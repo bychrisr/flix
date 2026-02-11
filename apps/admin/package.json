@@ -1,0 +1,13 @@
+{
+  "name": "@flix/admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'admin app scaffolded - add framework (Next.js/Vite)'",
+    "build": "echo 'admin build not configured yet'",
+    "test": "echo 'admin tests not configured yet'",
+    "lint": "echo 'admin lint not configured yet'",
+    "typecheck": "echo 'admin typecheck not configured yet'"
+  }
+}

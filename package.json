@@ -1,13 +1,21 @@
 {
   "name": "flix",
   "version": "0.1.0",
-  "description": "Created with Synkra AIOS",
+  "description": "Flix monorepo",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
   "scripts": {
-    "dev": "echo 'Add your dev script'",
-    "build": "echo 'Add your build script'",
-    "test": "echo 'Add your test script'",
-    "lint": "echo 'Add your lint script'",
-    "typecheck": "echo 'Add your typecheck script'"
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev:web": "npm --workspace @flix/web run dev",
+    "dev:admin": "npm --workspace @flix/admin run dev",
+    "dev:api": "npm --workspace @flix/api run dev"
   }
 }

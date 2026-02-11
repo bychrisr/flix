@@ -1,0 +1,13 @@
+{
+  "name": "@flix/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'web app scaffolded - add framework (Next.js/Vite)'",
+    "build": "echo 'web build not configured yet'",
+    "test": "echo 'web tests not configured yet'",
+    "lint": "echo 'web lint not configured yet'",
+    "typecheck": "echo 'web typecheck not configured yet'"
+  }
+}

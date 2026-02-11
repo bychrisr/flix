@@ -1,0 +1,25 @@
+{
+  "name": "@flix/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./tokens": {
+      "import": "./src/tokens/index.ts",
+      "types": "./src/tokens/index.ts"
+    }
+  },
+  "scripts": {
+    "dev": "echo 'design-system scaffolded - migrate tokens/components'",
+    "build": "echo 'design-system build not configured yet'",
+    "test": "echo 'design-system tests not configured yet'",
+    "lint": "echo 'design-system lint not configured yet'",
+    "typecheck": "echo 'design-system typecheck not configured yet'"
+  }
+}
