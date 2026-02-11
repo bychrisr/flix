@@ -1,0 +1,58 @@
+# Unified Project Structure
+```text
+flix/
+  apps/
+    web/
+      src/
+        app/
+        features/
+        components/
+        hooks/
+        services/
+        stores/
+        utils/
+      package.json
+    admin/
+      src/
+        app/
+        features/
+        components/
+        hooks/
+        services/
+        stores/
+        utils/
+      package.json
+  services/
+    api/
+      src/
+        modules/
+        middleware/
+        plugins/
+        lib/
+      package.json
+  packages/
+    design-system/
+      src/
+        tokens/
+        foundations/
+        components/
+        patterns/
+        lib/
+      package.json
+    shared/                 # planned
+      src/
+        contracts/
+        types/
+      package.json
+    config/                 # planned
+      eslint/
+      tsconfig/
+      vitest/
+  docs/
+    project-brief.md
+    prd.md
+    architecture.md
+    design-system-extraction.md
+  design-system/            # reference-only legacy input
+  package.json
+```
