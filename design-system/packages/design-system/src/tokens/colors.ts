@@ -1,0 +1,135 @@
+/**
+ * Netflix Design System - Color Tokens
+ * Extracted from Netflix Brand Guidelines
+ */
+
+export const colors = {
+  // Primitive tokens - raw color values from Netflix design system
+  primitive: {
+    // Primary Brand Colors
+    black: '#000000',
+    netflixRed: '#E50914',
+    white: '#FFFFFF',
+
+    // Secondary Colors
+    red: {
+      100: '#EB3942',
+      200: '#C11119',
+      300: '#F50723',
+    },
+    blue: {
+      100: '#0071EB',
+      200: '#448EF4',
+      300: '#54b9c5',
+    },
+    green: '#46d369',
+
+    // Neutral Gray Scale (Netflix's extensive palette)
+    gray: {
+      10: '#e5e5e5',
+      20: '#dcdcdc',
+      25: '#d2d2d2',
+      50: '#bcbcbc',
+      100: '#b3b3b3',
+      150: '#979797',
+      200: '#808080',
+      250: '#777777',
+      300: '#6d6d6e',
+      350: '#545454',
+      400: '#414141',
+      450: '#404040',
+      500: '#3a3a3a',
+      550: '#363636',
+      600: '#333333',
+      650: '#2f2f2f',
+      700: '#2a2a2a',
+      750: '#262626',
+      800: '#232323',
+      850: '#181818',
+      900: '#141414',
+    },
+
+    // Transparent Variants
+    transparentWhite: {
+      15: 'rgba(255, 255, 255, 0.15)',
+      20: 'rgba(255, 255, 255, 0.20)',
+      30: 'rgba(255, 255, 255, 0.30)',
+      35: 'rgba(255, 255, 255, 0.35)',
+      50: 'rgba(255, 255, 255, 0.50)',
+      70: 'rgba(255, 255, 255, 0.70)',
+    },
+    transparentBlack: {
+      30: 'rgba(0, 0, 0, 0.30)',
+      60: 'rgba(0, 0, 0, 0.60)',
+      90: 'rgba(0, 0, 0, 0.90)',
+    },
+    transparentGray: {
+      '300-40': 'rgba(109, 109, 110, 0.40)',
+      '300-70': 'rgba(109, 109, 110, 0.70)',
+      '600-60': 'rgba(51, 51, 51, 0.60)',
+    },
+  },
+
+  // Semantic tokens - purpose-based color assignments
+  semantic: {
+    // Brand
+    brand: {
+      primary: '#E50914',
+      primaryHover: '#C11119',
+      primaryActive: '#F50723',
+    },
+
+    // Backgrounds
+    background: {
+      primary: '#000000',
+      secondary: '#141414',
+      elevated: '#181818',
+      card: '#2a2a2a',
+      hover: '#333333',
+      overlay: 'rgba(0, 0, 0, 0.60)',
+    },
+
+    // Text
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#b3b3b3',
+      tertiary: '#808080',
+      disabled: '#545454',
+      error: '#EB3942',
+    },
+
+    // Borders
+    border: {
+      default: '#333333',
+      input: '#808080',
+      inputFocus: '#FFFFFF',
+      error: '#EB3942',
+    },
+
+    // Interactive States
+    interactive: {
+      default: '#FFFFFF',
+      hover: 'rgba(255, 255, 255, 0.70)',
+      active: '#b3b3b3',
+      disabled: '#545454',
+    },
+
+    // Status Colors
+    status: {
+      success: '#46d369',
+      error: '#EB3942',
+      warning: '#448EF4',
+      info: '#0071EB',
+    },
+
+    // Video Player
+    player: {
+      controls: '#FFFFFF',
+      controlsHover: 'rgba(255, 255, 255, 0.70)',
+      progressBar: '#E50914',
+      progressBackground: 'rgba(255, 255, 255, 0.30)',
+    },
+  },
+} as const;
+
+export type ColorToken = keyof typeof colors.primitive | keyof typeof colors.semantic;
