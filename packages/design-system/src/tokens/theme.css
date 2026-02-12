@@ -82,6 +82,14 @@
   --fx-size-pattern-get-started-arrow-stroke: 2px;
   --fx-size-pattern-signin-control-width: 314px;
   --fx-size-pattern-signin-button-height: 40px;
+  --fx-size-pattern-movie-info-left-min-width: 320px;
+  --fx-size-pattern-movie-info-right-min-width: 240px;
+  --fx-size-pattern-movie-info-quality-icon-width: 37px;
+  --fx-size-pattern-movie-info-quality-icon-height: 18px;
+  --fx-size-pattern-movie-info-rating-icon-width: 48px;
+  --fx-size-pattern-movie-info-rating-icon-height: 24px;
+  --fx-size-pattern-movie-info-preset-icon-width: 24px;
+  --fx-size-pattern-movie-info-preset-icon-height: 36px;
 
   --fx-breakpoint-sm: 640px;
   --fx-breakpoint-md: 768px;
