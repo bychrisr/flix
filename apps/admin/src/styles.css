@@ -1,4 +1,9 @@
-@import '../../../packages/design-system/src/tokens/theme.css';
+:root {
+  color-scheme: light;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #e2e8f0 0%, #f8fafc 45%, #ffffff 100%);
+  color: #0f172a;
+}
 
 * {
   box-sizing: border-box;
@@ -6,111 +11,128 @@
 
 body {
   margin: 0;
-  background: var(--fx-color-bg-secondary);
-  color: var(--fx-color-text-primary);
-  font-family: var(--fx-font-sans);
-}
-
-.admin-shell {
   min-height: 100vh;
+}
+
+.auth-layout,
+.dashboard-layout {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.auth-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  place-items: center;
 }
 
-.sidebar {
-  border-right: 1px solid var(--fx-color-border-default);
-  padding: var(--fx-space-6);
+.auth-card {
+  width: min(420px, 100%);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
-.sidebar h1 {
-  margin: 0 0 var(--fx-space-4);
-  font-family: var(--fx-font-display);
-  font-size: var(--fx-text-title);
-  color: var(--fx-color-brand-primary);
+.auth-card h1 {
+  margin: 0;
+  font-size: 1.6rem;
 }
 
-.sidebar nav {
+.auth-card p {
+  margin: 0.6rem 0 1.2rem;
+  color: #475569;
+}
+
+.auth-form {
   display: grid;
-  gap: var(--fx-space-2);
+  gap: 0.9rem;
 }
 
-.sidebar nav a {
-  color: var(--fx-color-text-secondary);
-  text-decoration: none;
-}
-
-.content {
-  padding: var(--fx-space-6);
-}
-
-.form-grid {
+.auth-form label {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--fx-space-4);
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: #334155;
 }
 
-.field {
-  display: grid;
-  gap: var(--fx-space-2);
+.auth-form input {
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
 }
 
-.field label {
-  font-size: var(--fx-text-caption);
-  color: var(--fx-color-text-secondary);
+button {
+  border: 0;
+  border-radius: 9px;
+  background: #0ea5e9;
+  color: #f8fafc;
+  padding: 0.7rem 0.85rem;
+  cursor: pointer;
 }
 
-.field input,
-.field textarea,
-.field select {
-  width: 100%;
-  padding: var(--fx-space-3);
-  border: 1px solid var(--fx-color-border-strong);
-  border-radius: var(--fx-radius-md);
-  background: var(--fx-color-bg-elevated);
-  color: var(--fx-color-text-primary);
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-.form-actions {
-  margin-top: var(--fx-space-4);
+.auth-error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.dashboard-layout {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
   display: flex;
-  gap: var(--fx-space-3);
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.button {
-  border-radius: var(--fx-radius-md);
-  padding: var(--fx-space-3) var(--fx-space-4);
-  border: 1px solid var(--fx-color-border-default);
-  background: var(--fx-color-bg-card);
-  color: var(--fx-color-text-primary);
+.dashboard-header h1 {
+  margin: 0;
 }
 
-.button.primary {
-  border-color: var(--fx-color-brand-primary);
-  background: var(--fx-color-brand-primary);
+.dashboard-header p {
+  margin: 0.35rem 0 0;
+  color: #334155;
 }
 
-@media (max-width: 1024px) {
-  .admin-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--fx-color-border-default);
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.9rem;
 }
 
-@media (max-width: 768px) {
-  .content,
-  .sidebar {
-    padding: var(--fx-space-4);
+.dashboard-grid article {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.dashboard-grid h2 {
+  margin-top: 0;
+}
+
+code {
+  font-family: "JetBrains Mono", monospace;
+}
+
+@media (max-width: 640px) {
+  .auth-layout,
+  .dashboard-layout {
+    padding: 1rem;
   }
 
-  .form-actions {
+  .dashboard-header {
     flex-direction: column;
+    align-items: stretch;
   }
 }
