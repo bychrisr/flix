@@ -44,3 +44,27 @@ export const fetchPlayback = (eventSlug, lessonSlug, eventAccessKey) =>
     path: `/api/public/events/${eventSlug}/lessons/${lessonSlug}/playback`,
     payload: eventAccessKey ? { eventAccessKey } : {},
   });
+
+export const fetchMaterials = (eventSlug, lessonSlug, eventAccessKey) =>
+  requestJson({
+    method: 'POST',
+    path: `/api/public/events/${eventSlug}/lessons/${lessonSlug}/materials`,
+    payload: eventAccessKey ? { eventAccessKey } : {},
+  });
+
+export const fetchQuiz = (eventSlug, lessonSlug, eventAccessKey) =>
+  requestJson({
+    method: 'POST',
+    path: `/api/public/events/${eventSlug}/lessons/${lessonSlug}/quiz`,
+    payload: eventAccessKey ? { eventAccessKey } : {},
+  });
+
+export const submitQuiz = ({ eventSlug, lessonSlug, eventAccessKey, answers }) =>
+  requestJson({
+    method: 'POST',
+    path: `/api/public/events/${eventSlug}/lessons/${lessonSlug}/quiz/submit`,
+    payload: {
+      ...(eventAccessKey ? { eventAccessKey } : {}),
+      answers,
+    },
+  });

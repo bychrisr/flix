@@ -31,6 +31,10 @@ body {
   padding: 1rem;
 }
 
+.panel h3 {
+  margin-top: 0;
+}
+
 .inline-fields {
   display: grid;
   gap: 0.5rem;
@@ -94,6 +98,39 @@ a {
   display: flex;
   gap: 0.6rem;
   align-items: center;
+}
+
+.quiz-shell {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.quiz-question {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  margin: 0;
+}
+
+.quiz-question legend {
+  padding: 0 0.2rem;
+  font-weight: 600;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.quiz-result {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.quiz-result p {
+  margin: 0;
 }
 
 .muted {
