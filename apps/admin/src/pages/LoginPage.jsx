@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { SignInEmailPasswordPattern } from '../../../../packages/design-system/src/components/molecules/SignInEmailPasswordPattern.tsx';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,8 +16,7 @@ export const LoginPage = () => {
     navigate('/dashboard', { replace: true });
   }
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
+  const submitLogin = async () => {
     setSubmitting(true);
     setError('');
 
@@ -32,6 +32,11 @@ export const LoginPage = () => {
     navigate(from && from !== '/login' ? from : '/dashboard', { replace: true });
   };
 
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await submitLogin();
+  };
+
   return (
     <main className="auth-layout">
       <section className="auth-card" aria-label="Admin login">
@@ -39,26 +44,22 @@ export const LoginPage = () => {
         <p>Sign in to manage events, lessons, and operations.</p>
 
         <form onSubmit={onSubmit} className="auth-form">
-          <label>
-            Username
-            <input value={username} onChange={(event) => setUsername(event.target.value)} required />
-          </label>
-
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </label>
+          <SignInEmailPasswordPattern
+            emailValue={username}
+            passwordValue={password}
+            onEmailChange={setUsername}
+            onPasswordChange={setPassword}
+            onSubmit={submitLogin}
+            emailPlaceholder="Username"
+            buttonLabel={submitting ? 'Signing in...' : 'Sign In'}
+            disabled={submitting}
+            controlWidth="100%"
+          />
+          <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1}>
+            Sign in
+          </button>
 
           {error ? <p className="auth-error">{error}</p> : null}
-
-          <button type="submit" disabled={submitting}>
-            {submitting ? 'Signing in...' : 'Sign in'}
-          </button>
         </form>
       </section>
     </main>
