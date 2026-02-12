@@ -29,8 +29,10 @@ const errorResponse = (reply, error) => {
   throw error;
 };
 
-export const registerLessonRoutes = async (app, { eventService }) => {
-  const lessonService = createLessonService({ eventService });
+export const registerLessonRoutes = async (
+  app,
+  { eventService, lessonService = createLessonService({ eventService }) },
+) => {
 
   app.get('/api/events/:eventId/lessons', { preHandler: [requireAdmin] }, async (request, reply) => {
     try {

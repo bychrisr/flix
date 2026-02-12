@@ -119,6 +119,7 @@ export const createEventService = () => {
   return {
     listEvents,
     getEventById,
+    countEvents: () => eventsById.size,
     createEvent,
     updateEvent,
     deleteEvent,
