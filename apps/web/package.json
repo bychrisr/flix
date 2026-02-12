@@ -12,7 +12,7 @@
     "typecheck": "echo 'web typecheck not configured yet'"
   },
   "dependencies": {
-    "@flix/design-system": "workspace:*",
+    "@flix/design-system": "0.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.4"
