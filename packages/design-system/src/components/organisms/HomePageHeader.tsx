@@ -41,10 +41,10 @@ const leftStyle: CSSProperties = {
 const brandStyle: CSSProperties = {
   margin: 0,
   color: 'var(--fx-color-brand-primary)',
-  fontFamily: 'var(--fx-font-sans)',
+  fontFamily: 'var(--fx-font-display)',
   fontSize: 'var(--fx-size-pattern-header-home-logo-size)',
   lineHeight: '1',
-  fontWeight: 'var(--fx-font-weight-bold)',
+  fontWeight: 'var(--fx-font-weight-regular)',
   letterSpacing: 'var(--fx-size-pattern-header-logo-letter-spacing)',
   textTransform: 'uppercase',
 };
