@@ -1,13 +1,11 @@
 import { useMemo, useState, useEffect, useRef, type ReactNode } from 'react';
 import ReactPlayer from 'react-player';
-import { AccessKeyForm } from '../molecules/AccessKeyForm';
-import { Card } from '../atoms/Card';
 import { Text } from '../atoms/Text';
+import { Icon } from '../atoms/Icon';
 import { MovieBlockCard } from '../molecules/MovieBlockCard';
 import { HeroBannerRatingPattern } from '../molecules/HeroBannerRatingPattern';
 import { HeroBanner } from '../organisms/HeroBanner';
 import { HomePageHeader } from '../organisms/HomePageHeader';
-import { LessonRail } from '../organisms/LessonRail';
 import { LoadingScreen } from '../organisms/LoadingScreen';
 
 type LessonItem = {
@@ -159,6 +157,7 @@ export const LearnerCatalogTemplate = ({
   gatedItems,
 }: LearnerCatalogTemplateProps) => {
   const playerRef = useRef<ReactPlayer | null>(null);
+  const railRef = useRef<HTMLDivElement | null>(null);
   const loopSeekLockRef = useRef(false);
   const activeVideoUrlRef = useRef('');
   const [isMounted, setIsMounted] = useState(false);
@@ -167,6 +166,8 @@ export const LearnerCatalogTemplate = ({
   const [hasMinPreload, setHasMinPreload] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [isHeroMuted, setIsHeroMuted] = useState(true);
+  const [canScrollRailPrev, setCanScrollRailPrev] = useState(false);
+  const [canScrollRailNext, setCanScrollRailNext] = useState(false);
   const [videoDuration, setVideoDuration] = useState(0);
   const candidateVideoUrls = useMemo(() => buildCandidateVideoUrls(highlightVideoUrl), [highlightVideoUrl]);
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
@@ -227,6 +228,43 @@ export const LearnerCatalogTemplate = ({
     return () => window.clearTimeout(timer);
   }, [isPlayerReady, hasMinPreload]);
 
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail || heroRailItems.length <= 4) {
+      setCanScrollRailPrev(false);
+      setCanScrollRailNext(false);
+      return;
+    }
+
+    const updateRailControls = () => {
+      const maxScrollLeft = rail.scrollWidth - rail.clientWidth;
+      const epsilon = 2;
+      setCanScrollRailPrev(rail.scrollLeft > epsilon);
+      setCanScrollRailNext(rail.scrollLeft < maxScrollLeft - epsilon);
+    };
+
+    updateRailControls();
+    rail.addEventListener('scroll', updateRailControls, { passive: true });
+    window.addEventListener('resize', updateRailControls);
+
+    return () => {
+      rail.removeEventListener('scroll', updateRailControls);
+      window.removeEventListener('resize', updateRailControls);
+    };
+  }, [heroRailItems]);
+
+  const scrollRail = (direction: 'prev' | 'next') => {
+    const rail = railRef.current;
+    if (!rail) return;
+
+    const firstCard = rail.firstElementChild as HTMLElement | null;
+    const step = firstCard ? firstCard.getBoundingClientRect().width + 10 : rail.clientWidth * 0.85;
+    rail.scrollBy({
+      left: direction === 'next' ? step : -step,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <main style={{ width: '100%', display: 'grid', gap: 'var(--fx-space-6)' }}>
       <LoadingScreen isReady={isHeroReady} />
@@ -236,9 +274,10 @@ export const LearnerCatalogTemplate = ({
         style={{
           width: '100%',
           position: 'relative',
-          minHeight: '100svh',
-          height: '100svh',
-          overflow: 'hidden',
+          minHeight: 'calc(56.25vw + 96px)',
+          height: 'auto',
+          overflow: 'visible',
+          paddingBottom: 96,
           background: 'var(--fx-color-bg-primary)',
         }}
       >
@@ -248,12 +287,11 @@ export const LearnerCatalogTemplate = ({
               className="fx-catalog-hero-video-frame"
               style={{
                 position: 'absolute',
-                left: '50%',
-                top: '50%',
-                width: 'max(100vw, calc(100svh * 16 / 9))',
-                height: 'max(100svh, calc(100vw * 9 / 16))',
-                transform: 'translate(-50%, -50%)',
-                transformOrigin: 'center',
+                left: 0,
+                top: 0,
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '16 / 9',
               }}
             >
               <ReactPlayer
@@ -370,7 +408,7 @@ export const LearnerCatalogTemplate = ({
               }
 
               .fx-catalog-hero-content {
-                min-height: clamp(420px, calc(100svh - 220px), 700px) !important;
+                min-height: clamp(320px, calc(56.25vw - 188px), 560px) !important;
               }
 
               .fx-catalog-hero-banner {
@@ -384,11 +422,16 @@ export const LearnerCatalogTemplate = ({
 
               .fx-catalog-hero-rail {
                 margin-top: 0 !important;
+                transform: translateY(24px);
+              }
+
+              .fx-catalog-hero-rail-track {
+                grid-auto-columns: calc((100% - 30px) / 4);
               }
 
               @media (max-width: 1200px) {
                 .fx-catalog-hero-content {
-                  min-height: clamp(400px, calc(100svh - 210px), 640px) !important;
+                  min-height: clamp(280px, calc(56.25vw - 170px), 520px) !important;
                 }
 
                 .fx-catalog-hero-banner {
@@ -399,11 +442,12 @@ export const LearnerCatalogTemplate = ({
 
               @media (max-width: 900px) {
                 .fx-catalog-hero {
-                  min-height: 100svh !important;
+                  min-height: calc(56.25vw + 64px) !important;
+                  padding-bottom: 48px !important;
                 }
 
                 .fx-catalog-hero-content {
-                  min-height: clamp(360px, calc(100svh - 190px), 560px) !important;
+                  min-height: clamp(260px, calc(56.25vw - 128px), 430px) !important;
                   padding: 0 var(--fx-space-4) !important;
                 }
 
@@ -415,6 +459,11 @@ export const LearnerCatalogTemplate = ({
 
                 .fx-catalog-hero-rail {
                   padding: 0 var(--fx-space-4) var(--fx-space-3) !important;
+                  transform: translateY(12px);
+                }
+
+                .fx-catalog-hero-rail-track {
+                  grid-auto-columns: calc((100% - 10px) / 2);
                 }
 
                 .fx-catalog-rating-dock {
@@ -424,7 +473,7 @@ export const LearnerCatalogTemplate = ({
 
               @media (max-width: 768px) {
                 .fx-catalog-hero-content {
-                  min-height: clamp(340px, calc(100svh - 170px), 520px) !important;
+                  min-height: clamp(260px, calc(56.25vw - 80px), 460px) !important;
                 }
 
                 .fx-catalog-hero-banner {
@@ -438,12 +487,13 @@ export const LearnerCatalogTemplate = ({
 
               @media (max-width: 560px) {
                 .fx-catalog-hero-video-frame {
-                  width: max(100vw, calc(100dvh * 16 / 9)) !important;
-                  height: max(100dvh, calc(100vw * 9 / 16)) !important;
+                  width: 100% !important;
+                  height: auto !important;
+                  aspect-ratio: 16 / 9 !important;
                 }
 
                 .fx-catalog-hero-content {
-                  min-height: clamp(300px, calc(100svh - 150px), 460px) !important;
+                  min-height: clamp(240px, calc(56.25vw - 12px), 420px) !important;
                   padding: 0 var(--fx-space-3) !important;
                 }
 
@@ -455,6 +505,11 @@ export const LearnerCatalogTemplate = ({
 
                 .fx-catalog-hero-rail {
                   padding: 0 var(--fx-space-3) var(--fx-space-2) !important;
+                  transform: none;
+                }
+
+                .fx-catalog-hero-rail-track {
+                  grid-auto-columns: 82%;
                 }
 
                 .fx-catalog-rail-title {
@@ -561,19 +616,76 @@ export const LearnerCatalogTemplate = ({
                 zIndex: 2,
               }}
             >
-              <Text
-                as="h3"
-                variant="bold-title3"
-                className="fx-catalog-rail-title"
-                style={{ margin: 0, marginBottom: 'var(--fx-space-2)', fontSize: '32px', lineHeight: '1.15' }}
-              >
-                Matched to You
-              </Text>
               <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 'var(--fx-space-2)',
+                }}
+              >
+                <Text
+                  as="h3"
+                  variant="bold-title3"
+                  className="fx-catalog-rail-title"
+                  style={{ margin: 0, fontSize: '32px', lineHeight: '1.15' }}
+                >
+                  Próximas Aulas
+                </Text>
+                {heroRailItems.length > 4 ? (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--fx-space-2)' }}>
+                    <button
+                      type="button"
+                      aria-label="Scroll previous lessons"
+                      onClick={() => scrollRail('prev')}
+                      disabled={!canScrollRailPrev}
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: '999px',
+                        border: 'var(--fx-size-border-default) solid rgb(255 255 255 / 55%)',
+                        background: 'rgb(0 0 0 / 45%)',
+                        color: 'var(--fx-color-text-primary)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: canScrollRailPrev ? 1 : 0.42,
+                        cursor: canScrollRailPrev ? 'pointer' : 'not-allowed',
+                      }}
+                    >
+                      <Icon name="arrowLeft" size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Scroll next lessons"
+                      onClick={() => scrollRail('next')}
+                      disabled={!canScrollRailNext}
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: '999px',
+                        border: 'var(--fx-size-border-default) solid rgb(255 255 255 / 55%)',
+                        background: 'rgb(0 0 0 / 45%)',
+                        color: 'var(--fx-color-text-primary)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: canScrollRailNext ? 1 : 0.42,
+                        cursor: canScrollRailNext ? 'pointer' : 'not-allowed',
+                      }}
+                    >
+                      <Icon name="arrowRight" size={16} />
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+              <div
+                ref={railRef}
+                className="fx-catalog-hero-rail-track"
                 style={{
                   display: 'grid',
                   gridAutoFlow: 'column',
-                  gridAutoColumns: 'clamp(150px, 42vw, var(--fx-size-pattern-movie-card-standard-width))',
+                  gridAutoColumns: 'calc((100% - 30px) / 4)',
                   gap: '10px',
                   overflowX: 'auto',
                   paddingBottom: 'var(--fx-space-2)',
@@ -590,7 +702,7 @@ export const LearnerCatalogTemplate = ({
                     titleOverlay={item.title}
                     titleLines={2}
                     style={{
-                      width: 'clamp(150px, 18.5vw, 218px)',
+                      width: '100%',
                       height: 'auto',
                       aspectRatio: '16 / 9',
                     }}
@@ -602,42 +714,6 @@ export const LearnerCatalogTemplate = ({
         </div>
       </section>
 
-      <section
-        style={{
-          maxWidth: 1320,
-          width: '100%',
-          margin: '0 auto',
-          display: 'grid',
-          gap: 'var(--fx-space-6)',
-          padding: '0 var(--fx-space-6) var(--fx-space-8)',
-          boxSizing: 'border-box',
-          opacity: isHeroReady ? 1 : 0,
-          transition: 'opacity 220ms ease',
-        }}
-      >
-        <Card id="materiais">
-          <Text as="h1" variant="display-large">Flix</Text>
-          <Text variant="regular-body" style={{ marginTop: 'var(--fx-space-2)' }}>
-            Event: <code>{eventSlug}</code>
-          </Text>
-          <Text as="h2" variant="medium-title2" style={{ marginTop: 'var(--fx-space-4)' }}>
-            Catalog Access
-          </Text>
-          <AccessKeyForm
-            value={accessKey}
-            onChange={onAccessKeyChange}
-            onSubmit={onLoad}
-            loading={loading}
-            submitLabel="Load catalog"
-          />
-        </Card>
-        <section id="comentarios">
-          <LessonRail title="Continue learning" items={releasedItems} />
-        </section>
-        <section id="quiz">
-          <LessonRail title="Scheduled or restricted" items={gatedItems} />
-        </section>
-      </section>
     </main>
   );
 };
