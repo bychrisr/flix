@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { AdminContentTemplate, AdminDashboardPage, Card, Text } from '@flix/design-system/components';
 import {
   createEvent,
   generateEventBranding,
@@ -103,6 +104,13 @@ const pageTitles = {
   'eventos-edit': 'Eventos / Editar',
   aulas: 'Aulas',
   quizzes: 'Quizzes',
+};
+
+const isSectionActive = (currentSection, target) => {
+  if (target === 'eventos') {
+    return ['eventos', 'eventos-new', 'eventos-edit'].includes(currentSection);
+  }
+  return currentSection === target;
 };
 
 export const DashboardPage = ({ section = 'dashboard' }) => {
@@ -732,78 +740,74 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     }
   };
 
+  const navItems = [
+    { label: 'Dashboard', href: '/dashboard', active: isSectionActive(section, 'dashboard') },
+    { label: 'Eventos', href: '/eventos', active: isSectionActive(section, 'eventos') },
+    { label: 'Aulas', href: '/aulas', active: isSectionActive(section, 'aulas') },
+    { label: 'Quizzes', href: '/quizzes', active: isSectionActive(section, 'quizzes') },
+  ];
+
   return (
-    <main className="dashboard-layout">
-      <header className="dashboard-header">
-        <div>
-          <h1>{pageTitles[section] ?? 'Admin Content Operations'}</h1>
-          <p>Fluxo administrativo orientado por rotas do workflow oficial.</p>
-        </div>
-        <button type="button" onClick={logout}>
-          Logout
-        </button>
-      </header>
-
-      <nav className="admin-nav">
-        <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Dashboard
-        </NavLink>
-        <NavLink to="/eventos" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Eventos
-        </NavLink>
-        <NavLink to="/aulas" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Aulas
-        </NavLink>
-        <NavLink to="/quizzes" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Quizzes
-        </NavLink>
-      </nav>
-
-      <section className="dashboard-grid two-col">
-        <article>
-          <h2>Runtime</h2>
-          <p>
-            API base URL: <code>{getApiBaseUrl()}</code>
-          </p>
-          <p>
-            Signed in as <strong>{session?.user?.username ?? 'admin'}</strong>
-          </p>
-        </article>
-
-        <article>
-          <h2>Feedback</h2>
-          {status ? <p className="feedback-ok">{status}</p> : <p>No recent actions.</p>}
-          {error ? <p className="feedback-error">{error}</p> : null}
-        </article>
-      </section>
+    <AdminDashboardPage
+      title={pageTitles[section] ?? 'Admin Content Operations'}
+      subtitle="Fluxo administrativo orientado por rotas do workflow oficial."
+      onLogout={logout}
+      navItems={navItems}
+    >
+      <AdminContentTemplate
+        leftTitle="Runtime"
+        rightTitle="Feedback"
+        left={(
+          <>
+            <p>
+              API base URL: <code>{getApiBaseUrl()}</code>
+            </p>
+            <p>
+              Signed in as <strong>{session?.user?.username ?? 'admin'}</strong>
+            </p>
+          </>
+        )}
+        right={(
+          <>
+            {status ? <p className="feedback-ok">{status}</p> : <p>No recent actions.</p>}
+            {error ? <p className="feedback-error">{error}</p> : null}
+          </>
+        )}
+      />
 
       {section === 'dashboard' ? (
-        <section className="dashboard-grid two-col">
-          <article>
-            <h2>Command Center</h2>
+        <AdminContentTemplate
+          leftTitle="Command Center"
+          rightTitle="Selecao Atual"
+          left={(
+            <>
             <p className="muted">Use o menu para operar cada etapa com foco por contexto.</p>
             <div className="inline-actions">
               <NavLink to="/eventos">Abrir Eventos</NavLink>
               <NavLink to="/aulas">Abrir Aulas</NavLink>
               <NavLink to="/quizzes">Abrir Quizzes</NavLink>
             </div>
-          </article>
-          <article>
-            <h2>Selecao Atual</h2>
+            </>
+          )}
+          right={(
+            <>
             <p className="muted">
               Evento: <strong>{selectedEvent?.title ?? 'Nenhum'}</strong>
             </p>
             <p className="muted">
               Aula: <strong>{selectedLesson?.title ?? 'Nenhuma'}</strong>
             </p>
-          </article>
-        </section>
+            </>
+          )}
+        />
       ) : null}
 
       {isEventosSection ? (
-        <section className="dashboard-grid two-col">
-        <article>
-          <h2>Events + Branding</h2>
+        <AdminContentTemplate
+          leftTitle="Events + Branding"
+          rightTitle="Selected Event Context"
+          left={(
+            <>
           <form className="stack-form" onSubmit={handleCreateEvent}>
             <input
               placeholder="Event title"
@@ -1042,17 +1046,18 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               </li>
             ))}
           </ul>
-        </article>
-        <article>
-          <h2>Selected Event Context</h2>
+            </>
+          )}
+          right={(
+            <>
           {selectedEvent ? (
-            <div className="payload-preview">
+            <Card className="payload-preview">
               <p>
                 <strong>{selectedEvent.title}</strong>
               </p>
               <p className="muted">Slug: {selectedEvent.slug}</p>
               <p className="muted">Visibility: {selectedEvent.visibility}</p>
-            </div>
+            </Card>
           ) : (
             <p className="muted">
               {isEventEditMode
@@ -1060,14 +1065,17 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
                 : 'Select an event to continue with lesson and quiz flows.'}
             </p>
           )}
-        </article>
-      </section>
+            </>
+          )}
+        />
       ) : null}
 
       {section === 'aulas' ? (
-      <section className="dashboard-grid two-col">
-        <article>
-          <h2>Lessons</h2>
+      <AdminContentTemplate
+        leftTitle="Lessons"
+        rightTitle="Materials"
+        left={(
+          <>
           <form className="stack-form" onSubmit={handleCreateLesson}>
             <input
               placeholder="Lesson title"
@@ -1143,10 +1151,10 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               </li>
             ))}
           </ul>
-        </article>
-
-        <article>
-          <h2>Materials</h2>
+          </>
+        )}
+        right={(
+          <>
           <form className="stack-form" onSubmit={handleCreateMaterial}>
             <input
               placeholder="File name"
@@ -1192,14 +1200,17 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               </li>
             ))}
           </ul>
-        </article>
-      </section>
+          </>
+        )}
+      />
       ) : null}
 
       {section === 'quizzes' ? (
-      <section className="dashboard-grid two-col">
-        <article>
-          <h2>Quizzes</h2>
+      <AdminContentTemplate
+        leftTitle="Quizzes"
+        rightTitle="Lesson Context"
+        left={(
+          <>
           <form className="stack-form" onSubmit={handleCreateQuiz}>
             <input
               placeholder="Quiz id (for load/update/delete)"
@@ -1262,26 +1273,28 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
           </form>
 
           {quizPayload ? (
-            <div className="payload-preview">
+            <Card className="payload-preview">
               <strong>Loaded quiz:</strong> {quizPayload.title} ({quizPayload.id})
-            </div>
+            </Card>
           ) : null}
-        </article>
-        <article>
-          <h2>Lesson Context</h2>
+          </>
+        )}
+        right={(
+          <>
           {selectedLesson ? (
-            <div className="payload-preview">
+            <Card className="payload-preview">
               <p>
                 <strong>{selectedLesson.title}</strong>
               </p>
               <p className="muted">Slug: {selectedLesson.slug}</p>
-            </div>
+            </Card>
           ) : (
             <p className="muted">Select event and lesson in /aulas before creating quizzes.</p>
           )}
-        </article>
-      </section>
+          </>
+        )}
+      />
       ) : null}
-    </main>
+    </AdminDashboardPage>
   );
 };
