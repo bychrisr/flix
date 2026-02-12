@@ -89,6 +89,8 @@ export const registerPublicAccessRoutes = async (
       id: lesson.id,
       slug: lesson.slug,
       title: lesson.title,
+      videoProvider: lesson.videoProvider,
+      videoId: lesson.videoId,
       releaseAt: lesson.releaseAt,
       expiresAt: lesson.expiresAt,
       status: lessonService.resolveLessonStatus(lesson),
