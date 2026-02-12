@@ -4,10 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo 'api scaffolded - choose runtime (Node/Express/Fastify)'",
-    "build": "echo 'api build not configured yet'",
-    "test": "echo 'api tests not configured yet'",
-    "lint": "echo 'api lint not configured yet'",
-    "typecheck": "echo 'api typecheck not configured yet'"
+    "dev": "node --watch src/server.js",
+    "build": "node -e \"console.log('api build: no transpilation step required for MVP baseline')\"",
+    "test": "vitest run",
+    "lint": "node -e \"console.log('api lint: not configured yet')\"",
+    "typecheck": "node -e \"console.log('api typecheck: not configured yet')\""
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/rate-limit": "^10.3.0",
+    "bcryptjs": "^3.0.3",
+    "fastify": "^5.7.4",
+    "jsonwebtoken": "^9.0.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.18"
   }
 }
