@@ -43,6 +43,11 @@ export const createEventService = () => {
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       .map((event) => ({ ...event }));
 
+  const getEventById = (id) => {
+    const event = eventsById.get(id);
+    return event ? { ...event } : null;
+  };
+
   const createEvent = (payload) => {
     const slug = normalizeSlug(payload.slug);
     if (hasSlugConflict(slug)) {
@@ -113,6 +118,7 @@ export const createEventService = () => {
 
   return {
     listEvents,
+    getEventById,
     createEvent,
     updateEvent,
     deleteEvent,
