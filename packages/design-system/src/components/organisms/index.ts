@@ -8,6 +8,7 @@ export * from './HomeHero';
 export * from './HomePageHeader';
 export * from './LandingPageHeader';
 export * from './LessonRail';
+export * from './LoadingScreen';
 export * from './HeroMobile';
 export * from './ListOfEpisodesPattern';
 export * from './MovieBlocksPattern';
