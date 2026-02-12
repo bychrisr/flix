@@ -34,6 +34,19 @@ export const iconAssets = {
   ratingTvPg: new URL('./maturity-ratings/TV-PG.svg', import.meta.url).href,
   ratingTvY: new URL('./maturity-ratings/TV-Y.svg', import.meta.url).href,
   ratingTvY7: new URL('./maturity-ratings/TV-Y7.svg', import.meta.url).href,
+  moviePreviewAddDefault: new URL('./movie-preview/MoviePreviewAddDefault.svg', import.meta.url).href,
+  moviePreviewAddHover: new URL('./movie-preview/MoviePreviewAddHover.svg', import.meta.url).href,
+  moviePreviewArrowDownDefault: new URL('./movie-preview/MoviePreviewArrowDownDefault.svg', import.meta.url).href,
+  moviePreviewArrowDownHover: new URL('./movie-preview/MoviePreviewArrowDownHover.svg', import.meta.url).href,
+  moviePreviewArrowDownInactive: new URL('./movie-preview/MoviePreviewArrowDownInactive.svg', import.meta.url).href,
+  moviePreviewMuteDefault: new URL('./movie-preview/MoviePreviewMuteDefault.svg', import.meta.url).href,
+  moviePreviewMuteHover: new URL('./movie-preview/MoviePreviewMuteHover.svg', import.meta.url).href,
+  moviePreviewPlayDefault: new URL('./movie-preview/MoviePreviewPlayDefault.svg', import.meta.url).href,
+  moviePreviewPlayHover: new URL('./movie-preview/MoviePreviewPlayHover.svg', import.meta.url).href,
+  moviePreviewThumbUpDefault: new URL('./movie-preview/MoviePreviewThumbUpDefault.svg', import.meta.url).href,
+  moviePreviewThumbUpHover: new URL('./movie-preview/MoviePreviewThumbUpHover.svg', import.meta.url).href,
+  moviePreviewThumbsGroupDefault: new URL('./movie-preview/MoviePreviewThumbsGroupDefault.svg', import.meta.url).href,
+  moviePreviewThumbsGroupHover: new URL('./movie-preview/MoviePreviewThumbsGroupHover.svg', import.meta.url).href,
   search: new URL('./Search.svg', import.meta.url).href,
   videoPlayer10secBackDefault: new URL('./video-player/VideoPlayer10secBackDefault.svg', import.meta.url).href,
   videoPlayer10secBackHover: new URL('./video-player/VideoPlayer10secBackHover.svg', import.meta.url).href,
@@ -69,3 +82,43 @@ export const iconAssets = {
 export type IconName = keyof typeof iconAssets;
 
 export const getIconAsset = (name: IconName): string => iconAssets[name];
+
+type IconSetState = 'default' | 'hover' | 'inactive';
+
+export const moviePreviewIconSets = {
+  add: {
+    default: iconAssets.moviePreviewAddDefault,
+    hover: iconAssets.moviePreviewAddHover,
+  },
+  arrowDown: {
+    default: iconAssets.moviePreviewArrowDownDefault,
+    hover: iconAssets.moviePreviewArrowDownHover,
+    inactive: iconAssets.moviePreviewArrowDownInactive,
+  },
+  mute: {
+    default: iconAssets.moviePreviewMuteDefault,
+    hover: iconAssets.moviePreviewMuteHover,
+  },
+  play: {
+    default: iconAssets.moviePreviewPlayDefault,
+    hover: iconAssets.moviePreviewPlayHover,
+  },
+  thumbUp: {
+    default: iconAssets.moviePreviewThumbUpDefault,
+    hover: iconAssets.moviePreviewThumbUpHover,
+  },
+  thumbsGroup: {
+    default: iconAssets.moviePreviewThumbsGroupDefault,
+    hover: iconAssets.moviePreviewThumbsGroupHover,
+  },
+} as const;
+
+export type MoviePreviewIconSetName = keyof typeof moviePreviewIconSets;
+
+export const getMoviePreviewIconSetAsset = (
+  setName: MoviePreviewIconSetName,
+  state: IconSetState,
+): string => {
+  const set = moviePreviewIconSets[setName] as Partial<Record<IconSetState, string>> & { default: string };
+  return set[state] ?? set.default;
+};
