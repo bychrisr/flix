@@ -1,4 +1,14 @@
 const allowedVisibility = ['public', 'private'];
+const defaultHero = {
+  title: '',
+  subtitle: '',
+  ctaText: '',
+};
+const defaultVisualStyle = {
+  backgroundColor: '#111111',
+  textColor: '#f5f5f5',
+  accentColor: '#e50914',
+};
 
 const normalizeSlug = (slug) =>
   slug
@@ -47,6 +57,8 @@ export const createEventService = () => {
       description: payload.description?.trim() ?? '',
       isActive: payload.isActive ?? false,
       visibility: payload.visibility ?? 'private',
+      hero: payload.hero ?? defaultHero,
+      visualStyle: payload.visualStyle ?? defaultVisualStyle,
       createdAt: now,
       updatedAt: now,
     };
@@ -83,6 +95,8 @@ export const createEventService = () => {
       description: payload.description?.trim() ?? existing.description,
       isActive: payload.isActive ?? existing.isActive,
       visibility,
+      hero: payload.hero ?? existing.hero,
+      visualStyle: payload.visualStyle ?? existing.visualStyle,
       updatedAt: new Date().toISOString(),
     };
 
