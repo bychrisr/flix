@@ -1,10 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 test('admin happy path smoke: login and create event', async ({ page }) => {
-  await page.goto('http://127.0.0.1:4174/login');
+  await page.goto('http://127.0.0.1:4274/login');
 
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page.getByRole('heading', { name: 'Admin Content Operations' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Eventos', exact: true })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Eventos', exact: true }).click();
+  await expect(page).toHaveURL(/\/eventos/);
 
   const randomSuffix = `${Date.now()}`;
   await page.getByPlaceholder('Event title').fill(`E2E Event ${randomSuffix}`);
