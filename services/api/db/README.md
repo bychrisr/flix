@@ -19,3 +19,10 @@ Versioned SQL migrations live in `services/api/db/migrations`.
 - quiz with questions/options
 
 This baseline enables end-to-end admin and learner smoke flows.
+
+For richer local manual testing, use `db:seed:mock` / `db:reset:mock` to populate:
+
+- multiple public/private events
+- released, locked, and expired lessons
+- materials in multiple lessons
+- quizzes prepared for full submission flow

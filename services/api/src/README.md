@@ -15,7 +15,16 @@ Commands:
 - `npm run db:migrate --workspace @flix/api`
 - `npm run db:seed --workspace @flix/api`
 - `npm run db:reset --workspace @flix/api`
+- `npm run db:seed:mock --workspace @flix/api`
+- `npm run db:reset:mock --workspace @flix/api`
 - `npm run db:verify --workspace @flix/api`
+
+`db:seed:mock` includes an expanded dataset for local manual QA:
+
+- public and private events
+- released, locked, and expired lessons
+- materials across multiple lessons
+- quizzes with valid UUID question/option IDs for submission flow testing
 
 ## Runtime Adapter
 

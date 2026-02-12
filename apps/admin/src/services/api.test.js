@@ -34,4 +34,13 @@ describe('requestJson', () => {
       message: 'Invalid payload',
     });
   });
+
+  it('throws API_UNAVAILABLE when backend is offline', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('fetch failed'));
+
+    await expect(requestJson({ method: 'GET', path: '/api/events', token: 'abc' })).rejects.toMatchObject({
+      status: 0,
+      code: 'API_UNAVAILABLE',
+    });
+  });
 });

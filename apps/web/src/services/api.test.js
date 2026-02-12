@@ -79,4 +79,13 @@ describe('learner requestJson', () => {
       }),
     );
   });
+
+  it('throws API_UNAVAILABLE when backend is offline', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('fetch failed'));
+
+    await expect(requestJson({ method: 'POST', path: '/api/public/events/demo/catalog' })).rejects.toMatchObject({
+      status: 0,
+      code: 'API_UNAVAILABLE',
+    });
+  });
 });

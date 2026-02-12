@@ -3,7 +3,7 @@ import { openSqliteDatabase } from './client.js';
 
 const seedTimestamp = '2026-02-12T12:00:00.000Z';
 
-const seedData = {
+const defaultSeedData = {
   admins: [
     {
       id: 'admin-1',
@@ -107,7 +107,7 @@ const seedData = {
   ],
 };
 
-export const runSeed = async ({ databaseUrl = process.env.DATABASE_URL } = {}) => {
+const seedDatabase = async ({ databaseUrl, seedData }) => {
   const { db, dbPath } = openSqliteDatabase(databaseUrl);
 
   db.exec('BEGIN');
@@ -275,4 +275,17 @@ export const runSeed = async ({ databaseUrl = process.env.DATABASE_URL } = {}) =
         .length,
     },
   };
+};
+
+export const runSeed = async ({ databaseUrl = process.env.DATABASE_URL } = {}) =>
+  seedDatabase({ databaseUrl, seedData: defaultSeedData });
+
+export const runSeedWithData = async ({
+  databaseUrl = process.env.DATABASE_URL,
+  seedData,
+} = {}) => {
+  if (!seedData) {
+    throw new Error('seedData is required');
+  }
+  return seedDatabase({ databaseUrl, seedData });
 };
