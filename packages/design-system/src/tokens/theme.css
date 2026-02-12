@@ -43,10 +43,12 @@
   --fx-color-text-secondary: #b3b3b3;
   --fx-color-text-tertiary: #808080;
   --fx-color-text-placeholder: #bcbcbc;
+  --fx-color-bg-overlay-strong: rgb(109 109 110 / 70%);
   --fx-color-border-default: #333333;
   --fx-color-border-strong: #808080;
   --fx-color-success: #46d369;
   --fx-color-error: #eb3942;
+  --fx-opacity-disabled: 0.7;
 
   --fx-font-sans: 'Netflix Sans', 'Helvetica Neue', Arial, sans-serif;
   --fx-font-display: 'Bebas Neue', 'Arial Black', sans-serif;
@@ -66,11 +68,18 @@
 
   --fx-radius-sm: 2px;
   --fx-radius-input: 4px;
+  --fx-radius-button: 4px;
   --fx-radius-md: 6px;
   --fx-radius-lg: 8px;
   --fx-radius-xl: 12px;
 
   --fx-size-input-height: 55px;
+  --fx-size-button-height-sm: 40px;
+  --fx-size-button-height-md: 48px;
+  --fx-size-button-height-lg: 56px;
+  --fx-size-button-padding-x-sm: 14px;
+  --fx-size-button-padding-x-md: 16px;
+  --fx-size-button-padding-x-lg: 24px;
   --fx-size-input-error-icon: 16px;
   --fx-size-border-default: 1px;
   --fx-size-focus-ring: 2px;
