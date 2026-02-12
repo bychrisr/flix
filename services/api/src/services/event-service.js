@@ -50,7 +50,13 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       id: crypto.randomUUID(),
       title: payload.title.trim(),
       slug,
-      description: payload.description?.trim() ?? '',
+      shortDescription: payload.shortDescription?.trim() ?? payload.description?.trim() ?? '',
+      longDescription:
+        payload.longDescription?.trim() ??
+        payload.shortDescription?.trim() ??
+        payload.description?.trim() ??
+        '',
+      description: payload.shortDescription?.trim() ?? payload.description?.trim() ?? '',
       isActive: payload.isActive ?? false,
       visibility: payload.visibility ?? 'private',
       accessKey: payload.accessKey?.trim() || null,
@@ -93,7 +99,21 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       ...existing,
       title: payload.title?.trim() ?? existing.title,
       slug: nextSlug,
-      description: payload.description?.trim() ?? existing.description,
+      shortDescription:
+        payload.shortDescription?.trim() ??
+        payload.description?.trim() ??
+        existing.shortDescription ??
+        existing.description,
+      longDescription:
+        payload.longDescription?.trim() ??
+        existing.longDescription ??
+        existing.shortDescription ??
+        existing.description,
+      description:
+        payload.shortDescription?.trim() ??
+        payload.description?.trim() ??
+        existing.shortDescription ??
+        existing.description,
       isActive: payload.isActive ?? existing.isActive,
       visibility,
       accessKey: payload.accessKey === undefined ? existing.accessKey : payload.accessKey?.trim() || null,

@@ -17,6 +17,9 @@ const defaultSeedData = {
       title: 'Flix MVP Launch Event',
       slug: 'flix-mvp-launch-event',
       description: 'Public event used as baseline for learner catalog/playback flow.',
+      shortDescription: 'Aprenda em trilhas curtas com checkpoints práticos.',
+      longDescription:
+        'Public event used as baseline for learner catalog/playback flow. Explore aulas práticas para lançar e validar o MVP com ritmo rápido.',
       isActive: 1,
       visibility: 'public',
       accessKey: null,
@@ -33,6 +36,9 @@ const defaultSeedData = {
       title: 'Flix Growth Intensive',
       slug: 'flix-growth-intensive',
       description: 'Private event baseline with access key protected lessons.',
+      shortDescription: 'Conteúdo privado para alunos convidados.',
+      longDescription:
+        'Private event baseline with access key protected lessons. Trilha focada em growth, aquisição e escala para alunos com acesso liberado.',
       isActive: 1,
       visibility: 'private',
       accessKey: 'growth2026',
@@ -50,6 +56,7 @@ const defaultSeedData = {
       id: 'lesson-public-1',
       eventId: 'event-public-1',
       title: 'Kickoff do MVP',
+      description: 'Visão geral do lançamento e plano de execução do MVP.',
       slug: 'kickoff-do-mvp',
       videoProvider: 'youtube',
       videoId: 'dQw4w9WgXcQ',
@@ -60,6 +67,7 @@ const defaultSeedData = {
       id: 'lesson-private-1',
       eventId: 'event-private-1',
       title: 'Growth Playbook',
+      description: 'Fundamentos de aquisição com foco em alavancas de crescimento.',
       slug: 'growth-playbook',
       videoProvider: 'youtube',
       videoId: 'M7lc1UVf-VE',
@@ -136,11 +144,11 @@ const seedDatabase = async ({ databaseUrl, seedData }) => {
 
     const insertEvent = db.prepare(
       `INSERT INTO events (
-        id, title, slug, description, is_active, visibility, access_key,
+        id, title, slug, description, short_description, long_description, is_active, visibility, access_key,
         hero_title, hero_subtitle, hero_cta_text,
         background_color, text_color, accent_color, highlight_video_url,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
 
     for (const event of seedData.events) {
@@ -149,6 +157,8 @@ const seedDatabase = async ({ databaseUrl, seedData }) => {
         event.title,
         event.slug,
         event.description,
+        event.shortDescription ?? event.description,
+        event.longDescription ?? event.description,
         event.isActive,
         event.visibility,
         event.accessKey,
@@ -166,9 +176,9 @@ const seedDatabase = async ({ databaseUrl, seedData }) => {
 
     const insertLesson = db.prepare(
       `INSERT INTO lessons (
-        id, event_id, title, slug, video_provider, video_id,
+        id, event_id, title, description, slug, video_provider, video_id,
         release_at, expires_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
 
     for (const lesson of seedData.lessons) {
@@ -176,6 +186,7 @@ const seedDatabase = async ({ databaseUrl, seedData }) => {
         lesson.id,
         lesson.eventId,
         lesson.title,
+        lesson.description ?? '',
         lesson.slug,
         lesson.videoProvider,
         lesson.videoId,

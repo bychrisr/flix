@@ -2,6 +2,7 @@ const mapRowToLesson = (row) => ({
   id: row.id,
   eventId: row.event_id,
   title: row.title,
+  description: row.description ?? '',
   slug: row.slug,
   videoProvider: row.video_provider,
   videoId: row.video_id,
@@ -20,13 +21,13 @@ export const createSqliteLessonRepository = ({ db }) => {
   );
   const insertStmt = db.prepare(`
     INSERT INTO lessons (
-      id, event_id, title, slug, video_provider, video_id,
+      id, event_id, title, description, slug, video_provider, video_id,
       release_at, expires_at, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const updateStmt = db.prepare(`
     UPDATE lessons SET
-      title = ?, slug = ?, video_provider = ?, video_id = ?,
+      title = ?, description = ?, slug = ?, video_provider = ?, video_id = ?,
       release_at = ?, expires_at = ?, updated_at = ?
     WHERE id = ?
   `);
@@ -53,6 +54,7 @@ export const createSqliteLessonRepository = ({ db }) => {
         lesson.id,
         lesson.eventId,
         lesson.title,
+        lesson.description ?? '',
         lesson.slug,
         lesson.videoProvider,
         lesson.videoId,
@@ -67,6 +69,7 @@ export const createSqliteLessonRepository = ({ db }) => {
     update: (id, lesson) => {
       updateStmt.run(
         lesson.title,
+        lesson.description ?? '',
         lesson.slug,
         lesson.videoProvider,
         lesson.videoId,
