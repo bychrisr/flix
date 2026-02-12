@@ -1,7 +1,9 @@
 # Design System Canonical Policy
 
 ## Rule
-- Canonical source for tokens and foundations is `packages/design-system`.
+- Source of truth for visual design decisions is `design-system/netflix-design-system/Netflix Design System.pdf`.
+- Source of truth for navigation/usability flows is `design-system/netflix-course-workflow.md`.
+- Canonical implementation source for tokens and foundations in code is `packages/design-system`.
 - Legacy folder `design-system/` is reference-only and must not be imported by app code.
 
 ## Current Canonical Files

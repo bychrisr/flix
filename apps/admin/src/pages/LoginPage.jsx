@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { SignInCompletePattern } from '@flix/design-system/components';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ export const LoginPage = () => {
   const { login, isAuthenticated } = useAuth();
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('admin123');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -15,8 +17,7 @@ export const LoginPage = () => {
     navigate('/dashboard', { replace: true });
   }
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
+  const submitLogin = async () => {
     setSubmitting(true);
     setError('');
 
@@ -32,33 +33,32 @@ export const LoginPage = () => {
     navigate(from && from !== '/login' ? from : '/dashboard', { replace: true });
   };
 
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await submitLogin();
+  };
+
   return (
     <main className="auth-layout">
       <section className="auth-card" aria-label="Admin login">
-        <h1>Flix Admin</h1>
-        <p>Sign in to manage events, lessons, and operations.</p>
-
         <form onSubmit={onSubmit} className="auth-form">
-          <label>
-            Username
-            <input value={username} onChange={(event) => setUsername(event.target.value)} required />
-          </label>
-
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </label>
-
+          <SignInCompletePattern
+            emailValue={username}
+            passwordValue={password}
+            rememberMe={rememberMe}
+            onEmailChange={setUsername}
+            onPasswordChange={setPassword}
+            onRememberMeChange={setRememberMe}
+            onSubmit={submitLogin}
+            title="Sign In"
+            submitLabel={submitting ? 'Signing in...' : 'Sign in'}
+            signUpPrefix="New to Flix?"
+            signUpLabel="Sign up now."
+            recaptchaCopy="This page is protected by Google reCAPTCHA to ensure you're not a bot."
+            controlWidth="100%"
+            submitting={submitting}
+          />
           {error ? <p className="auth-error">{error}</p> : null}
-
-          <button type="submit" disabled={submitting}>
-            {submitting ? 'Signing in...' : 'Sign in'}
-          </button>
         </form>
       </section>
     </main>

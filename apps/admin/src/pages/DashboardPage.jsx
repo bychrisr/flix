@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import {
   createEvent,
@@ -95,7 +96,18 @@ const buildEventUpdatePayload = (form) => ({
   logoUrl: form.logoUrl ? form.logoUrl : null,
 });
 
-export const DashboardPage = () => {
+const pageTitles = {
+  dashboard: 'Dashboard',
+  eventos: 'Eventos',
+  'eventos-new': 'Eventos / Novo',
+  'eventos-edit': 'Eventos / Editar',
+  aulas: 'Aulas',
+  quizzes: 'Quizzes',
+};
+
+export const DashboardPage = ({ section = 'dashboard' }) => {
+  const navigate = useNavigate();
+  const { id: routeEventId } = useParams();
   const { session, logout } = useAuth();
   const token = session?.accessToken;
 
@@ -118,6 +130,10 @@ export const DashboardPage = () => {
 
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
+
+  const isEventosSection = ['eventos', 'eventos-new', 'eventos-edit'].includes(section);
+  const isEventCreateMode = section === 'eventos-new';
+  const isEventEditMode = section === 'eventos-edit';
 
   const selectedEvent = useMemo(
     () => events.find((event) => event.id === selectedEventId) ?? null,
@@ -247,6 +263,26 @@ export const DashboardPage = () => {
     fetchMaterials(selectedEventId, selectedLessonId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEventId, selectedLessonId]);
+
+  useEffect(() => {
+    if (isEventCreateMode) {
+      setSelectedEventId('');
+      setEventForm(defaultEventForm);
+      setBrandingPreview(null);
+      setBrandingRollback(null);
+      setBrandingError('');
+      return;
+    }
+
+    if (isEventEditMode && routeEventId) {
+      setSelectedEventId(routeEventId);
+    }
+  }, [isEventCreateMode, isEventEditMode, routeEventId]);
+
+  useEffect(() => {
+    if (!isEventEditMode || !selectedEvent) return;
+    setEventForm(mapEventToForm(selectedEvent));
+  }, [isEventEditMode, selectedEvent]);
 
   const handleCreateEvent = async (event) => {
     event.preventDefault();
@@ -700,13 +736,28 @@ export const DashboardPage = () => {
     <main className="dashboard-layout">
       <header className="dashboard-header">
         <div>
-          <h1>Admin Content Operations</h1>
-          <p>Manage events, lessons, materials, quizzes, and branding from one place.</p>
+          <h1>{pageTitles[section] ?? 'Admin Content Operations'}</h1>
+          <p>Fluxo administrativo orientado por rotas do workflow oficial.</p>
         </div>
         <button type="button" onClick={logout}>
           Logout
         </button>
       </header>
+
+      <nav className="admin-nav">
+        <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Dashboard
+        </NavLink>
+        <NavLink to="/eventos" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Eventos
+        </NavLink>
+        <NavLink to="/aulas" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Aulas
+        </NavLink>
+        <NavLink to="/quizzes" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Quizzes
+        </NavLink>
+      </nav>
 
       <section className="dashboard-grid two-col">
         <article>
@@ -726,7 +777,31 @@ export const DashboardPage = () => {
         </article>
       </section>
 
-      <section className="dashboard-grid two-col">
+      {section === 'dashboard' ? (
+        <section className="dashboard-grid two-col">
+          <article>
+            <h2>Command Center</h2>
+            <p className="muted">Use o menu para operar cada etapa com foco por contexto.</p>
+            <div className="inline-actions">
+              <NavLink to="/eventos">Abrir Eventos</NavLink>
+              <NavLink to="/aulas">Abrir Aulas</NavLink>
+              <NavLink to="/quizzes">Abrir Quizzes</NavLink>
+            </div>
+          </article>
+          <article>
+            <h2>Selecao Atual</h2>
+            <p className="muted">
+              Evento: <strong>{selectedEvent?.title ?? 'Nenhum'}</strong>
+            </p>
+            <p className="muted">
+              Aula: <strong>{selectedLesson?.title ?? 'Nenhuma'}</strong>
+            </p>
+          </article>
+        </section>
+      ) : null}
+
+      {isEventosSection ? (
+        <section className="dashboard-grid two-col">
         <article>
           <h2>Events + Branding</h2>
           <form className="stack-form" onSubmit={handleCreateEvent}>
@@ -919,18 +994,35 @@ export const DashboardPage = () => {
             )}
 
             <div className="inline-actions">
-              <button type="submit">Create event</button>
-              <button type="button" onClick={handleLoadEventForEdit}>
-                Load selected
-              </button>
-              <button type="button" onClick={handleUpdateEvent}>
-                Update selected
-              </button>
-              <button type="button" className="danger" onClick={handleDeleteEvent}>
-                Delete selected
-              </button>
+              {isEventCreateMode ? (
+                <>
+                  <button type="submit">Create event</button>
+                  <button type="button" onClick={() => setEventForm(defaultEventForm)}>
+                    Clear form
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button type="submit">Create event</button>
+                  <button type="button" onClick={handleLoadEventForEdit}>
+                    Load selected
+                  </button>
+                  <button type="button" onClick={handleUpdateEvent}>
+                    Update selected
+                  </button>
+                  <button type="button" className="danger" onClick={handleDeleteEvent}>
+                    Delete selected
+                  </button>
+                </>
+              )}
             </div>
           </form>
+
+          <div className="inline-actions">
+            <NavLink to="/eventos/novo">Novo evento</NavLink>
+            <NavLink to="/eventos">Painel eventos</NavLink>
+            {selectedEventId ? <NavLink to={`/eventos/${selectedEventId}/editar`}>Editar selecionado</NavLink> : null}
+          </div>
 
           <ul className="select-list">
             {events.map((item) => (
@@ -938,7 +1030,12 @@ export const DashboardPage = () => {
                 <button
                   type="button"
                   className={selectedEventId === item.id ? 'active' : ''}
-                  onClick={() => setSelectedEventId(item.id)}
+                  onClick={() => {
+                    setSelectedEventId(item.id);
+                    if (isEventEditMode) {
+                      navigate(`/eventos/${item.id}/editar`);
+                    }
+                  }}
                 >
                   {item.title} ({item.visibility})
                 </button>
@@ -946,7 +1043,29 @@ export const DashboardPage = () => {
             ))}
           </ul>
         </article>
+        <article>
+          <h2>Selected Event Context</h2>
+          {selectedEvent ? (
+            <div className="payload-preview">
+              <p>
+                <strong>{selectedEvent.title}</strong>
+              </p>
+              <p className="muted">Slug: {selectedEvent.slug}</p>
+              <p className="muted">Visibility: {selectedEvent.visibility}</p>
+            </div>
+          ) : (
+            <p className="muted">
+              {isEventEditMode
+                ? 'Select an event or use a valid /eventos/:id/editar URL.'
+                : 'Select an event to continue with lesson and quiz flows.'}
+            </p>
+          )}
+        </article>
+      </section>
+      ) : null}
 
+      {section === 'aulas' ? (
+      <section className="dashboard-grid two-col">
         <article>
           <h2>Lessons</h2>
           <form className="stack-form" onSubmit={handleCreateLesson}>
@@ -1025,9 +1144,7 @@ export const DashboardPage = () => {
             ))}
           </ul>
         </article>
-      </section>
 
-      <section className="dashboard-grid two-col">
         <article>
           <h2>Materials</h2>
           <form className="stack-form" onSubmit={handleCreateMaterial}>
@@ -1076,7 +1193,11 @@ export const DashboardPage = () => {
             ))}
           </ul>
         </article>
+      </section>
+      ) : null}
 
+      {section === 'quizzes' ? (
+      <section className="dashboard-grid two-col">
         <article>
           <h2>Quizzes</h2>
           <form className="stack-form" onSubmit={handleCreateQuiz}>
@@ -1146,7 +1267,21 @@ export const DashboardPage = () => {
             </div>
           ) : null}
         </article>
+        <article>
+          <h2>Lesson Context</h2>
+          {selectedLesson ? (
+            <div className="payload-preview">
+              <p>
+                <strong>{selectedLesson.title}</strong>
+              </p>
+              <p className="muted">Slug: {selectedLesson.slug}</p>
+            </div>
+          ) : (
+            <p className="muted">Select event and lesson in /aulas before creating quizzes.</p>
+          )}
+        </article>
       </section>
+      ) : null}
     </main>
   );
 };

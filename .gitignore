@@ -37,3 +37,6 @@ services/api/.data/
 # E2E artifacts
 playwright-report/
 test-results/
+
+# Local MCP config
+mcp.toml
