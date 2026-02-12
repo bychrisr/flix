@@ -96,6 +96,12 @@ export const colors = {
       controlBorder: 'rgba(255, 255, 255, 0.70)',
       ratingBackground: '#6d6d6e',
     },
+    homeHero: {
+      overlayTop: 'rgba(0, 0, 0, 0.70)',
+      overlayLeft: 'rgba(0, 0, 0, 0.60)',
+      overlayBottom: '#141414',
+      utilityBackground: 'rgba(51, 51, 51, 0.60)',
+    },
     status: {
       success: '#46d369',
       error: '#EB3942',

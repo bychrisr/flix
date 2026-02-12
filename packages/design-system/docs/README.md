@@ -12,7 +12,7 @@ Component architecture (Atomic Design)
 - Molecules
   - `FormField`, `AccessKeyForm`, `LessonTile`, `StatTile`, `HeroBannerActionsPattern`, `HeroBannerUtilitiesPattern`
 - Organisms
-  - `AppTopNav`, `HeroBanner`, `LessonRail`, `PlaybackPanel`, `AdminHeader`, `FaqQuestionsPattern`
+  - `AppTopNav`, `HeroBanner`, `HomeHero`, `LessonRail`, `PlaybackPanel`, `AdminHeader`, `FaqQuestionsPattern`
 - Templates
   - `LearnerCatalogTemplate`, `LearnerPlaybackTemplate`, `AdminDashboardTemplate`, `AdminContentTemplate`
 - Pages

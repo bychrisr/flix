@@ -90,6 +90,20 @@ export const componentSizes = {
     ratingWidth: '111px',
     ratingHeight: '36px',
   },
+  homeHero: {
+    height: '810px',
+    contentTop: '118px',
+    contentLeft: '54px',
+    contentMaxWidth: '560px',
+    titleSize: '92px',
+    titleLineHeight: '0.88',
+    descriptionSize: '35px',
+    descriptionLineHeight: '1.2',
+    descriptionMaxWidth: '640px',
+    ratingDockRight: '0px',
+    ratingDockBottom: '322px',
+    ratingDockHeight: '42px',
+  },
 } as const;
 
 export const zIndex = {

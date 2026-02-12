@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { Icon } from '../atoms/Icon';
 import type { IconName } from '../../assets/icons';
 
-type HomeNavItem = {
+export type HomeNavItem = {
   label: string;
   href: string;
   active?: boolean;
@@ -10,8 +10,11 @@ type HomeNavItem = {
 
 type HomePageHeaderProps = {
   items: HomeNavItem[];
-  brandLabel?: string;
+  brandLabel: string;
   profileIconName?: IconName;
+  searchControlLabel: string;
+  notificationsControlLabel: string;
+  profileControlLabel: string;
   onSearchClick?: () => void;
   onNotificationsClick?: () => void;
   onProfileClick?: () => void;
@@ -77,8 +80,11 @@ const profileButtonStyle: CSSProperties = {
 
 export const HomePageHeader = ({
   items,
-  brandLabel = 'NETFLIX',
+  brandLabel,
   profileIconName = 'account',
+  searchControlLabel,
+  notificationsControlLabel,
+  profileControlLabel,
   onSearchClick,
   onNotificationsClick,
   onProfileClick,
@@ -109,13 +115,13 @@ export const HomePageHeader = ({
     </div>
 
     <div style={rightStyle}>
-      <button type="button" onClick={onSearchClick} style={iconButtonStyle} aria-label="Search">
+      <button type="button" onClick={onSearchClick} style={iconButtonStyle} aria-label={searchControlLabel}>
         <Icon name="search" size="var(--fx-size-pattern-header-action-icon-size)" />
       </button>
-      <button type="button" onClick={onNotificationsClick} style={iconButtonStyle} aria-label="Notifications">
+      <button type="button" onClick={onNotificationsClick} style={iconButtonStyle} aria-label={notificationsControlLabel}>
         <Icon name="notification" size="var(--fx-size-pattern-header-action-icon-size)" />
       </button>
-      <button type="button" onClick={onProfileClick} style={profileButtonStyle} aria-label="Profile menu">
+      <button type="button" onClick={onProfileClick} style={profileButtonStyle} aria-label={profileControlLabel}>
         <Icon name={profileIconName} size="var(--fx-size-pattern-header-avatar-size)" />
         <Icon name="arrowDown" size="var(--fx-size-pattern-header-caret-size)" />
       </button>

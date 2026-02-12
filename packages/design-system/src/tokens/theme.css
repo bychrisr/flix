@@ -57,6 +57,10 @@
   --fx-color-hero-control-background: rgb(0 0 0 / 30%);
   --fx-color-hero-control-border: rgb(255 255 255 / 70%);
   --fx-color-hero-rating-background: #6d6d6e;
+  --fx-color-home-hero-overlay-top: rgb(0 0 0 / 70%);
+  --fx-color-home-hero-overlay-left: rgb(0 0 0 / 60%);
+  --fx-color-home-hero-overlay-bottom: #141414;
+  --fx-color-home-hero-utility-background: rgb(51 51 51 / 60%);
   --fx-color-success: #46d369;
   --fx-color-error: #eb3942;
   --fx-opacity-disabled: 0.7;
@@ -163,6 +167,18 @@
   --fx-size-pattern-hero-supporting-size: 14px;
   --fx-size-pattern-hero-supporting-line-height: 1.4;
   --fx-size-pattern-hero-supporting-max-width: 470px;
+  --fx-size-pattern-home-hero-height: 810px;
+  --fx-size-pattern-home-hero-content-top: 118px;
+  --fx-size-pattern-home-hero-content-left: 54px;
+  --fx-size-pattern-home-hero-content-max-width: 560px;
+  --fx-size-pattern-home-hero-title-size: 92px;
+  --fx-size-pattern-home-hero-title-line-height: 0.88;
+  --fx-size-pattern-home-hero-description-size: 35px;
+  --fx-size-pattern-home-hero-description-line-height: 1.2;
+  --fx-size-pattern-home-hero-description-max-width: 640px;
+  --fx-size-pattern-home-hero-rating-dock-right: 0px;
+  --fx-size-pattern-home-hero-rating-dock-bottom: 322px;
+  --fx-size-pattern-home-hero-rating-dock-height: 42px;
 
   --fx-breakpoint-sm: 640px;
   --fx-breakpoint-md: 768px;
