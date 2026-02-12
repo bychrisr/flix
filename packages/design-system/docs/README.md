@@ -8,11 +8,11 @@ Source of truth
 
 Component architecture (Atomic Design)
 - Atoms
-  - `Button`, `Input`, `Text`, `Badge`, `Card`
+  - `Button`, `Input`, `Text`, `Badge`, `Card`, `HeroBannerControlButton`
 - Molecules
-  - `FormField`, `AccessKeyForm`, `LessonTile`, `StatTile`
+  - `FormField`, `AccessKeyForm`, `LessonTile`, `StatTile`, `HeroBannerActionsPattern`, `HeroBannerUtilitiesPattern`
 - Organisms
-  - `AppTopNav`, `HeroBanner`, `LessonRail`, `PlaybackPanel`, `AdminHeader`
+  - `AppTopNav`, `HeroBanner`, `LessonRail`, `PlaybackPanel`, `AdminHeader`, `FaqQuestionsPattern`
 - Templates
   - `LearnerCatalogTemplate`, `LearnerPlaybackTemplate`, `AdminDashboardTemplate`, `AdminContentTemplate`
 - Pages

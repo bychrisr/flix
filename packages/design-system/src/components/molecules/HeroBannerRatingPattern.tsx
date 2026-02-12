@@ -3,7 +3,8 @@ import { Icon } from '../atoms/Icon';
 import { Text } from '../atoms/Text';
 
 type HeroBannerRatingPatternProps = {
-  ratingLabel?: string;
+  ratingLabel: string;
+  leadingIconName?: 'heroBannerPreviewRepeatArrowDefault' | 'heroBannerPreviewRepeatArrowHover';
   style?: CSSProperties;
 };
 
@@ -24,11 +25,12 @@ const ratingBoxStyle: CSSProperties = {
 };
 
 export const HeroBannerRatingPattern = ({
-  ratingLabel = 'TV-14',
+  ratingLabel,
+  leadingIconName = 'heroBannerPreviewRepeatArrowDefault',
   style,
 }: HeroBannerRatingPatternProps): ReactNode => (
   <div style={{ ...wrapperStyle, ...style }}>
-    <Icon name="heroBannerPreviewRepeatArrowDefault" size="var(--fx-size-pattern-video-icon-control)" />
+    <Icon name={leadingIconName} size="var(--fx-size-pattern-video-icon-control)" />
     <div style={ratingBoxStyle}>
       <Text as="span" variant="medium-headline2">
         {ratingLabel}

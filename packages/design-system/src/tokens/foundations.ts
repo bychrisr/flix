@@ -66,6 +66,32 @@ export const breakpoints = {
   '2xl': '1536px',
 } as const;
 
+export const componentSizes = {
+  faq: {
+    maxWidth: '1104px',
+    itemMinHeight: '84px',
+    itemPaddingX: '24px',
+    itemGap: '8px',
+    icon: '30px',
+    answerGap: '24px',
+    textSize: '40px',
+    textLineHeight: '1.15',
+  },
+  hero: {
+    large: { width: '518px', height: '406px' },
+    medium: { width: '518px', height: '360px' },
+    small1: { width: '518px', height: '289px' },
+    small2: { width: '518px', height: '207px' },
+    small3: { width: '340px', height: '136px' },
+    mediaHeight: '207px',
+    contentPaddingX: '24px',
+    actionHeight: '42px',
+    control: '36px',
+    ratingWidth: '111px',
+    ratingHeight: '36px',
+  },
+} as const;
+
 export const zIndex = {
   dropdown: 1000,
   modal: 1100,

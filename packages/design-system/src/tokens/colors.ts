@@ -89,11 +89,24 @@ export const colors = {
       active: '#b3b3b3',
       disabled: '#545454',
     },
+    hero: {
+      mediaOverlayLeft: 'rgba(0, 0, 0, 0.60)',
+      mediaOverlayBottom: 'rgba(0, 0, 0, 0.72)',
+      controlBackground: 'rgba(0, 0, 0, 0.30)',
+      controlBorder: 'rgba(255, 255, 255, 0.70)',
+      ratingBackground: '#6d6d6e',
+    },
     status: {
       success: '#46d369',
       error: '#EB3942',
       warning: '#448EF4',
       info: '#0071EB',
+    },
+    faq: {
+      itemBackgroundDefault: '#2D2D2D',
+      itemBackgroundHover: '#414141',
+      answerBackground: '#2A2A2A',
+      divider: '#181818',
     },
     player: {
       controls: '#FFFFFF',
