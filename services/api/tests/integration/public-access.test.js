@@ -123,6 +123,55 @@ describe('Public access enforcement', () => {
     await app.close();
   });
 
+  it('returns embedded player payload and previous/next navigation for authorized lessons', async () => {
+    const app = await createApp();
+    const token = await getAdminToken(app);
+    const event = await createEvent(app, token, {
+      title: 'Evento Player',
+      slug: 'evento-player',
+      visibility: 'public',
+    });
+
+    await createLesson(app, token, event.id, {
+      title: 'Aula 1',
+      slug: 'aula-1',
+      videoProvider: 'youtube',
+      videoId: 'yt-video-1',
+      releaseAt: '2025-01-01T00:00:00.000Z',
+    });
+    await createLesson(app, token, event.id, {
+      title: 'Aula 2',
+      slug: 'aula-2',
+      videoProvider: 'vimeo',
+      videoId: 'vimeo-video-2',
+      releaseAt: '2025-01-02T00:00:00.000Z',
+    });
+    await createLesson(app, token, event.id, {
+      title: 'Aula 3',
+      slug: 'aula-3',
+      videoProvider: 'gemini_stream',
+      videoId: 'gemini-video-3',
+      releaseAt: '2025-01-03T00:00:00.000Z',
+    });
+
+    const playback = await app.inject({
+      method: 'POST',
+      url: '/api/public/events/evento-player/lessons/aula-2/playback',
+    });
+
+    expect(playback.statusCode).toBe(200);
+    const body = playback.json();
+    expect(body.lesson.slug).toBe('aula-2');
+    expect(body.player.provider).toBe('vimeo');
+    expect(body.player.videoId).toBe('vimeo-video-2');
+    expect(body.player.embedUrl).toBe('https://player.vimeo.com/video/vimeo-video-2');
+    expect(body.player.constraints.disableDownload).toBe(true);
+    expect(body.navigation.previous.slug).toBe('aula-1');
+    expect(body.navigation.next.slug).toBe('aula-3');
+
+    await app.close();
+  });
+
   it('validates private-event access key together with release-window checks', async () => {
     const app = await createApp();
     const token = await getAdminToken(app);

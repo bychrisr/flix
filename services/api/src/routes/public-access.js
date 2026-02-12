@@ -13,7 +13,28 @@ const errorResponse = (reply, error) => {
   throw error;
 };
 
-export const registerPublicAccessRoutes = async (app, { learnerAccessService }) => {
+const buildEmbedUrl = (provider, videoId) => {
+  if (provider === 'vimeo') {
+    return `https://player.vimeo.com/video/${videoId}`;
+  }
+  if (provider === 'gemini_stream') {
+    return `https://stream.gemini.google/embed/${videoId}`;
+  }
+  return `https://www.youtube-nocookie.com/embed/${videoId}`;
+};
+
+const mapNavigationLesson = (lesson, lessonService) => {
+  if (!lesson) {
+    return null;
+  }
+  return {
+    slug: lesson.slug,
+    title: lesson.title,
+    status: lessonService.resolveLessonStatus(lesson),
+  };
+};
+
+export const registerPublicAccessRoutes = async (app, { learnerAccessService, lessonService }) => {
   app.post(
     '/api/public/events/:eventSlug/lessons/:lessonSlug/access-check',
     async (request, reply) => {
@@ -71,13 +92,36 @@ export const registerPublicAccessRoutes = async (app, { learnerAccessService }) 
       }
 
       return reply.send({
+        player: {
+          provider: access.lesson.videoProvider,
+          videoId: access.lesson.videoId,
+          embedUrl: buildEmbedUrl(access.lesson.videoProvider, access.lesson.videoId),
+          constraints: {
+            allowedDomains: ['flix.app', 'www.flix.app'],
+            disableDownload: true,
+            disablePictureInPicture: false,
+            referrerPolicy: 'strict-origin-when-cross-origin',
+          },
+        },
         lesson: {
           id: access.lesson.id,
           slug: access.lesson.slug,
           title: access.lesson.title,
+          videoProvider: access.lesson.videoProvider,
+          videoId: access.lesson.videoId,
           releaseAt: access.lesson.releaseAt,
           expiresAt: access.lesson.expiresAt,
         },
+        navigation: (() => {
+          const adjacent = lessonService.getAdjacentLessonsBySlug(
+            access.event.id,
+            access.lesson.slug,
+          );
+          return {
+            previous: mapNavigationLesson(adjacent.previous, lessonService),
+            next: mapNavigationLesson(adjacent.next, lessonService),
+          };
+        })(),
       });
     } catch (error) {
       return errorResponse(reply, error);
