@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { requestJson } from './api.js';
+import { fetchMaterials, fetchQuiz, requestJson, submitQuiz } from './api.js';
 
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -26,5 +26,57 @@ describe('learner requestJson', () => {
     await expect(
       requestJson({ method: 'POST', path: '/api/public/events/demo/catalog' }),
     ).rejects.toMatchObject({ status: 403, code: 'EVENT_ACCESS_DENIED' });
+  });
+
+  it('sends access key for materials and quiz endpoints', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ items: [] }),
+    });
+
+    await fetchMaterials('demo', 'lesson-1', 'private123');
+    await fetchQuiz('demo', 'lesson-1', 'private123');
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'http://localhost:3001/api/public/events/demo/lessons/lesson-1/materials',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ eventAccessKey: 'private123' }),
+      }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'http://localhost:3001/api/public/events/demo/lessons/lesson-1/quiz',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ eventAccessKey: 'private123' }),
+      }),
+    );
+  });
+
+  it('submits quiz answers payload', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: { status: 'passed' } }),
+    });
+
+    await submitQuiz({
+      eventSlug: 'demo',
+      lessonSlug: 'lesson-1',
+      eventAccessKey: 'private123',
+      answers: [{ questionId: 'q1', optionId: 'o1' }],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://localhost:3001/api/public/events/demo/lessons/lesson-1/quiz/submit',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          eventAccessKey: 'private123',
+          answers: [{ questionId: 'q1', optionId: 'o1' }],
+        }),
+      }),
+    );
   });
 });
