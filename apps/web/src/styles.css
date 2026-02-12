@@ -1,5 +1,3 @@
-@import "../../../packages/design-system/src/tokens/theme.css";
-
 :root {
   color-scheme: dark;
   font-family: var(--fx-font-sans);

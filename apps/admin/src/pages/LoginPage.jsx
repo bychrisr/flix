@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { SignInCompletePattern } from '../../../../packages/design-system/src/components/molecules/SignInCompletePattern.tsx';
+import { SignInCompletePattern } from '@flix/design-system/components';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
