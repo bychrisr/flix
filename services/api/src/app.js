@@ -15,14 +15,32 @@ import { createLearnerAccessService } from './services/learner-access-service.js
 import { createQuizService } from './services/quiz-service.js';
 import { registerQuizRoutes } from './routes/quizzes.js';
 import { createObservabilityService } from './services/observability-service.js';
-import { createInMemoryRepositories } from './repositories/in-memory/index.js';
+import { createRepositories } from './repositories/index.js';
+import { env } from './config/env.js';
 
-export const createApp = async ({ logger = true, observabilityOverrides } = {}) => {
+export const createApp = async ({
+  logger = true,
+  observabilityOverrides,
+  persistenceAdapter = env.persistenceAdapter,
+  databaseUrl = env.databaseUrl,
+  databaseProfile = env.databaseProfile,
+} = {}) => {
   const app = Fastify({ logger });
 
   registerErrorHandler(app);
   await registerSecurityPlugins(app);
-  const repositories = createInMemoryRepositories();
+  const repositories = createRepositories({
+    adapter: persistenceAdapter,
+    databaseUrl,
+    databaseProfile,
+  });
+
+  if (typeof repositories.close === 'function') {
+    app.addHook('onClose', async () => {
+      repositories.close();
+    });
+  }
+
   const eventService = createEventService({ eventRepository: repositories.eventRepository });
   const lessonService = createLessonService({
     eventService,
