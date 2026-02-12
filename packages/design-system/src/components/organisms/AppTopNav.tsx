@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Text } from '../atoms/Text';
 
 type NavItem = { label: string; href: string; active?: boolean };
 
@@ -18,16 +19,9 @@ export const AppTopNav = ({ brand, items, rightSlot }: AppTopNavProps) => (
       flexWrap: 'wrap',
     }}
   >
-    <strong
-      style={{
-        fontFamily: 'var(--fx-font-display)',
-        fontSize: 'var(--fx-text-title)',
-        letterSpacing: '0.5px',
-        textTransform: 'uppercase',
-      }}
-    >
+    <Text as="strong" variant="display-small" style={{ textTransform: 'uppercase' }}>
       {brand}
-    </strong>
+    </Text>
     <div style={{ display: 'flex', gap: 'var(--fx-space-2)', flexWrap: 'wrap' }}>
       {items.map((item) => (
         <a

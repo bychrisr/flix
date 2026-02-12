@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Card } from '../atoms/Card';
+import { Text } from '../atoms/Text';
 import { PlaybackPanel } from '../organisms/PlaybackPanel';
 
 type LearnerPlaybackTemplateProps = {
@@ -14,11 +15,15 @@ export const LearnerPlaybackTemplate = ({ title, embedUrl, provider, materials, 
   <main style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gap: 'var(--fx-space-4)', padding: 'var(--fx-space-6)' }}>
     <PlaybackPanel title={title} embedUrl={embedUrl} provider={provider} />
     <Card>
-      <h3 style={{ marginTop: 0 }}>Lesson Materials</h3>
+      <Text as="h3" variant="medium-title3" style={{ marginTop: 0 }}>
+        Lesson Materials
+      </Text>
       {materials}
     </Card>
     <Card>
-      <h3 style={{ marginTop: 0 }}>Lesson Quiz</h3>
+      <Text as="h3" variant="medium-title3" style={{ marginTop: 0 }}>
+        Lesson Quiz
+      </Text>
       {quiz}
     </Card>
   </main>

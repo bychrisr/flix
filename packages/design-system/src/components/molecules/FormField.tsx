@@ -22,7 +22,7 @@ export const FormField = ({
   hint,
 }: FormFieldProps): ReactNode => (
   <label style={{ display: 'grid', gap: 'var(--fx-space-2)' }}>
-    <Text as="span" tone="secondary" size="caption">
+    <Text as="span" tone="secondary" variant="regular-caption1">
       {label}
     </Text>
     <Input
@@ -33,7 +33,7 @@ export const FormField = ({
       onChange={(event) => onChange(event.target.value)}
     />
     {hint ? (
-      <Text as="span" tone="tertiary" size="caption">
+      <Text as="span" tone="tertiary" variant="regular-caption1">
         {hint}
       </Text>
     ) : null}

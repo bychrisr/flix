@@ -33,7 +33,7 @@ export const iconAssets = {
   presetNewSeason: new URL('./presets-labels/NewSeason.svg', import.meta.url).href,
   presetRecentlyAdded: new URL('./presets-labels/RecentlyAdded.svg', import.meta.url).href,
   presetTop10: new URL('./presets-labels/Top10.svg', import.meta.url).href,
-  presetTop10Number: new URL('./presets-labels/Top10+#.svg', import.meta.url).href,
+  presetTop10Number: new URL('./presets-labels/Top10Number.svg', import.meta.url).href,
   question: new URL('./Question.svg', import.meta.url).href,
   ratingG: new URL('./maturity-ratings/G.svg', import.meta.url).href,
   ratingNc17: new URL('./maturity-ratings/NC-17.svg', import.meta.url).href,

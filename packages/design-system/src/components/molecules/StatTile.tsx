@@ -9,10 +9,10 @@ type StatTileProps = {
 
 export const StatTile = ({ label, value }: StatTileProps): ReactNode => (
   <Card>
-    <Text tone="secondary" size="caption">
+    <Text tone="secondary" variant="regular-caption1">
       {label}
     </Text>
-    <Text as="strong" size="title" style={{ display: 'block', marginTop: 'var(--fx-space-2)' }}>
+    <Text as="strong" variant="medium-title1" style={{ display: 'block', marginTop: 'var(--fx-space-2)' }}>
       {value}
     </Text>
   </Card>

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { AccessKeyForm } from '../molecules/AccessKeyForm';
 import { Card } from '../atoms/Card';
+import { Text } from '../atoms/Text';
 import { HeroBanner } from '../organisms/HeroBanner';
 import { LessonRail } from '../organisms/LessonRail';
 
@@ -36,8 +37,13 @@ export const LearnerCatalogTemplate = ({
 }: LearnerCatalogTemplateProps) => (
   <main style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gap: 'var(--fx-space-4)', padding: 'var(--fx-space-6)' }}>
     <Card>
-      <h1 style={{ margin: 0, fontFamily: 'var(--fx-font-display)', fontSize: 'var(--fx-text-display)' }}>Flix</h1>
-      <p style={{ marginTop: 'var(--fx-space-2)' }}>Event: <code>{eventSlug}</code></p>
+      <Text as="h1" variant="display-large">Flix</Text>
+      <Text variant="regular-body" style={{ marginTop: 'var(--fx-space-2)' }}>
+        Event: <code>{eventSlug}</code>
+      </Text>
+      <Text as="h2" variant="medium-title2" style={{ marginTop: 'var(--fx-space-4)' }}>
+        Catalog Access
+      </Text>
       <AccessKeyForm value={accessKey} onChange={onAccessKeyChange} onSubmit={onLoad} loading={loading} />
     </Card>
     <HeroBanner eyebrow="Featured event" title={heroTitle} description={heroDescription} />

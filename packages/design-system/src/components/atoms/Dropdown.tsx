@@ -126,6 +126,7 @@ export const Dropdown = ({
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const selectedValue = isControlled ? value : internalValue;
+  const resolvedWidth = width ?? (variant === 'browse' ? 245 : 177);
   const selectedIndex = useMemo(
     () => options.findIndex((option) => option.value === selectedValue),
     [options, selectedValue],
@@ -317,4 +318,3 @@ export const Dropdown = ({
     </div>
   );
 };
-  const resolvedWidth = width ?? (variant === 'browse' ? 245 : 177);

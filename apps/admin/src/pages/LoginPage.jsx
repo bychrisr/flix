@@ -51,17 +51,13 @@ export const LoginPage = () => {
             onRememberMeChange={setRememberMe}
             onSubmit={submitLogin}
             title="Sign In"
-            submitLabel={submitting ? 'Signing in...' : 'Sign In'}
+            submitLabel={submitting ? 'Signing in...' : 'Sign in'}
             signUpPrefix="New to Flix?"
             signUpLabel="Sign up now."
             recaptchaCopy="This page is protected by Google reCAPTCHA to ensure you're not a bot."
             controlWidth="100%"
             submitting={submitting}
           />
-          <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1}>
-            Sign in
-          </button>
-
           {error ? <p className="auth-error">{error}</p> : null}
         </form>
       </section>

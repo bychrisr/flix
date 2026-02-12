@@ -10,7 +10,9 @@ type PlaybackPanelProps = {
 
 export const PlaybackPanel = ({ title, embedUrl, provider }: PlaybackPanelProps): ReactNode => (
   <Card>
-    <h2 style={{ marginTop: 0 }}>{title}</h2>
+    <Text as="h2" variant="medium-title2" style={{ marginTop: 0 }}>
+      {title}
+    </Text>
     <div
       style={{
         width: '100%',
@@ -23,7 +25,7 @@ export const PlaybackPanel = ({ title, embedUrl, provider }: PlaybackPanelProps)
     >
       <iframe title={`${title} player`} src={embedUrl} allowFullScreen style={{ width: '100%', height: '100%', border: 0 }} />
     </div>
-    <Text tone="secondary" style={{ marginTop: 'var(--fx-space-3)' }}>
+    <Text tone="secondary" variant="regular-body" style={{ marginTop: 'var(--fx-space-3)' }}>
       Provider: {provider}
     </Text>
   </Card>
