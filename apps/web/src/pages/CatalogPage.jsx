@@ -20,6 +20,14 @@ export const CatalogPage = () => {
   const [error, setError] = useState('');
 
   const isPrivateBlocked = useMemo(() => error.includes('Private event access is required'), [error]);
+  const releasedLessons = useMemo(
+    () => catalog?.catalog?.items?.filter((lesson) => lesson.status === 'released') ?? [],
+    [catalog],
+  );
+  const gatedLessons = useMemo(
+    () => catalog?.catalog?.items?.filter((lesson) => lesson.status !== 'released') ?? [],
+    [catalog],
+  );
 
   const loadCatalog = async () => {
     setLoading(true);
@@ -48,7 +56,7 @@ export const CatalogPage = () => {
   return (
     <main className="web-layout">
       <header className="web-header">
-        <h1>Flix Learner</h1>
+        <h1>Flix</h1>
         <p>Event: <code>{eventSlug}</code></p>
       </header>
 
@@ -69,23 +77,60 @@ export const CatalogPage = () => {
       </section>
 
       {catalog ? (
-        <section className="panel">
-          <h2>{catalog.event.title}</h2>
-          <p>{catalog.event.description || 'No description'}</p>
-          <ul className="card-list">
-            {catalog.catalog.items.map((lesson) => (
-              <li key={lesson.id}>
-                <div>
-                  <strong>{lesson.title}</strong>
-                  <p>
-                    Status: <span className={`badge ${lesson.status}`}>{statusLabel[lesson.status]}</span>
-                  </p>
-                </div>
-                <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Open lesson</Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <>
+          <section className="hero-panel">
+            <p className="hero-eyebrow">Featured event</p>
+            <h2>{catalog.event.title}</h2>
+            <p>{catalog.event.description || 'No description'}</p>
+            {releasedLessons[0] ? (
+              <div className="inline-actions">
+                <Link to={`/events/${eventSlug}/lessons/${releasedLessons[0].slug}`}>Play now</Link>
+              </div>
+            ) : null}
+          </section>
+
+          <section className="panel">
+            <h3>Continue learning</h3>
+            {releasedLessons.length === 0 ? (
+              <p className="muted">No released lessons yet.</p>
+            ) : (
+              <ul className="lesson-rail">
+                {releasedLessons.map((lesson) => (
+                  <li key={lesson.id} className="lesson-tile">
+                    <div>
+                      <strong>{lesson.title}</strong>
+                      <p>
+                        <span className={`badge ${lesson.status}`}>{statusLabel[lesson.status]}</span>
+                      </p>
+                    </div>
+                    <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Open lesson</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="panel">
+            <h3>Scheduled or restricted</h3>
+            {gatedLessons.length === 0 ? (
+              <p className="muted">No gated lessons.</p>
+            ) : (
+              <ul className="lesson-rail">
+                {gatedLessons.map((lesson) => (
+                  <li key={lesson.id} className="lesson-tile">
+                    <div>
+                      <strong>{lesson.title}</strong>
+                      <p>
+                        <span className={`badge ${lesson.status}`}>{statusLabel[lesson.status]}</span>
+                      </p>
+                    </div>
+                    <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Details</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </>
       ) : null}
     </main>
   );

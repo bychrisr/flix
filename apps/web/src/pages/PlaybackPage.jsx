@@ -174,12 +174,23 @@ export const PlaybackPage = () => {
         <>
           <section className="panel">
             <h2>{playback.lesson.title}</h2>
-            <p>
-              Provider: <code>{playback.player.provider}</code>
-            </p>
-            <p>
-              Embed URL: <a href={playback.player.embedUrl}>{playback.player.embedUrl}</a>
-            </p>
+            <div className="player-shell">
+              <div className="player-frame">
+                <iframe
+                  title={`${playback.lesson.title} player`}
+                  src={playback.player.embedUrl}
+                  allowFullScreen
+                />
+              </div>
+              <div>
+                <p>
+                  Provider: <code>{playback.player.provider}</code>
+                </p>
+                <p>
+                  Embed URL: <a href={playback.player.embedUrl}>{playback.player.embedUrl}</a>
+                </p>
+              </div>
+            </div>
 
             <div className="inline-actions">
               {playback.navigation.previous ? (
