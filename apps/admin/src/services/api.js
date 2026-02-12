@@ -12,14 +12,25 @@ const parseBody = async (response) => {
 };
 
 export const requestJson = async ({ method, path, payload, token }) => {
-  const response = await fetch(`${getApiBaseUrl()}${path}`, {
-    method,
-    headers: {
-      ...(payload ? { 'content-type': 'application/json' } : {}),
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
-    },
-    ...(payload ? { body: JSON.stringify(payload) } : {}),
-  });
+  const url = `${getApiBaseUrl()}${path}`;
+  let response;
+  try {
+    response = await fetch(url, {
+      method,
+      headers: {
+        ...(payload ? { 'content-type': 'application/json' } : {}),
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+      },
+      ...(payload ? { body: JSON.stringify(payload) } : {}),
+    });
+  } catch {
+    const error = new Error(
+      `API unavailable at ${getApiBaseUrl()}. Start @flix/api or set VITE_API_BASE_URL.`,
+    );
+    error.code = 'API_UNAVAILABLE';
+    error.status = 0;
+    throw error;
+  }
 
   const body = await parseBody(response);
 

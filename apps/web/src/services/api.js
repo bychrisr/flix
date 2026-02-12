@@ -4,11 +4,22 @@ export const getApiBaseUrl = () =>
   trimTrailingSlash(import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001');
 
 export const requestJson = async ({ method, path, payload }) => {
-  const response = await fetch(`${getApiBaseUrl()}${path}`, {
-    method,
-    headers: payload ? { 'content-type': 'application/json' } : {},
-    ...(payload ? { body: JSON.stringify(payload) } : {}),
-  });
+  const url = `${getApiBaseUrl()}${path}`;
+  let response;
+  try {
+    response = await fetch(url, {
+      method,
+      headers: payload ? { 'content-type': 'application/json' } : {},
+      ...(payload ? { body: JSON.stringify(payload) } : {}),
+    });
+  } catch {
+    const error = new Error(
+      `API unavailable at ${getApiBaseUrl()}. Start @flix/api or set VITE_API_BASE_URL.`,
+    );
+    error.code = 'API_UNAVAILABLE';
+    error.status = 0;
+    throw error;
+  }
 
   const body = await response.json().catch(() => ({}));
 

@@ -18,7 +18,10 @@ export const env = {
   databaseProfile: process.env.DATABASE_PROFILE ?? 'local',
   persistenceAdapter:
     process.env.PERSISTENCE_ADAPTER ?? (process.env.NODE_ENV === 'test' ? 'memory' : 'sqlite'),
-  corsOrigins: splitCsv(process.env.CORS_ORIGIN, 'http://localhost:3000,http://localhost:3002'),
+  corsOrigins: splitCsv(
+    process.env.CORS_ORIGIN,
+    'http://localhost:5173,http://localhost:5174,http://localhost:3000,http://localhost:3002',
+  ),
   rateLimitMax: toInt(process.env.RATE_LIMIT_MAX, 100),
   rateLimitWindowMs: toInt(process.env.RATE_LIMIT_WINDOW_MS, 60_000),
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-me',
