@@ -135,6 +135,16 @@ export const createLessonService = ({ eventService }) => {
       }
       return 'released';
     },
+    getCountdownData: (lesson, referenceDate = new Date()) => {
+      const now = referenceDate.getTime();
+      const releaseAt = new Date(lesson.releaseAt).getTime();
+      const remainingMs = Math.max(0, releaseAt - now);
+      return {
+        releaseAt: lesson.releaseAt,
+        expiresAt: lesson.expiresAt,
+        unlocksInSeconds: Math.ceil(remainingMs / 1000),
+      };
+    },
     countLessons: () => lessonsById.size,
     getReleaseStatusDistribution: (referenceDate = new Date()) => {
       const now = referenceDate.getTime();

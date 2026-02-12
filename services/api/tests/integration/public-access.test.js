@@ -64,6 +64,8 @@ describe('Public access enforcement', () => {
     expect(released.statusCode).toBe(200);
     expect(released.json().authorized).toBe(true);
     expect(released.json().status).toBe('released');
+    expect(released.json().timing.unlocksInSeconds).toBe(0);
+    expect(released.json().timing.serverTime).toBe(released.json().serverTime);
 
     const locked = await app.inject({
       method: 'POST',
@@ -73,6 +75,7 @@ describe('Public access enforcement', () => {
     expect(locked.json().authorized).toBe(false);
     expect(locked.json().status).toBe('locked');
     expect(locked.json().message).toBe('Lesson is not released yet');
+    expect(locked.json().timing.unlocksInSeconds).toBeGreaterThan(0);
 
     const expired = await app.inject({
       method: 'POST',
@@ -81,6 +84,7 @@ describe('Public access enforcement', () => {
     expect(expired.statusCode).toBe(200);
     expect(expired.json().authorized).toBe(false);
     expect(expired.json().status).toBe('expired');
+    expect(expired.json().timing.unlocksInSeconds).toBe(0);
 
     await app.close();
   });
