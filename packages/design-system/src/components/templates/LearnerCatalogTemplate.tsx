@@ -166,6 +166,7 @@ export const LearnerCatalogTemplate = ({
   const [hasVideoError, setHasVideoError] = useState(false);
   const [hasMinPreload, setHasMinPreload] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [isHeroMuted, setIsHeroMuted] = useState(true);
   const [videoDuration, setVideoDuration] = useState(0);
   const candidateVideoUrls = useMemo(() => buildCandidateVideoUrls(highlightVideoUrl), [highlightVideoUrl]);
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
@@ -261,7 +262,7 @@ export const LearnerCatalogTemplate = ({
                 src={currentVideoUrl}
                 playing
                 loop
-                muted
+                muted={isHeroMuted}
                 controls={false}
                 width="100%"
                 height="100%"
@@ -369,7 +370,7 @@ export const LearnerCatalogTemplate = ({
               }
 
               .fx-catalog-hero-content {
-                min-height: clamp(340px, calc(100svh - 300px), 620px) !important;
+                min-height: clamp(420px, calc(100svh - 220px), 700px) !important;
               }
 
               .fx-catalog-hero-banner {
@@ -377,7 +378,8 @@ export const LearnerCatalogTemplate = ({
               }
 
               .fx-catalog-rating-dock {
-                bottom: clamp(116px, 16vh, 186px) !important;
+                right: 0 !important;
+                bottom: calc(clamp(108px, 15vh, 176px) + 150px) !important;
               }
 
               .fx-catalog-hero-rail {
@@ -386,16 +388,13 @@ export const LearnerCatalogTemplate = ({
 
               @media (max-width: 1200px) {
                 .fx-catalog-hero-content {
-                  min-height: clamp(330px, calc(100svh - 280px), 560px) !important;
+                  min-height: clamp(400px, calc(100svh - 210px), 640px) !important;
                 }
 
                 .fx-catalog-hero-banner {
                   width: min(560px, calc(100% - 72px)) !important;
                 }
 
-                .fx-catalog-rating-dock {
-                  right: var(--fx-space-4) !important;
-                }
               }
 
               @media (max-width: 900px) {
@@ -404,7 +403,7 @@ export const LearnerCatalogTemplate = ({
                 }
 
                 .fx-catalog-hero-content {
-                  min-height: clamp(300px, calc(100svh - 260px), 480px) !important;
+                  min-height: clamp(360px, calc(100svh - 190px), 560px) !important;
                   padding: 0 var(--fx-space-4) !important;
                 }
 
@@ -425,7 +424,7 @@ export const LearnerCatalogTemplate = ({
 
               @media (max-width: 768px) {
                 .fx-catalog-hero-content {
-                  min-height: clamp(280px, calc(100svh - 240px), 430px) !important;
+                  min-height: clamp(340px, calc(100svh - 170px), 520px) !important;
                 }
 
                 .fx-catalog-hero-banner {
@@ -444,7 +443,7 @@ export const LearnerCatalogTemplate = ({
                 }
 
                 .fx-catalog-hero-content {
-                  min-height: clamp(250px, calc(100svh - 220px), 380px) !important;
+                  min-height: clamp(300px, calc(100svh - 150px), 460px) !important;
                   padding: 0 var(--fx-space-3) !important;
                 }
 
@@ -485,7 +484,7 @@ export const LearnerCatalogTemplate = ({
               maxWidth: 1320,
               margin: '0 auto',
               padding: '0 var(--fx-space-6)',
-              minHeight: 620,
+              minHeight: 700,
               position: 'relative',
               boxSizing: 'border-box',
             }}
@@ -529,18 +528,25 @@ export const LearnerCatalogTemplate = ({
               />
             </div>
 
-            <div
-              className="fx-catalog-rating-dock"
-              style={{
-                position: 'absolute',
-                right: 0,
-                bottom: 176,
-                background: 'var(--fx-color-home-hero-utility-background)',
-                padding: 'var(--fx-space-2) 0 var(--fx-space-2) var(--fx-space-2)',
-              }}
-            >
-              <HeroBannerRatingPattern ratingLabel="TV-14" />
-            </div>
+          </div>
+
+          <div
+            className="fx-catalog-rating-dock"
+            style={{
+              position: 'absolute',
+              right: 0,
+              bottom: 300,
+              background: 'var(--fx-color-home-hero-utility-background)',
+              padding: 'var(--fx-space-2) 0 var(--fx-space-2) var(--fx-space-2)',
+              zIndex: 2,
+            }}
+          >
+            <HeroBannerRatingPattern
+              ratingLabel="TV-14"
+              leadingIconName={isHeroMuted ? 'heroBannerPreviewMuteDefault' : 'heroBannerPreviewSoundDefault'}
+              leadingControlLabel={isHeroMuted ? 'Enable sound' : 'Mute sound'}
+              onLeadingIconClick={() => setIsHeroMuted((prev) => !prev)}
+            />
           </div>
 
           {heroRailItems.length ? (
