@@ -83,6 +83,7 @@ export const registerPublicAccessRoutes = async (
       }
 
       try {
+        const serverTime = new Date().toISOString();
         const access = learnerAccessService.evaluateAccess({
           eventSlug: request.params.eventSlug,
           lessonSlug: request.params.lessonSlug,
@@ -93,7 +94,11 @@ export const registerPublicAccessRoutes = async (
           authorized: access.authorized,
           status: access.status,
           message: access.message,
-          serverTime: new Date().toISOString(),
+          serverTime,
+          timing: {
+            ...lessonService.getCountdownData(access.lesson, new Date(serverTime)),
+            serverTime,
+          },
         });
       } catch (error) {
         return errorResponse(reply, error);
