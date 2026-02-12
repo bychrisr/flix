@@ -45,3 +45,11 @@ export const updateQuiz = (token, quizId, payload) =>
 
 export const deleteQuiz = (token, quizId) =>
   requestJson({ method: 'DELETE', path: `/api/quizzes/${quizId}`, token });
+
+export const generateEventBranding = (token, eventId, payload) =>
+  requestJson({
+    method: 'POST',
+    path: `/api/events/${eventId}/branding/generate`,
+    token,
+    payload,
+  });
