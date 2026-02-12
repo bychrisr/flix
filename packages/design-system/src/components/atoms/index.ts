@@ -8,3 +8,4 @@ export * from './Icon';
 export * from './Input';
 export * from './ProfileAvatar';
 export * from './Text';
+export * from './VideoPlayerIconButton';

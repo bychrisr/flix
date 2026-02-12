@@ -1,7 +1,15 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { Icon } from '../atoms/Icon';
+import { VideoPlayerIconButton } from '../atoms/VideoPlayerIconButton';
 
 type VideoPlayerUtilitiesPatternProps = {
+  labels: {
+    nextEpisode: string;
+    listOfEpisodes: string;
+    subtitles: string;
+    speed: string;
+    fullScreen: string;
+  };
+  iconState?: 'default' | 'hover';
   onNextEpisodeClick?: () => void;
   onListOfEpisodesClick?: () => void;
   onSubtitlesClick?: () => void;
@@ -29,6 +37,8 @@ const iconButtonStyle: CSSProperties = {
 };
 
 export const VideoPlayerUtilitiesPattern = ({
+  labels,
+  iconState = 'default',
   onNextEpisodeClick,
   onListOfEpisodesClick,
   onSubtitlesClick,
@@ -37,20 +47,34 @@ export const VideoPlayerUtilitiesPattern = ({
   style,
 }: VideoPlayerUtilitiesPatternProps): ReactNode => (
   <div style={{ ...rowStyle, ...style }}>
-    <button type="button" onClick={onNextEpisodeClick} style={iconButtonStyle} aria-label="Next episode">
-      <Icon name="videoPlayerNextEpisodeDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
-    <button type="button" onClick={onListOfEpisodesClick} style={iconButtonStyle} aria-label="List of episodes">
-      <Icon name="videoPlayerListOfEpisodesDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
-    <button type="button" onClick={onSubtitlesClick} style={iconButtonStyle} aria-label="Subtitles">
-      <Icon name="videoPlayerSubtitlesDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
-    <button type="button" onClick={onSpeedClick} style={iconButtonStyle} aria-label="Playback speed">
-      <Icon name="videoPlayerSpeedDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
-    <button type="button" onClick={onFullScreenClick} style={iconButtonStyle} aria-label="Fullscreen">
-      <Icon name="videoPlayerFullScreenDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
+    <VideoPlayerIconButton
+      icon="nextEpisode"
+      state={iconState}
+      ariaLabel={labels.nextEpisode}
+      onClick={onNextEpisodeClick}
+      style={iconButtonStyle}
+    />
+    <VideoPlayerIconButton
+      icon="listOfEpisodes"
+      state={iconState}
+      ariaLabel={labels.listOfEpisodes}
+      onClick={onListOfEpisodesClick}
+      style={iconButtonStyle}
+    />
+    <VideoPlayerIconButton
+      icon="subtitles"
+      state={iconState}
+      ariaLabel={labels.subtitles}
+      onClick={onSubtitlesClick}
+      style={iconButtonStyle}
+    />
+    <VideoPlayerIconButton icon="speed" state={iconState} ariaLabel={labels.speed} onClick={onSpeedClick} style={iconButtonStyle} />
+    <VideoPlayerIconButton
+      icon="fullScreen"
+      state={iconState}
+      ariaLabel={labels.fullScreen}
+      onClick={onFullScreenClick}
+      style={iconButtonStyle}
+    />
   </div>
 );

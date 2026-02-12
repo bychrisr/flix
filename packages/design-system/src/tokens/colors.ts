@@ -136,6 +136,12 @@ export const colors = {
       controlsHover: 'rgba(255, 255, 255, 0.70)',
       progressBar: '#E50914',
       progressBackground: 'rgba(255, 255, 255, 0.30)',
+      surface: '#262626',
+      panel: '#181818',
+      panelMuted: '#545454',
+      panelSoft: '#3A3A3A',
+      marker: '#D2D2D2',
+      mutedText: '#B3B3B3',
     },
   },
 } as const;

@@ -1,7 +1,14 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { Icon } from '../atoms/Icon';
+import { VideoPlayerIconButton } from '../atoms/VideoPlayerIconButton';
 
 type VideoPlayerControlsPatternProps = {
+  labels: {
+    play: string;
+    back10: string;
+    forward10: string;
+    sound: string;
+  };
+  iconState?: 'default' | 'hover';
   onPlayClick?: () => void;
   onBackClick?: () => void;
   onForwardClick?: () => void;
@@ -28,6 +35,8 @@ const iconButtonStyle: CSSProperties = {
 };
 
 export const VideoPlayerControlsPattern = ({
+  labels,
+  iconState = 'default',
   onPlayClick,
   onBackClick,
   onForwardClick,
@@ -35,17 +44,16 @@ export const VideoPlayerControlsPattern = ({
   style,
 }: VideoPlayerControlsPatternProps): ReactNode => (
   <div style={{ ...rowStyle, ...style }}>
-    <button type="button" onClick={onPlayClick} style={iconButtonStyle} aria-label="Play">
-      <Icon name="videoPlayerPlayDefault" size="var(--fx-size-pattern-video-icon-play)" />
-    </button>
-    <button type="button" onClick={onBackClick} style={iconButtonStyle} aria-label="Back 10 seconds">
-      <Icon name="videoPlayer10secBackDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
-    <button type="button" onClick={onForwardClick} style={iconButtonStyle} aria-label="Forward 10 seconds">
-      <Icon name="videoPlayer10secForwardDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
-    <button type="button" onClick={onSoundClick} style={iconButtonStyle} aria-label="Sound">
-      <Icon name="videoPlayerSoundDefault" size="var(--fx-size-pattern-video-icon-control)" />
-    </button>
+    <VideoPlayerIconButton
+      icon="play"
+      state={iconState}
+      size="var(--fx-size-pattern-video-icon-play)"
+      ariaLabel={labels.play}
+      onClick={onPlayClick}
+      style={iconButtonStyle}
+    />
+    <VideoPlayerIconButton icon="back10" state={iconState} ariaLabel={labels.back10} onClick={onBackClick} style={iconButtonStyle} />
+    <VideoPlayerIconButton icon="forward10" state={iconState} ariaLabel={labels.forward10} onClick={onForwardClick} style={iconButtonStyle} />
+    <VideoPlayerIconButton icon="sound" state={iconState} ariaLabel={labels.sound} onClick={onSoundClick} style={iconButtonStyle} />
   </div>
 );

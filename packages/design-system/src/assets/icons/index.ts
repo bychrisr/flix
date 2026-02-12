@@ -159,3 +159,56 @@ export const getHeroBannerPreviewIconSetAsset = (
   const set = heroBannerPreviewIconSets[setName] as Partial<Record<IconSetState, string>> & { default: string };
   return set[state] ?? set.default;
 };
+
+export const videoPlayerIconSets = {
+  play: {
+    default: iconAssets.videoPlayerPlayDefault,
+    hover: iconAssets.videoPlayerPlayHover,
+  },
+  back10: {
+    default: iconAssets.videoPlayer10secBackDefault,
+    hover: iconAssets.videoPlayer10secBackHover,
+  },
+  forward10: {
+    default: iconAssets.videoPlayer10secForwardDefault,
+    hover: iconAssets.videoPlayer10secForwardHover,
+  },
+  sound: {
+    default: iconAssets.videoPlayerSoundDefault,
+    hover: iconAssets.videoPlayerSoundHover,
+  },
+  mute: {
+    default: iconAssets.videoPlayerMuteDefault,
+    hover: iconAssets.videoPlayerMuteHover,
+  },
+  nextEpisode: {
+    default: iconAssets.videoPlayerNextEpisodeDefault,
+    hover: iconAssets.videoPlayerNextEpisodeHover,
+  },
+  listOfEpisodes: {
+    default: iconAssets.videoPlayerListOfEpisodesDefault,
+    hover: iconAssets.videoPlayerListOfEpisodesHover,
+  },
+  subtitles: {
+    default: iconAssets.videoPlayerSubtitlesDefault,
+    hover: iconAssets.videoPlayerSubtitlesHover,
+  },
+  speed: {
+    default: iconAssets.videoPlayerSpeedDefault,
+    hover: iconAssets.videoPlayerSpeedHover,
+  },
+  fullScreen: {
+    default: iconAssets.videoPlayerFullScreenDefault,
+    hover: iconAssets.videoPlayerFullScreenHover,
+  },
+} as const;
+
+export type VideoPlayerIconSetName = keyof typeof videoPlayerIconSets;
+
+export const getVideoPlayerIconSetAsset = (
+  setName: VideoPlayerIconSetName,
+  state: IconSetState,
+): string => {
+  const set = videoPlayerIconSets[setName] as Partial<Record<IconSetState, string>> & { default: string };
+  return set[state] ?? set.default;
+};
