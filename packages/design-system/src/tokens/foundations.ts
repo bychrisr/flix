@@ -120,6 +120,22 @@ export const componentSizes = {
     closeSize: '36px',
     muteSize: '40px',
   },
+  movieCard: {
+    small: { width: '128px', height: '72px' },
+    standard: { width: '218px', height: '123px' },
+    medium: { width: '236px', height: '132px' },
+    top10Poster: { width: '74px', height: '154px' },
+    progressTrackWidth: '132px',
+    progressTrackHeight: '3px',
+  },
+  movieLayouts: {
+    continueWatching: { width: '337px', height: '405px' },
+    listOfEpisodes: { width: '873px', height: '459px' },
+    top10: { width: '979px', height: '447px' },
+    movieBlocks: { width: '1559px', height: '1342px' },
+    moviesCards: { width: '631px', height: '1329px' },
+    moviePreviewDesktop: { width: '758px', height: '471px' },
+  },
 } as const;
 
 export const zIndex = {

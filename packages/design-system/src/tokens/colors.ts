@@ -106,6 +106,11 @@ export const colors = {
       overlayBottom: '#181818',
       closeBackground: '#181818',
     },
+    movieCard: {
+      progressTrack: 'rgba(255, 255, 255, 0.35)',
+      activeBackground: '#232323',
+      secondarySurface: '#2f2f2f',
+    },
     status: {
       success: '#46d369',
       error: '#EB3942',
