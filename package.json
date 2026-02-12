@@ -19,7 +19,8 @@
     "dev:api": "npm --workspace @flix/api run dev",
     "release:readiness": "node scripts/release-readiness-gate.mjs",
     "e2e:smoke": "playwright test --config e2e/playwright.config.mjs",
-    "e2e:smoke:gate": "node scripts/e2e-smoke-gate.mjs"
+    "e2e:smoke:gate": "node scripts/e2e-smoke-gate.mjs",
+    "ci:local": "node scripts/ci-local-gate.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.1"

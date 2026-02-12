@@ -34,6 +34,7 @@ npm run dev:api
 ## Quality Gates
 
 ```bash
+npm run ci:local
 npm run e2e:smoke
 npm run e2e:smoke:gate
 npm run release:readiness
