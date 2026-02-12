@@ -11,7 +11,6 @@ export const AdminPageHeader = ({ items, onLogout }: AdminPageHeaderProps): Reac
     style={{
       width: '100%',
       background: 'var(--fx-color-bg-primary)',
-      borderBottom: 'var(--fx-size-border-default) solid var(--fx-color-border-subtle)',
     }}
   >
     <HomePageHeader
@@ -21,7 +20,7 @@ export const AdminPageHeader = ({ items, onLogout }: AdminPageHeaderProps): Reac
       notificationsControlLabel="Notifications"
       profileControlLabel="Admin menu"
       onProfileClick={onLogout}
-      style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}
+      style={{ maxWidth: 1320, margin: '0 auto', width: '100%' }}
     />
   </header>
 );

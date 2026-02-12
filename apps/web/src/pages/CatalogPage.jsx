@@ -79,8 +79,10 @@ export const CatalogPage = () => {
         onAccessKeyChange={setAccessKey}
         onLoad={loadCatalog}
         loading={loading}
-        heroTitle={catalog?.event?.title ?? 'Flix'}
-        heroDescription={catalog?.event?.description ?? ''}
+        eventVisibility={catalog?.event?.visibility}
+        heroTitle={catalog?.event?.hero?.title ?? catalog?.event?.title ?? 'Flix'}
+        heroDescription={catalog?.event?.hero?.subtitle ?? catalog?.event?.description ?? ''}
+        heroCtaLabel={catalog?.event?.hero?.ctaText ?? 'Load catalog'}
         releasedItems={releasedItems}
         gatedItems={gatedItems}
       />

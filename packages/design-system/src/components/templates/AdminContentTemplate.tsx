@@ -10,7 +10,7 @@ type AdminContentTemplateProps = {
 };
 
 export const AdminContentTemplate = ({ leftTitle, rightTitle, left, right }: AdminContentTemplateProps) => (
-  <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--fx-space-4)' }}>
+  <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--fx-space-6)' }}>
     <Card>
       <Text as="h2" variant="medium-title2" style={{ marginTop: 0 }}>
         {leftTitle}

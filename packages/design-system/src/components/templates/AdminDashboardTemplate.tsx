@@ -18,16 +18,16 @@ export const AdminDashboardTemplate = ({
   navItems,
   children,
 }: AdminDashboardTemplateProps) => (
-  <main style={{ width: '100%', display: 'grid', gap: 'var(--fx-space-4)' }}>
+  <main style={{ width: '100%', display: 'grid' }}>
     <AdminPageHeader items={navItems} onLogout={onLogout} />
     <section
       style={{
-        maxWidth: 1200,
+        maxWidth: 1320,
         width: '100%',
         margin: '0 auto',
         display: 'grid',
-        gap: 'var(--fx-space-4)',
-        padding: '0 var(--fx-space-6) var(--fx-space-6)',
+        gap: 'var(--fx-space-6)',
+        padding: 'var(--fx-space-6) var(--fx-space-6) var(--fx-space-8)',
         boxSizing: 'border-box',
       }}
     >
