@@ -13,6 +13,9 @@
     "./tokens": {
       "import": "./src/tokens/index.ts",
       "types": "./src/tokens/index.ts"
+    },
+    "./tokens/theme.css": {
+      "import": "./src/tokens/theme.css"
     }
   },
   "scripts": {

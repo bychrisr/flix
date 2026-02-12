@@ -1,3 +1,3 @@
-// Canonical token entrypoint for @flix/design-system
-// Next step: migrate tokens from design-system/packages/design-system/src/tokens
-export const tokens = {};
+export * from './colors';
+export * from './typography';
+export * from './foundations';

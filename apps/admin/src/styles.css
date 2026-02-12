@@ -1,0 +1,116 @@
+@import '../../../packages/design-system/src/tokens/theme.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fx-color-bg-secondary);
+  color: var(--fx-color-text-primary);
+  font-family: var(--fx-font-sans);
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+}
+
+.sidebar {
+  border-right: 1px solid var(--fx-color-border-default);
+  padding: var(--fx-space-6);
+}
+
+.sidebar h1 {
+  margin: 0 0 var(--fx-space-4);
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-title);
+  color: var(--fx-color-brand-primary);
+}
+
+.sidebar nav {
+  display: grid;
+  gap: var(--fx-space-2);
+}
+
+.sidebar nav a {
+  color: var(--fx-color-text-secondary);
+  text-decoration: none;
+}
+
+.content {
+  padding: var(--fx-space-6);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--fx-space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--fx-space-2);
+}
+
+.field label {
+  font-size: var(--fx-text-caption);
+  color: var(--fx-color-text-secondary);
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: var(--fx-space-3);
+  border: 1px solid var(--fx-color-border-strong);
+  border-radius: var(--fx-radius-md);
+  background: var(--fx-color-bg-elevated);
+  color: var(--fx-color-text-primary);
+}
+
+.form-actions {
+  margin-top: var(--fx-space-4);
+  display: flex;
+  gap: var(--fx-space-3);
+}
+
+.button {
+  border-radius: var(--fx-radius-md);
+  padding: var(--fx-space-3) var(--fx-space-4);
+  border: 1px solid var(--fx-color-border-default);
+  background: var(--fx-color-bg-card);
+  color: var(--fx-color-text-primary);
+}
+
+.button.primary {
+  border-color: var(--fx-color-brand-primary);
+  background: var(--fx-color-brand-primary);
+}
+
+@media (max-width: 1024px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--fx-color-border-default);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .content,
+  .sidebar {
+    padding: var(--fx-space-4);
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+}

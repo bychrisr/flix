@@ -1,0 +1,44 @@
+:root {
+  --fx-color-bg-primary: #000000;
+  --fx-color-bg-secondary: #141414;
+  --fx-color-bg-elevated: #181818;
+  --fx-color-bg-card: #2a2a2a;
+  --fx-color-bg-hover: #333333;
+  --fx-color-brand-primary: #e50914;
+  --fx-color-brand-hover: #c11119;
+  --fx-color-text-primary: #ffffff;
+  --fx-color-text-secondary: #b3b3b3;
+  --fx-color-text-tertiary: #808080;
+  --fx-color-border-default: #333333;
+  --fx-color-border-strong: #808080;
+  --fx-color-success: #46d369;
+  --fx-color-error: #eb3942;
+
+  --fx-font-sans: 'Netflix Sans', 'Helvetica Neue', Arial, sans-serif;
+  --fx-font-display: 'Bebas Neue', 'Arial Black', sans-serif;
+
+  --fx-space-1: 4px;
+  --fx-space-2: 8px;
+  --fx-space-3: 12px;
+  --fx-space-4: 16px;
+  --fx-space-5: 20px;
+  --fx-space-6: 24px;
+  --fx-space-8: 32px;
+  --fx-space-10: 40px;
+  --fx-space-12: 48px;
+
+  --fx-radius-sm: 2px;
+  --fx-radius-md: 6px;
+  --fx-radius-lg: 8px;
+  --fx-radius-xl: 12px;
+
+  --fx-breakpoint-sm: 640px;
+  --fx-breakpoint-md: 768px;
+  --fx-breakpoint-lg: 1024px;
+
+  --fx-text-caption: 13px;
+  --fx-text-body: 16px;
+  --fx-text-headline: 21px;
+  --fx-text-title: 30px;
+  --fx-text-display: 48px;
+}

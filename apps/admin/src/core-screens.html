@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flix Admin - Core Screens</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <aside class="sidebar">
+        <h1>FLIX</h1>
+        <nav>
+          <a href="#">Dashboard</a>
+          <a href="#">Events</a>
+          <a href="#">Lessons</a>
+          <a href="#">Quizzes</a>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <h2>Create Lesson</h2>
+        <form>
+          <div class="form-grid">
+            <div class="field">
+              <label for="title">Title</label>
+              <input id="title" type="text" />
+            </div>
+            <div class="field">
+              <label for="slug">Slug</label>
+              <input id="slug" type="text" />
+            </div>
+            <div class="field">
+              <label for="release">Release At</label>
+              <input id="release" type="datetime-local" />
+            </div>
+            <div class="field">
+              <label for="expires">Expires At</label>
+              <input id="expires" type="datetime-local" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="button" type="button">Save Draft</button>
+            <button class="button primary" type="submit">Publish</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
