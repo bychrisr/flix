@@ -13,4 +13,6 @@ export * from './MovieBlocksPattern';
 export * from './MoviePreviewDesktopPattern';
 export * from './MoviesCardsPattern';
 export * from './PlaybackPanel';
+export * from './ProfileMenuPattern';
 export * from './Top10Pattern';
+export * from './UserProfilesPattern';
