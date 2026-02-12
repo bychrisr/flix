@@ -19,6 +19,7 @@ const visualStyleSchema = z
   })
   .strict();
 const logoUrlSchema = z.string().url().max(400);
+const highlightVideoUrlSchema = z.string().url().max(400);
 
 const createEventSchema = z.object({
   title: z.string().min(3),
@@ -30,6 +31,7 @@ const createEventSchema = z.object({
   hero: heroSchema.optional(),
   visualStyle: visualStyleSchema.optional(),
   logoUrl: logoUrlSchema.optional(),
+  highlightVideoUrl: highlightVideoUrlSchema.optional(),
 });
 
 const updateEventSchema = z
@@ -43,6 +45,7 @@ const updateEventSchema = z
     hero: heroSchema.optional(),
     visualStyle: visualStyleSchema.optional(),
     logoUrl: logoUrlSchema.nullable().optional(),
+    highlightVideoUrl: highlightVideoUrlSchema.nullable().optional(),
   })
   .refine((payload) => Object.keys(payload).length > 0, {
     message: 'At least one field must be provided',

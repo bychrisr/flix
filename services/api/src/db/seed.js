@@ -23,6 +23,7 @@ const defaultSeedData = {
       heroTitle: 'Bem-vindo ao Flix',
       heroSubtitle: 'Aprenda em trilhas curtas com checkpoints práticos.',
       heroCtaText: 'Comecar',
+      highlightVideoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       backgroundColor: '#0f172a',
       textColor: '#f8fafc',
       accentColor: '#22d3ee',
@@ -38,6 +39,7 @@ const defaultSeedData = {
       heroTitle: 'Acesso exclusivo',
       heroSubtitle: 'Conteudo privado para alunos convidados.',
       heroCtaText: 'Entrar com chave',
+      highlightVideoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
       backgroundColor: '#111111',
       textColor: '#f5f5f5',
       accentColor: '#e50914',
@@ -136,9 +138,9 @@ const seedDatabase = async ({ databaseUrl, seedData }) => {
       `INSERT INTO events (
         id, title, slug, description, is_active, visibility, access_key,
         hero_title, hero_subtitle, hero_cta_text,
-        background_color, text_color, accent_color,
+        background_color, text_color, accent_color, highlight_video_url,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
 
     for (const event of seedData.events) {
@@ -156,6 +158,7 @@ const seedDatabase = async ({ databaseUrl, seedData }) => {
         event.backgroundColor,
         event.textColor,
         event.accentColor,
+        event.highlightVideoUrl ?? null,
         seedTimestamp,
         seedTimestamp,
       );

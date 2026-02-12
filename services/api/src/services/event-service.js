@@ -57,6 +57,7 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       hero: payload.hero ?? defaultHero,
       visualStyle: payload.visualStyle ?? defaultVisualStyle,
       logoUrl: payload.logoUrl?.trim() || null,
+      highlightVideoUrl: payload.highlightVideoUrl?.trim() || null,
       brandingProvider: payload.brandingProvider?.trim() || null,
       brandingPromptVersion: payload.brandingPromptVersion?.trim() || null,
       brandingGeneratedAt: payload.brandingGeneratedAt ?? null,
@@ -99,6 +100,10 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       hero: payload.hero ?? existing.hero,
       visualStyle: payload.visualStyle ?? existing.visualStyle,
       logoUrl: payload.logoUrl === undefined ? existing.logoUrl : payload.logoUrl?.trim() || null,
+      highlightVideoUrl:
+        payload.highlightVideoUrl === undefined
+          ? existing.highlightVideoUrl
+          : payload.highlightVideoUrl?.trim() || null,
       brandingProvider:
         payload.brandingProvider === undefined
           ? existing.brandingProvider
