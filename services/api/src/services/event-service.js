@@ -48,6 +48,16 @@ export const createEventService = () => {
     return event ? { ...event } : null;
   };
 
+  const getEventBySlug = (slug) => {
+    const normalizedSlug = normalizeSlug(slug);
+    for (const event of eventsById.values()) {
+      if (event.slug === normalizedSlug) {
+        return { ...event };
+      }
+    }
+    return null;
+  };
+
   const createEvent = (payload) => {
     const slug = normalizeSlug(payload.slug);
     if (hasSlugConflict(slug)) {
@@ -62,6 +72,7 @@ export const createEventService = () => {
       description: payload.description?.trim() ?? '',
       isActive: payload.isActive ?? false,
       visibility: payload.visibility ?? 'private',
+      accessKey: payload.accessKey?.trim() || null,
       hero: payload.hero ?? defaultHero,
       visualStyle: payload.visualStyle ?? defaultVisualStyle,
       createdAt: now,
@@ -100,6 +111,7 @@ export const createEventService = () => {
       description: payload.description?.trim() ?? existing.description,
       isActive: payload.isActive ?? existing.isActive,
       visibility,
+      accessKey: payload.accessKey === undefined ? existing.accessKey : payload.accessKey?.trim() || null,
       hero: payload.hero ?? existing.hero,
       visualStyle: payload.visualStyle ?? existing.visualStyle,
       updatedAt: new Date().toISOString(),
@@ -119,6 +131,7 @@ export const createEventService = () => {
   return {
     listEvents,
     getEventById,
+    getEventBySlug,
     countEvents: () => eventsById.size,
     createEvent,
     updateEvent,

@@ -7,6 +7,7 @@ const createError = (statusCode, error, message) => {
 
 export const createLessonService = ({ eventService }) => {
   const lessonsById = new Map();
+  const normalizeLessonSlug = (slug) => slug.trim().toLowerCase();
 
   const assertEventExists = (eventId) => {
     const event = eventService.getEventById(eventId);
@@ -45,7 +46,7 @@ export const createLessonService = ({ eventService }) => {
       id: crypto.randomUUID(),
       eventId,
       title: payload.title.trim(),
-      slug: payload.slug.trim().toLowerCase(),
+      slug: normalizeLessonSlug(payload.slug),
       releaseAt: payload.releaseAt,
       expiresAt: payload.expiresAt ?? null,
       createdAt: now,
@@ -66,7 +67,7 @@ export const createLessonService = ({ eventService }) => {
     const next = {
       ...lesson,
       title: payload.title?.trim() ?? lesson.title,
-      slug: payload.slug?.trim().toLowerCase() ?? lesson.slug,
+      slug: payload.slug ? normalizeLessonSlug(payload.slug) : lesson.slug,
       releaseAt: payload.releaseAt ?? lesson.releaseAt,
       expiresAt: payload.expiresAt === undefined ? lesson.expiresAt : payload.expiresAt,
       updatedAt: new Date().toISOString(),
@@ -88,6 +89,35 @@ export const createLessonService = ({ eventService }) => {
 
   return {
     listLessonsByEvent,
+    listLessonsByEventSlug: (eventSlug) => {
+      const event = eventService.getEventBySlug(eventSlug);
+      if (!event) {
+        throw createError(404, 'EVENT_NOT_FOUND', 'Event not found');
+      }
+      return listLessonsByEvent(event.id);
+    },
+    getLessonBySlug: (eventId, lessonSlug) => {
+      const normalizedSlug = normalizeLessonSlug(lessonSlug);
+      for (const lesson of lessonsById.values()) {
+        if (lesson.eventId === eventId && lesson.slug === normalizedSlug) {
+          return { ...lesson };
+        }
+      }
+      return null;
+    },
+    resolveLessonStatus: (lesson, referenceDate = new Date()) => {
+      const now = referenceDate.getTime();
+      const releaseAt = new Date(lesson.releaseAt).getTime();
+      const expiresAt = lesson.expiresAt ? new Date(lesson.expiresAt).getTime() : null;
+
+      if (releaseAt > now) {
+        return 'locked';
+      }
+      if (expiresAt !== null && expiresAt <= now) {
+        return 'expired';
+      }
+      return 'released';
+    },
     countLessons: () => lessonsById.size,
     getReleaseStatusDistribution: (referenceDate = new Date()) => {
       const now = referenceDate.getTime();

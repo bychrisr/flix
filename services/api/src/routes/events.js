@@ -25,6 +25,7 @@ const createEventSchema = z.object({
   description: z.string().max(500).optional(),
   isActive: z.boolean().optional(),
   visibility: visibilitySchema.optional(),
+  accessKey: z.string().min(6).max(64).optional(),
   hero: heroSchema.optional(),
   visualStyle: visualStyleSchema.optional(),
 });
@@ -36,6 +37,7 @@ const updateEventSchema = z
     description: z.string().max(500).optional(),
     isActive: z.boolean().optional(),
     visibility: visibilitySchema.optional(),
+    accessKey: z.string().min(6).max(64).nullable().optional(),
     hero: heroSchema.optional(),
     visualStyle: visualStyleSchema.optional(),
   })
