@@ -25,4 +25,10 @@ export const env = {
   jwtAccessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
   adminUsername: process.env.ADMIN_USERNAME ?? 'admin',
   adminPassword: process.env.ADMIN_PASSWORD ?? 'admin123',
+  brandingProvider: process.env.BRANDING_PROVIDER ?? 'gemini',
+  brandingPromptVersion: process.env.BRANDING_PROMPT_VERSION ?? 'v1',
+  brandingTimeoutMs: toInt(process.env.BRANDING_TIMEOUT_MS, 9000),
+  brandingMaxRetries: toInt(process.env.BRANDING_MAX_RETRIES, 2),
+  geminiApiKey: process.env.GEMINI_API_KEY ?? '',
+  geminiModel: process.env.GEMINI_MODEL ?? 'gemini-2.0-flash',
 };
