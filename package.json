@@ -17,5 +17,7 @@
     "dev:web": "npm --workspace @flix/web run dev",
     "dev:admin": "npm --workspace @flix/admin run dev",
     "dev:api": "npm --workspace @flix/api run dev"
+    ,
+    "release:readiness": "node scripts/release-readiness-gate.mjs"
   }
 }

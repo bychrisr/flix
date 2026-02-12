@@ -7,7 +7,7 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
-export const registerAdminAuthRoutes = async (app) => {
+export const registerAdminAuthRoutes = async (app, { observabilityService } = {}) => {
   app.post('/api/admin/login', async (request, reply) => {
     const parsed = loginSchema.safeParse(request.body);
     if (!parsed.success) {
@@ -15,11 +15,19 @@ export const registerAdminAuthRoutes = async (app) => {
         error: 'VALIDATION_ERROR',
         message: 'Invalid login payload',
         details: parsed.error.flatten(),
+        requestId: request.id,
       });
     }
 
     const admin = await authenticateAdmin(parsed.data);
     if (!admin) {
+      observabilityService?.emitEvent(request, 'admin_auth_failed', {
+        username: parsed.data.username,
+        reason: 'invalid_credentials',
+      });
+      observabilityService?.emitKpiHook(request, 'kpi_auth_login', {
+        success: false,
+      });
       return reply.code(401).send({
         error: 'INVALID_CREDENTIALS',
         message: 'Invalid username or password',
@@ -27,6 +35,13 @@ export const registerAdminAuthRoutes = async (app) => {
     }
 
     const accessToken = signAccessToken({ sub: admin.id, username: admin.username, role: 'admin' });
+    observabilityService?.emitEvent(request, 'admin_auth_succeeded', {
+      adminId: admin.id,
+      username: admin.username,
+    });
+    observabilityService?.emitKpiHook(request, 'kpi_auth_login', {
+      success: true,
+    });
 
     return reply.send({
       accessToken,

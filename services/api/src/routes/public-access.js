@@ -48,7 +48,14 @@ const mapNavigationLesson = (lesson, lessonService) => {
 
 export const registerPublicAccessRoutes = async (
   app,
-  { learnerAccessService, eventService, lessonService, materialService, quizService },
+  {
+    learnerAccessService,
+    eventService,
+    lessonService,
+    materialService,
+    quizService,
+    observabilityService,
+  },
 ) => {
   app.post('/api/public/events/:eventSlug/catalog', async (request, reply) => {
     const parsed = accessPayloadSchema.safeParse(request.body);
@@ -57,6 +64,7 @@ export const registerPublicAccessRoutes = async (
         error: 'VALIDATION_ERROR',
         message: 'Invalid catalog payload',
         details: parsed.error.flatten(),
+        requestId: request.id,
       });
     }
 
@@ -107,11 +115,12 @@ export const registerPublicAccessRoutes = async (
     async (request, reply) => {
       const parsed = accessPayloadSchema.safeParse(request.body);
       if (!parsed.success) {
-        return reply.code(400).send({
-          error: 'VALIDATION_ERROR',
-          message: 'Invalid access-check payload',
-          details: parsed.error.flatten(),
-        });
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid access-check payload',
+        details: parsed.error.flatten(),
+        requestId: request.id,
+      });
       }
 
       try {
@@ -120,6 +129,16 @@ export const registerPublicAccessRoutes = async (
           eventSlug: request.params.eventSlug,
           lessonSlug: request.params.lessonSlug,
           eventAccessKey: parsed.data?.eventAccessKey,
+        });
+        observabilityService?.emitEvent(request, 'lesson_access_evaluated', {
+          eventSlug: request.params.eventSlug,
+          lessonSlug: request.params.lessonSlug,
+          status: access.status,
+          authorized: access.authorized,
+        });
+        observabilityService?.emitKpiHook(request, 'kpi_lesson_access_check', {
+          status: access.status,
+          authorized: access.authorized,
         });
 
         return reply.send({
@@ -145,6 +164,7 @@ export const registerPublicAccessRoutes = async (
         error: 'VALIDATION_ERROR',
         message: 'Invalid playback payload',
         details: parsed.error.flatten(),
+        requestId: request.id,
       });
     }
 
@@ -207,6 +227,7 @@ export const registerPublicAccessRoutes = async (
         error: 'VALIDATION_ERROR',
         message: 'Invalid materials payload',
         details: parsed.error.flatten(),
+        requestId: request.id,
       });
     }
 
@@ -239,6 +260,7 @@ export const registerPublicAccessRoutes = async (
         error: 'VALIDATION_ERROR',
         message: 'Invalid quiz payload',
         details: parsed.error.flatten(),
+        requestId: request.id,
       });
     }
 
@@ -261,6 +283,14 @@ export const registerPublicAccessRoutes = async (
       if (!quiz) {
         return reply.code(404).send({ error: 'QUIZ_NOT_FOUND', message: 'Quiz not found' });
       }
+      observabilityService?.emitEvent(request, 'quiz_loaded', {
+        eventSlug: request.params.eventSlug,
+        lessonSlug: request.params.lessonSlug,
+        quizId: quiz.id,
+      });
+      observabilityService?.emitKpiHook(request, 'kpi_quiz_started', {
+        quizId: quiz.id,
+      });
 
       return reply.send({ item: quizService.getQuizForLearner(quiz.id) });
     } catch (error) {
@@ -275,6 +305,7 @@ export const registerPublicAccessRoutes = async (
         error: 'VALIDATION_ERROR',
         message: 'Invalid quiz submit payload',
         details: parsed.error.flatten(),
+        requestId: request.id,
       });
     }
 
@@ -299,6 +330,18 @@ export const registerPublicAccessRoutes = async (
       }
 
       const result = quizService.submitAttempt(quiz.id, parsed.data.answers);
+      observabilityService?.emitEvent(request, 'quiz_submitted', {
+        eventSlug: request.params.eventSlug,
+        lessonSlug: request.params.lessonSlug,
+        quizId: quiz.id,
+        scorePercentage: result.scorePercentage,
+        passed: result.passed,
+      });
+      observabilityService?.emitKpiHook(request, 'kpi_quiz_completed', {
+        quizId: quiz.id,
+        scorePercentage: result.scorePercentage,
+        passed: result.passed,
+      });
       return reply.send({
         lesson: {
           id: access.lesson.id,

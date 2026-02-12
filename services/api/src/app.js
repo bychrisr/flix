@@ -14,9 +14,10 @@ import { createMaterialService } from './services/material-service.js';
 import { createLearnerAccessService } from './services/learner-access-service.js';
 import { createQuizService } from './services/quiz-service.js';
 import { registerQuizRoutes } from './routes/quizzes.js';
+import { createObservabilityService } from './services/observability-service.js';
 
-export const createApp = async () => {
-  const app = Fastify({ logger: true });
+export const createApp = async ({ logger = true, observabilityOverrides } = {}) => {
+  const app = Fastify({ logger });
 
   registerErrorHandler(app);
   await registerSecurityPlugins(app);
@@ -25,9 +26,10 @@ export const createApp = async () => {
   const materialService = createMaterialService({ eventService, lessonService });
   const quizService = createQuizService({ eventService, lessonService });
   const learnerAccessService = createLearnerAccessService({ eventService, lessonService });
+  const observabilityService = createObservabilityService(observabilityOverrides);
 
   await registerHealthRoutes(app);
-  await registerAdminAuthRoutes(app);
+  await registerAdminAuthRoutes(app, { observabilityService });
   await registerEventRoutes(app, { eventService });
   await registerLessonRoutes(app, { eventService, lessonService });
   await registerMaterialRoutes(app, { eventService, lessonService, materialService });
@@ -39,6 +41,7 @@ export const createApp = async () => {
     lessonService,
     materialService,
     quizService,
+    observabilityService,
   });
 
   return app;

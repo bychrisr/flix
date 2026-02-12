@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo 'admin app scaffolded - add framework (Next.js/Vite)'",
+    "dev": "echo 'open apps/admin/src/core-screens.html in browser for responsive baseline preview'",
     "build": "echo 'admin build not configured yet'",
-    "test": "echo 'admin tests not configured yet'",
+    "test": "node ../../scripts/verify-token-usage.mjs apps/admin/src",
     "lint": "echo 'admin lint not configured yet'",
     "typecheck": "echo 'admin typecheck not configured yet'"
   }

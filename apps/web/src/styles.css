@@ -1,0 +1,119 @@
+@import '../../../packages/design-system/src/tokens/theme.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fx-color-bg-primary);
+  color: var(--fx-color-text-primary);
+  font-family: var(--fx-font-sans);
+}
+
+.web-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar {
+  padding: var(--fx-space-4) var(--fx-space-6);
+  border-bottom: 1px solid var(--fx-color-border-default);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--fx-space-3);
+  align-items: center;
+}
+
+.brand {
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-display);
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: var(--fx-color-brand-primary);
+}
+
+.catalog-grid {
+  padding: var(--fx-space-6);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--fx-space-4);
+}
+
+.lesson-card {
+  border: 1px solid var(--fx-color-border-default);
+  border-radius: var(--fx-radius-lg);
+  padding: var(--fx-space-4);
+  background: var(--fx-color-bg-card);
+}
+
+.lesson-status {
+  margin-top: var(--fx-space-2);
+  font-size: var(--fx-text-caption);
+  color: var(--fx-color-text-secondary);
+}
+
+.playback-layout {
+  padding: var(--fx-space-6);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--fx-space-4);
+}
+
+.player-box,
+.panel {
+  border: 1px solid var(--fx-color-border-default);
+  border-radius: var(--fx-radius-lg);
+  background: var(--fx-color-bg-elevated);
+  padding: var(--fx-space-4);
+}
+
+.player-box {
+  min-height: 320px;
+}
+
+.panel h3 {
+  margin: 0 0 var(--fx-space-3);
+  font-size: var(--fx-text-headline);
+}
+
+.panel ul {
+  margin: 0;
+  padding-left: var(--fx-space-4);
+  color: var(--fx-color-text-secondary);
+}
+
+@media (max-width: 1024px) {
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .playback-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand {
+    font-size: var(--fx-text-title);
+  }
+
+  .catalog-grid {
+    grid-template-columns: 1fr;
+    padding: var(--fx-space-4);
+  }
+
+  .playback-layout {
+    padding: var(--fx-space-4);
+  }
+
+  .player-box {
+    min-height: 220px;
+  }
+}

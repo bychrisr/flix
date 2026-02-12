@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo 'web app scaffolded - add framework (Next.js/Vite)'",
+    "dev": "echo 'open apps/web/src/core-screens.html in browser for responsive baseline preview'",
     "build": "echo 'web build not configured yet'",
-    "test": "echo 'web tests not configured yet'",
+    "test": "node ../../scripts/verify-token-usage.mjs apps/web/src",
     "lint": "echo 'web lint not configured yet'",
     "typecheck": "echo 'web typecheck not configured yet'"
   }
