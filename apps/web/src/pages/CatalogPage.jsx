@@ -5,6 +5,16 @@ import { fetchCatalog } from '../services/api.js';
 
 const eventKey = (eventSlug) => `flix.web.eventKey.${eventSlug}`;
 
+const getLessonThumbnail = (lesson) => {
+  if (lesson?.videoProvider === 'youtube' && lesson?.videoId) {
+    return `https://i.ytimg.com/vi/${lesson.videoId}/hqdefault.jpg`;
+  }
+  if (lesson?.videoProvider === 'vimeo' && lesson?.videoId) {
+    return `https://vumbnail.com/${lesson.videoId}.jpg`;
+  }
+  return '';
+};
+
 export const CatalogPage = () => {
   const { eventSlug } = useParams();
   const [catalog, setCatalog] = useState(null);
@@ -51,6 +61,8 @@ export const CatalogPage = () => {
     id: lesson.id,
     title: lesson.title,
     status: lesson.status,
+    imageUrl: getLessonThumbnail(lesson),
+    presetIconName: 'presetRecentlyAdded',
     action: <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Open lesson</Link>,
   }));
 
@@ -58,6 +70,8 @@ export const CatalogPage = () => {
     id: lesson.id,
     title: lesson.title,
     status: lesson.status,
+    imageUrl: getLessonThumbnail(lesson),
+    presetIconName: lesson.status === 'locked' ? 'presetTop10' : 'presetLeavingSoon',
     action: <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Details</Link>,
   }));
 

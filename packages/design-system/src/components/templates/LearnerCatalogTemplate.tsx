@@ -3,6 +3,8 @@ import ReactPlayer from 'react-player';
 import { AccessKeyForm } from '../molecules/AccessKeyForm';
 import { Card } from '../atoms/Card';
 import { Text } from '../atoms/Text';
+import { MovieBlockCard } from '../molecules/MovieBlockCard';
+import { HeroBannerRatingPattern } from '../molecules/HeroBannerRatingPattern';
 import { HeroBanner } from '../organisms/HeroBanner';
 import { HomePageHeader } from '../organisms/HomePageHeader';
 import { LessonRail } from '../organisms/LessonRail';
@@ -12,6 +14,9 @@ type LessonItem = {
   id: string;
   title: string;
   status: 'released' | 'locked' | 'expired';
+  imageUrl?: string;
+  imageAlt?: string;
+  presetIconName?: 'presetTop10' | 'presetRecentlyAdded' | 'presetLeavingSoon' | 'presetNewSeason';
   action?: ReactNode;
 };
 
@@ -112,6 +117,30 @@ const buildCandidateVideoUrls = (highlightVideoUrl: string) => {
   return candidates.filter((url) => ReactPlayer.canPlay(url));
 };
 
+const encodeSvg = (value: string) =>
+  value
+    .replace(/%/g, '%25')
+    .replace(/</g, '%3C')
+    .replace(/>/g, '%3E')
+    .replace(/#/g, '%23')
+    .replace(/"/g, '%22')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const buildFallbackCardImage = (seed: string, title: string) => {
+  const palette = [
+    ['#2d0a10', '#0f1015'],
+    ['#121e38', '#0c1018'],
+    ['#37210a', '#101216'],
+    ['#2a122f', '#0f1015'],
+  ];
+  const hash = Array.from(seed).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const [start, end] = palette[hash % palette.length];
+  const shortTitle = (title || 'Untitled').slice(0, 34);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='360' height='200' viewBox='0 0 360 200'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${start}'/><stop offset='100%' stop-color='${end}'/></linearGradient></defs><rect width='360' height='200' fill='url(#g)'/><rect x='0' y='0' width='360' height='200' fill='rgba(0,0,0,.22)'/><text x='18' y='170' fill='white' font-family='Arial,sans-serif' font-size='22' font-weight='700'>${shortTitle}</text></svg>`;
+  return `data:image/svg+xml,${encodeSvg(svg)}`;
+};
+
 export const LearnerCatalogTemplate = ({
   eventSlug,
   accessKey,
@@ -141,6 +170,16 @@ export const LearnerCatalogTemplate = ({
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
   const currentVideoUrl = candidateVideoUrls[currentCandidateIndex] ?? '';
   const currentYouTubeVideoId = useMemo(() => getYouTubeVideoId(currentVideoUrl) ?? '', [currentVideoUrl]);
+  const heroRailItems = useMemo(
+    () =>
+      [...releasedItems, ...gatedItems]
+        .slice(0, 10)
+        .map((item) => ({
+          ...item,
+          imageUrl: item.imageUrl || buildFallbackCardImage(item.id, item.title),
+        })),
+    [releasedItems, gatedItems],
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -193,7 +232,7 @@ export const LearnerCatalogTemplate = ({
         style={{
           width: '100%',
           position: 'relative',
-          minHeight: 680,
+          minHeight: 760,
           overflow: 'hidden',
           background: 'var(--fx-color-bg-primary)',
         }}
@@ -300,7 +339,7 @@ export const LearnerCatalogTemplate = ({
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(180deg, rgb(0 0 0 / 40%) 0%, rgb(0 0 0 / 20%) 24%, rgb(0 0 0 / 75%) 100%), linear-gradient(90deg, rgb(0 0 0 / 70%) 0%, rgb(0 0 0 / 15%) 55%, rgb(0 0 0 / 60%) 100%)',
+              'linear-gradient(180deg, rgb(0 0 0 / 24%) 0%, rgb(0 0 0 / 22%) 18%, rgb(0 0 0 / 82%) 100%), linear-gradient(90deg, rgb(0 0 0 / 74%) 0%, rgb(0 0 0 / 26%) 52%, rgb(0 0 0 / 48%) 100%)',
           }}
         />
 
@@ -316,42 +355,86 @@ export const LearnerCatalogTemplate = ({
             searchControlLabel="Search"
             notificationsControlLabel="Notifications"
             profileControlLabel="Open profile menu"
-            style={{ maxWidth: 1320, margin: '0 auto', width: '100%' }}
+            style={{ maxWidth: 1360, margin: '0 auto', width: '100%', paddingTop: 'var(--fx-space-3)' }}
           />
 
           <div
             style={{
-              maxWidth: 1320,
+              maxWidth: 1360,
               margin: '0 auto',
-              padding: 'var(--fx-space-8) var(--fx-space-6)',
-              minHeight: 560,
-              display: 'flex',
-              alignItems: 'flex-end',
+              padding: '0 var(--fx-space-6)',
+              minHeight: 600,
+              position: 'relative',
               boxSizing: 'border-box',
             }}
           >
-            <HeroBanner
-              mode="overlay"
-              size="large"
-              badgeLabel={eventVisibility === 'private' ? 'Private event' : 'Public event'}
-              eyebrow={eventTitle || eventSlug}
-              title={heroTitle}
-              description={heroDescription}
-              supportingText={eventDescription}
-              actions={{
-                primaryLabel: heroCtaLabel,
-                secondaryLabel: 'More Info',
-                onPrimaryClick: onLoad,
+            <div
+              style={{
+                position: 'absolute',
+                left: 'var(--fx-space-6)',
+                bottom: 120,
+                width: 620,
+                maxWidth: 'min(620px, calc(100% - 180px))',
               }}
-              utilities={{
-                ratingLabel: 'TV-14',
-                muteControlLabel: 'Mute',
-                audioDescriptionControlLabel: 'Audio description',
-                replayControlLabel: 'Replay',
+            >
+              <HeroBanner
+                mode="overlay"
+                size="large"
+                badgeLabel={undefined}
+                eyebrow={eventVisibility === 'private' ? 'Private event' : 'N SERIES'}
+                title={heroTitle}
+                description={heroDescription}
+                actions={{
+                  primaryLabel: heroCtaLabel || 'Play',
+                  secondaryLabel: 'More Info',
+                  onPrimaryClick: onLoad,
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                position: 'absolute',
+                right: 'var(--fx-space-6)',
+                bottom: 132,
               }}
-              style={{ width: 620, maxWidth: '100%' }}
-            />
+            >
+              <HeroBannerRatingPattern ratingLabel="TV-14" />
+            </div>
           </div>
+
+          {heroRailItems.length ? (
+            <div
+              style={{
+                maxWidth: 1360,
+                margin: '0 auto',
+                padding: '0 var(--fx-space-6) var(--fx-space-6)',
+                boxSizing: 'border-box',
+              }}
+            >
+              <Text as="h3" variant="bold-title3" style={{ margin: 0, marginBottom: 'var(--fx-space-3)' }}>
+                Matched to You
+              </Text>
+              <div
+                style={{
+                  display: 'grid',
+                  gridAutoFlow: 'column',
+                  gridAutoColumns: 'var(--fx-size-pattern-movie-card-standard-width)',
+                  gap: 'var(--fx-space-2)',
+                  overflowX: 'auto',
+                }}
+              >
+                {heroRailItems.map((item) => (
+                  <MovieBlockCard
+                    key={item.id}
+                    imageUrl={item.imageUrl ?? buildFallbackCardImage(item.id, item.title)}
+                    imageAlt={item.imageAlt ?? item.title}
+                    presetIconName={item.presetIconName}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </section>
 
