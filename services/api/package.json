@@ -8,7 +8,11 @@
     "build": "node -e \"console.log('api build: no transpilation step required for MVP baseline')\"",
     "test": "vitest run",
     "lint": "node -e \"console.log('api lint: not configured yet')\"",
-    "typecheck": "node -e \"console.log('api typecheck: not configured yet')\""
+    "typecheck": "node -e \"console.log('api typecheck: not configured yet')\"",
+    "db:migrate": "node ./scripts/db-migrate.mjs",
+    "db:seed": "node ./scripts/db-seed.mjs",
+    "db:reset": "node ./scripts/db-reset.mjs",
+    "db:verify": "node ./scripts/db-verify.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",

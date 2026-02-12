@@ -14,6 +14,8 @@ const toInt = (value, fallback) => {
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: toInt(process.env.API_PORT, 3001),
+  databaseUrl: process.env.DATABASE_URL ?? 'file:.data/flix.sqlite',
+  databaseProfile: process.env.DATABASE_PROFILE ?? 'local',
   corsOrigins: splitCsv(process.env.CORS_ORIGIN, 'http://localhost:3000,http://localhost:3002'),
   rateLimitMax: toInt(process.env.RATE_LIMIT_MAX, 100),
   rateLimitWindowMs: toInt(process.env.RATE_LIMIT_WINDOW_MS, 60_000),
