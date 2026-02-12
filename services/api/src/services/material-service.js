@@ -1,3 +1,5 @@
+import { createInMemoryMaterialRepository } from '../repositories/in-memory/material-repository.js';
+
 const createError = (statusCode, error, message) => {
   const err = new Error(message);
   err.statusCode = statusCode;
@@ -14,9 +16,11 @@ export const allowedMaterialTypes = new Set([
   'text/plain',
 ]);
 
-export const createMaterialService = ({ eventService, lessonService }) => {
-  const materialsById = new Map();
-
+export const createMaterialService = ({
+  eventService,
+  lessonService,
+  materialRepository = createInMemoryMaterialRepository(),
+}) => {
   const assertLessonContext = (eventId, lessonId) => {
     const event = eventService.getEventById(eventId);
     if (!event) {
@@ -52,20 +56,16 @@ export const createMaterialService = ({ eventService, lessonService }) => {
 
   const listByLesson = (eventId, lessonId) => {
     assertLessonContext(eventId, lessonId);
-
-    return Array.from(materialsById.values())
-      .filter((item) => item.lessonId === lessonId)
-      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-      .map((item) => ({ ...item }));
+    return materialRepository.listByLesson(lessonId);
   };
 
   const createMany = (eventId, lessonId, files) => {
     assertLessonContext(eventId, lessonId);
 
     const now = new Date().toISOString();
-    const created = files.map((file) => {
+    const materials = files.map((file) => {
       validateMaterialInput(file);
-      const material = {
+      return {
         id: crypto.randomUUID(),
         eventId,
         lessonId,
@@ -75,11 +75,9 @@ export const createMaterialService = ({ eventService, lessonService }) => {
         downloadUrl: file.downloadUrl,
         createdAt: now,
       };
-      materialsById.set(material.id, material);
-      return material;
     });
 
-    return created.map((item) => ({ ...item }));
+    return materialRepository.insertMany(materials);
   };
 
   return {

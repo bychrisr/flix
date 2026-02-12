@@ -15,16 +15,29 @@ import { createLearnerAccessService } from './services/learner-access-service.js
 import { createQuizService } from './services/quiz-service.js';
 import { registerQuizRoutes } from './routes/quizzes.js';
 import { createObservabilityService } from './services/observability-service.js';
+import { createInMemoryRepositories } from './repositories/in-memory/index.js';
 
 export const createApp = async ({ logger = true, observabilityOverrides } = {}) => {
   const app = Fastify({ logger });
 
   registerErrorHandler(app);
   await registerSecurityPlugins(app);
-  const eventService = createEventService();
-  const lessonService = createLessonService({ eventService });
-  const materialService = createMaterialService({ eventService, lessonService });
-  const quizService = createQuizService({ eventService, lessonService });
+  const repositories = createInMemoryRepositories();
+  const eventService = createEventService({ eventRepository: repositories.eventRepository });
+  const lessonService = createLessonService({
+    eventService,
+    lessonRepository: repositories.lessonRepository,
+  });
+  const materialService = createMaterialService({
+    eventService,
+    lessonService,
+    materialRepository: repositories.materialRepository,
+  });
+  const quizService = createQuizService({
+    eventService,
+    lessonService,
+    quizRepository: repositories.quizRepository,
+  });
   const learnerAccessService = createLearnerAccessService({ eventService, lessonService });
   const observabilityService = createObservabilityService(observabilityOverrides);
 

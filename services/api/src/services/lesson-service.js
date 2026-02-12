@@ -1,3 +1,5 @@
+import { createInMemoryLessonRepository } from '../repositories/in-memory/lesson-repository.js';
+
 const createError = (statusCode, error, message) => {
   const err = new Error(message);
   err.statusCode = statusCode;
@@ -5,8 +7,10 @@ const createError = (statusCode, error, message) => {
   return err;
 };
 
-export const createLessonService = ({ eventService }) => {
-  const lessonsById = new Map();
+export const createLessonService = ({
+  eventService,
+  lessonRepository = createInMemoryLessonRepository(),
+}) => {
   const normalizeLessonSlug = (slug) => slug.trim().toLowerCase();
   const normalizeVideoProvider = (provider) => provider.trim().toLowerCase();
 
@@ -32,10 +36,7 @@ export const createLessonService = ({ eventService }) => {
 
   const listLessonsByEvent = (eventId) => {
     assertEventExists(eventId);
-    return Array.from(lessonsById.values())
-      .filter((lesson) => lesson.eventId === eventId)
-      .sort((a, b) => a.releaseAt.localeCompare(b.releaseAt))
-      .map((lesson) => ({ ...lesson }));
+    return lessonRepository.listByEvent(eventId);
   };
 
   const createLesson = (eventId, payload) => {
@@ -56,13 +57,12 @@ export const createLessonService = ({ eventService }) => {
       updatedAt: now,
     };
 
-    lessonsById.set(lesson.id, lesson);
-    return { ...lesson };
+    return lessonRepository.insert(lesson);
   };
 
   const updateLesson = (eventId, lessonId, payload) => {
     assertEventExists(eventId);
-    const lesson = lessonsById.get(lessonId);
+    const lesson = lessonRepository.findById(lessonId);
     if (!lesson || lesson.eventId !== eventId) {
       throw createError(404, 'LESSON_NOT_FOUND', 'Lesson not found');
     }
@@ -81,24 +81,20 @@ export const createLessonService = ({ eventService }) => {
     };
 
     assertValidWindow(next);
-    lessonsById.set(lesson.id, next);
-    return { ...next };
+    return lessonRepository.update(lesson.id, next);
   };
 
   const deleteLesson = (eventId, lessonId) => {
     assertEventExists(eventId);
-    const lesson = lessonsById.get(lessonId);
+    const lesson = lessonRepository.findById(lessonId);
     if (!lesson || lesson.eventId !== eventId) {
       throw createError(404, 'LESSON_NOT_FOUND', 'Lesson not found');
     }
-    lessonsById.delete(lessonId);
+    lessonRepository.deleteById(lessonId);
   };
 
   return {
-    getLessonById: (lessonId) => {
-      const lesson = lessonsById.get(lessonId);
-      return lesson ? { ...lesson } : null;
-    },
+    getLessonById: (lessonId) => lessonRepository.findById(lessonId),
     listLessonsByEvent,
     listLessonsByEventSlug: (eventSlug) => {
       const event = eventService.getEventBySlug(eventSlug);
@@ -107,15 +103,8 @@ export const createLessonService = ({ eventService }) => {
       }
       return listLessonsByEvent(event.id);
     },
-    getLessonBySlug: (eventId, lessonSlug) => {
-      const normalizedSlug = normalizeLessonSlug(lessonSlug);
-      for (const lesson of lessonsById.values()) {
-        if (lesson.eventId === eventId && lesson.slug === normalizedSlug) {
-          return { ...lesson };
-        }
-      }
-      return null;
-    },
+    getLessonBySlug: (eventId, lessonSlug) =>
+      lessonRepository.findByEventAndSlug(eventId, normalizeLessonSlug(lessonSlug)),
     getAdjacentLessonsBySlug: (eventId, lessonSlug) => {
       const lessons = listLessonsByEvent(eventId);
       const idx = lessons.findIndex((lesson) => lesson.slug === normalizeLessonSlug(lessonSlug));
@@ -149,12 +138,12 @@ export const createLessonService = ({ eventService }) => {
         unlocksInSeconds: Math.ceil(remainingMs / 1000),
       };
     },
-    countLessons: () => lessonsById.size,
+    countLessons: () => lessonRepository.count(),
     getReleaseStatusDistribution: (referenceDate = new Date()) => {
       const now = referenceDate.getTime();
       const distribution = { upcoming: 0, available: 0, expired: 0 };
 
-      for (const lesson of lessonsById.values()) {
+      for (const lesson of lessonRepository.listAll()) {
         const releaseTime = new Date(lesson.releaseAt).getTime();
         const expiresTime = lesson.expiresAt ? new Date(lesson.expiresAt).getTime() : null;
 

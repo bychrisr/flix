@@ -1,3 +1,5 @@
+import { createInMemoryQuizRepository } from '../repositories/in-memory/quiz-repository.js';
+
 const createError = (statusCode, error, message) => {
   const err = new Error(message);
   err.statusCode = statusCode;
@@ -7,20 +9,11 @@ const createError = (statusCode, error, message) => {
 
 const defaultPassPercentage = 70;
 
-const cloneQuiz = (quiz, questions, optionsByQuestion) => ({
-  ...quiz,
-  questions: questions.map((question) => ({
-    ...question,
-    options: (optionsByQuestion.get(question.id) ?? []).map((option) => ({ ...option })),
-  })),
-});
-
-export const createQuizService = ({ eventService, lessonService }) => {
-  const quizzesById = new Map();
-  const quizIdByLessonId = new Map();
-  const questionsByQuizId = new Map();
-  const optionsByQuestionId = new Map();
-
+export const createQuizService = ({
+  eventService,
+  lessonService,
+  quizRepository = createInMemoryQuizRepository(),
+}) => {
   const assertLessonContext = (eventId, lessonId) => {
     const event = eventService.getEventById(eventId);
     if (!event) {
@@ -60,87 +53,72 @@ export const createQuizService = ({ eventService, lessonService }) => {
     });
   };
 
-  const createQuestionAndOptions = (quizId, payloadQuestions, now) => {
-    const questions = payloadQuestions.map((question, questionIdx) => {
-      const questionId = crypto.randomUUID();
-      const normalizedQuestion = {
+  const toQuizAggregate = ({
+    quizId = crypto.randomUUID(),
+    eventId,
+    lessonId,
+    title,
+    passPercentage,
+    questions,
+    createdAt,
+    updatedAt,
+  }) => ({
+    id: quizId,
+    eventId,
+    lessonId,
+    title: title.trim(),
+    passPercentage: passPercentage ?? defaultPassPercentage,
+    createdAt,
+    updatedAt,
+    questions: questions.map((question, questionIdx) => {
+      const questionId = question.id ?? crypto.randomUUID();
+      return {
         id: questionId,
-        quizId,
         prompt: question.prompt.trim(),
         order: question.order ?? questionIdx + 1,
-        createdAt: now,
-        updatedAt: now,
+        options: question.options.map((option) => ({
+          id: option.id ?? crypto.randomUUID(),
+          text: option.text.trim(),
+          isCorrect: Boolean(option.isCorrect),
+        })),
       };
-
-      const options = question.options.map((option) => ({
-        id: crypto.randomUUID(),
-        questionId,
-        text: option.text.trim(),
-        isCorrect: Boolean(option.isCorrect),
-        createdAt: now,
-        updatedAt: now,
-      }));
-
-      optionsByQuestionId.set(questionId, options);
-      return normalizedQuestion;
-    });
-
-    questionsByQuizId.set(quizId, questions);
-  };
-
-  const deleteQuestionGraph = (quizId) => {
-    const questions = questionsByQuizId.get(quizId) ?? [];
-    questions.forEach((question) => {
-      optionsByQuestionId.delete(question.id);
-    });
-    questionsByQuizId.delete(quizId);
-  };
+    }),
+  });
 
   const getQuizForAdmin = (quizId) => {
-    const quiz = quizzesById.get(quizId);
+    const quiz = quizRepository.findById(quizId);
     if (!quiz) {
       throw createError(404, 'QUIZ_NOT_FOUND', 'Quiz not found');
     }
-
-    const questions = questionsByQuizId.get(quizId) ?? [];
-    return cloneQuiz(quiz, questions, optionsByQuestionId);
+    return quiz;
   };
 
-  const getQuizByLesson = (lessonId) => {
-    const quizId = quizIdByLessonId.get(lessonId);
-    if (!quizId) {
-      return null;
-    }
-    return getQuizForAdmin(quizId);
-  };
+  const getQuizByLesson = (lessonId) => quizRepository.findByLessonId(lessonId);
 
   const createQuiz = ({ eventId, lessonId, title, passPercentage, questions }) => {
     assertLessonContext(eventId, lessonId);
     assertQuizPayload({ questions });
 
-    if (quizIdByLessonId.has(lessonId)) {
+    if (quizRepository.findByLessonId(lessonId)) {
       throw createError(409, 'QUIZ_LESSON_CONFLICT', 'Lesson already has a quiz');
     }
 
     const now = new Date().toISOString();
-    const quiz = {
-      id: crypto.randomUUID(),
+    const quiz = toQuizAggregate({
       eventId,
       lessonId,
-      title: title.trim(),
-      passPercentage: passPercentage ?? defaultPassPercentage,
+      title,
+      passPercentage,
+      questions,
       createdAt: now,
       updatedAt: now,
-    };
+    });
 
-    quizzesById.set(quiz.id, quiz);
-    quizIdByLessonId.set(lessonId, quiz.id);
-    createQuestionAndOptions(quiz.id, questions, now);
-    return getQuizForAdmin(quiz.id);
+    return quizRepository.insert(quiz);
   };
 
   const updateQuiz = (quizId, payload) => {
-    const existing = quizzesById.get(quizId);
+    const existing = quizRepository.findById(quizId);
     if (!existing) {
       throw createError(404, 'QUIZ_NOT_FOUND', 'Quiz not found');
     }
@@ -148,28 +126,26 @@ export const createQuizService = ({ eventService, lessonService }) => {
     assertLessonContext(existing.eventId, existing.lessonId);
     assertQuizPayload(payload);
 
-    const next = {
-      ...existing,
-      title: payload.title.trim(),
+    const updatedAt = new Date().toISOString();
+    const next = toQuizAggregate({
+      quizId: existing.id,
+      eventId: existing.eventId,
+      lessonId: existing.lessonId,
+      title: payload.title,
       passPercentage: payload.passPercentage ?? existing.passPercentage,
-      updatedAt: new Date().toISOString(),
-    };
+      questions: payload.questions,
+      createdAt: existing.createdAt,
+      updatedAt,
+    });
 
-    quizzesById.set(quizId, next);
-    deleteQuestionGraph(quizId);
-    createQuestionAndOptions(quizId, payload.questions, next.updatedAt);
-    return getQuizForAdmin(quizId);
+    return quizRepository.update(quizId, next);
   };
 
   const deleteQuiz = (quizId) => {
-    const quiz = quizzesById.get(quizId);
-    if (!quiz) {
+    const deleted = quizRepository.deleteById(quizId);
+    if (!deleted) {
       throw createError(404, 'QUIZ_NOT_FOUND', 'Quiz not found');
     }
-
-    quizzesById.delete(quizId);
-    quizIdByLessonId.delete(quiz.lessonId);
-    deleteQuestionGraph(quizId);
   };
 
   const getQuizForLearner = (quizId) => {
@@ -204,7 +180,7 @@ export const createQuizService = ({ eventService, lessonService }) => {
     });
 
     let correctAnswers = 0;
-    const questions = quiz.questions
+    const questionResults = quiz.questions
       .slice()
       .sort((a, b) => a.order - b.order)
       .map((question) => {
@@ -248,7 +224,7 @@ export const createQuizService = ({ eventService, lessonService }) => {
       passPercentage: quiz.passPercentage,
       status: passed ? 'passed' : 'failed',
       passed,
-      answers: questions,
+      answers: questionResults,
       submittedAt: new Date().toISOString(),
     };
   };
