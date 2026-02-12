@@ -25,6 +25,8 @@ const defaultEventForm = {
   title: '',
   slug: '',
   description: '',
+  shortDescription: '',
+  longDescription: '',
   isActive: false,
   visibility: 'private',
   accessKey: '',
@@ -47,6 +49,7 @@ const defaultBrandingRequest = {
 
 const defaultLessonForm = {
   title: '',
+  description: '',
   slug: '',
   videoProvider: 'youtube',
   videoId: '',
@@ -81,7 +84,9 @@ const formatError = (error) => {
 const buildEventUpdatePayload = (form) => ({
   title: form.title,
   slug: form.slug,
-  description: form.description,
+  description: form.shortDescription || form.description,
+  shortDescription: form.shortDescription || form.description,
+  longDescription: form.longDescription || form.description,
   isActive: form.isActive,
   visibility: form.visibility,
   accessKey: form.accessKey ? form.accessKey : null,
@@ -155,11 +160,13 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     [lessons, selectedLessonId],
   );
 
-  const mapEventToForm = (item) => ({
-    title: item.title ?? '',
-    slug: item.slug ?? '',
-    description: item.description ?? '',
-    isActive: Boolean(item.isActive),
+const mapEventToForm = (item) => ({
+  title: item.title ?? '',
+  slug: item.slug ?? '',
+  description: item.description ?? '',
+  shortDescription: item.shortDescription ?? item.description ?? '',
+  longDescription: item.longDescription ?? item.description ?? '',
+  isActive: Boolean(item.isActive),
     visibility: item.visibility ?? 'private',
     accessKey: item.accessKey ?? '',
     heroTitle: item.hero?.title ?? '',
@@ -303,7 +310,9 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
       await createEvent(token, {
         title: eventForm.title,
         slug: eventForm.slug,
-        description: eventForm.description,
+        description: eventForm.shortDescription || eventForm.description,
+        shortDescription: eventForm.shortDescription || eventForm.description,
+        longDescription: eventForm.longDescription || eventForm.description,
         isActive: eventForm.isActive,
         visibility: eventForm.visibility,
         accessKey: eventForm.accessKey || undefined,
@@ -508,6 +517,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     try {
       await createLesson(token, selectedEventId, {
         title: lessonForm.title,
+        description: lessonForm.description || undefined,
         slug: lessonForm.slug,
         videoProvider: lessonForm.videoProvider,
         videoId: lessonForm.videoId || undefined,
@@ -539,6 +549,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
 
     setLessonForm({
       title: selectedLesson.title ?? '',
+      description: selectedLesson.description ?? '',
       slug: selectedLesson.slug ?? '',
       videoProvider: selectedLesson.videoProvider ?? 'youtube',
       videoId: selectedLesson.videoId ?? '',
@@ -560,6 +571,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     try {
       await updateLesson(token, selectedEventId, selectedLessonId, {
         title: lessonForm.title,
+        description: lessonForm.description,
         slug: lessonForm.slug,
         videoProvider: lessonForm.videoProvider,
         videoId: lessonForm.videoId,
@@ -830,6 +842,16 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               value={eventForm.description}
               onChange={(event) => setEventForm({ ...eventForm, description: event.target.value })}
             />
+            <textarea
+              placeholder="Short description (Hero)"
+              value={eventForm.shortDescription}
+              onChange={(event) => setEventForm({ ...eventForm, shortDescription: event.target.value })}
+            />
+            <textarea
+              placeholder="Long description"
+              value={eventForm.longDescription}
+              onChange={(event) => setEventForm({ ...eventForm, longDescription: event.target.value })}
+            />
             <div className="inline-fields">
               <select
                 value={eventForm.visibility}
@@ -1097,6 +1119,11 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               value={lessonForm.slug}
               onChange={(event) => setLessonForm({ ...lessonForm, slug: event.target.value })}
               required
+            />
+            <textarea
+              placeholder="Short lesson description"
+              value={lessonForm.description}
+              onChange={(event) => setLessonForm({ ...lessonForm, description: event.target.value })}
             />
             <div className="inline-fields">
               <select
