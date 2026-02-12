@@ -20,7 +20,7 @@ const mockSeedData = {
       heroTitle: 'Bem-vindo ao Flix',
       heroSubtitle: 'Aprenda em trilhas curtas com checkpoints praticos.',
       heroCtaText: 'Comecar',
-      highlightVideoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      highlightVideoUrl: 'https://www.youtube.com/watch?v=BKZ_Bkl324Y&t=25s',
       backgroundColor: '#0f172a',
       textColor: '#f8fafc',
       accentColor: '#22d3ee',
