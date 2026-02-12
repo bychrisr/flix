@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../auth/AuthContext.jsx';
 import {
   createEvent,
+  generateEventBranding,
   createLesson,
   createMaterials,
   createQuiz,
@@ -31,6 +32,14 @@ const defaultEventForm = {
   backgroundColor: '#111111',
   textColor: '#f5f5f5',
   accentColor: '#e50914',
+  logoUrl: '',
+};
+
+const defaultBrandingRequest = {
+  prompt: '',
+  styleHint: '',
+  provider: 'gemini',
+  fallbackOnError: true,
 };
 
 const defaultLessonForm = {
@@ -66,6 +75,26 @@ const formatError = (error) => {
   return error.message || 'Unexpected error';
 };
 
+const buildEventUpdatePayload = (form) => ({
+  title: form.title,
+  slug: form.slug,
+  description: form.description,
+  isActive: form.isActive,
+  visibility: form.visibility,
+  accessKey: form.accessKey ? form.accessKey : null,
+  hero: {
+    title: form.heroTitle,
+    subtitle: form.heroSubtitle,
+    ctaText: form.heroCtaText,
+  },
+  visualStyle: {
+    backgroundColor: form.backgroundColor,
+    textColor: form.textColor,
+    accentColor: form.accentColor,
+  },
+  logoUrl: form.logoUrl ? form.logoUrl : null,
+});
+
 export const DashboardPage = () => {
   const { session, logout } = useAuth();
   const token = session?.accessToken;
@@ -78,6 +107,11 @@ export const DashboardPage = () => {
   const [quizPayload, setQuizPayload] = useState(null);
 
   const [eventForm, setEventForm] = useState(defaultEventForm);
+  const [brandingRequest, setBrandingRequest] = useState(defaultBrandingRequest);
+  const [brandingPreview, setBrandingPreview] = useState(null);
+  const [brandingRollback, setBrandingRollback] = useState(null);
+  const [brandingBusy, setBrandingBusy] = useState(false);
+  const [brandingError, setBrandingError] = useState('');
   const [lessonForm, setLessonForm] = useState(defaultLessonForm);
   const [materialForm, setMaterialForm] = useState(defaultMaterialForm);
   const [quizForm, setQuizForm] = useState(defaultQuizForm);
@@ -95,9 +129,37 @@ export const DashboardPage = () => {
     [lessons, selectedLessonId],
   );
 
+  const mapEventToForm = (item) => ({
+    title: item.title ?? '',
+    slug: item.slug ?? '',
+    description: item.description ?? '',
+    isActive: Boolean(item.isActive),
+    visibility: item.visibility ?? 'private',
+    accessKey: item.accessKey ?? '',
+    heroTitle: item.hero?.title ?? '',
+    heroSubtitle: item.hero?.subtitle ?? '',
+    heroCtaText: item.hero?.ctaText ?? '',
+    backgroundColor: item.visualStyle?.backgroundColor ?? '#111111',
+    textColor: item.visualStyle?.textColor ?? '#f5f5f5',
+    accentColor: item.visualStyle?.accentColor ?? '#e50914',
+    logoUrl: item.logoUrl ?? '',
+  });
+
+  const mapBrandingAssetsToForm = (baseForm, assets) => ({
+    ...baseForm,
+    heroTitle: assets?.hero?.title ?? baseForm.heroTitle,
+    heroSubtitle: assets?.hero?.subtitle ?? baseForm.heroSubtitle,
+    heroCtaText: assets?.hero?.ctaText ?? baseForm.heroCtaText,
+    backgroundColor: assets?.visualStyle?.backgroundColor ?? baseForm.backgroundColor,
+    textColor: assets?.visualStyle?.textColor ?? baseForm.textColor,
+    accentColor: assets?.visualStyle?.accentColor ?? baseForm.accentColor,
+    logoUrl: assets?.logoUrl ?? baseForm.logoUrl,
+  });
+
   const resetFeedback = () => {
     setError('');
     setStatus('');
+    setBrandingError('');
   };
 
   const handleAuthError = (caughtError) => {
@@ -176,6 +238,12 @@ export const DashboardPage = () => {
   }, [selectedEventId]);
 
   useEffect(() => {
+    setBrandingPreview(null);
+    setBrandingRollback(null);
+    setBrandingError('');
+  }, [selectedEventId]);
+
+  useEffect(() => {
     fetchMaterials(selectedEventId, selectedLessonId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEventId, selectedLessonId]);
@@ -202,6 +270,7 @@ export const DashboardPage = () => {
           textColor: eventForm.textColor,
           accentColor: eventForm.accentColor,
         },
+        logoUrl: eventForm.logoUrl || undefined,
       });
       setStatus('Event created successfully.');
       await fetchEvents();
@@ -218,20 +287,7 @@ export const DashboardPage = () => {
       return;
     }
 
-    setEventForm({
-      title: selectedEvent.title ?? '',
-      slug: selectedEvent.slug ?? '',
-      description: selectedEvent.description ?? '',
-      isActive: Boolean(selectedEvent.isActive),
-      visibility: selectedEvent.visibility ?? 'private',
-      accessKey: selectedEvent.accessKey ?? '',
-      heroTitle: selectedEvent.hero?.title ?? '',
-      heroSubtitle: selectedEvent.hero?.subtitle ?? '',
-      heroCtaText: selectedEvent.hero?.ctaText ?? '',
-      backgroundColor: selectedEvent.visualStyle?.backgroundColor ?? '#111111',
-      textColor: selectedEvent.visualStyle?.textColor ?? '#f5f5f5',
-      accentColor: selectedEvent.visualStyle?.accentColor ?? '#e50914',
-    });
+    setEventForm(mapEventToForm(selectedEvent));
 
     setStatus('Event loaded into form. Update to apply branding/content changes.');
   };
@@ -245,24 +301,7 @@ export const DashboardPage = () => {
     resetFeedback();
 
     try {
-      await updateEvent(token, selectedEventId, {
-        title: eventForm.title,
-        slug: eventForm.slug,
-        description: eventForm.description,
-        isActive: eventForm.isActive,
-        visibility: eventForm.visibility,
-        accessKey: eventForm.accessKey ? eventForm.accessKey : null,
-        hero: {
-          title: eventForm.heroTitle,
-          subtitle: eventForm.heroSubtitle,
-          ctaText: eventForm.heroCtaText,
-        },
-        visualStyle: {
-          backgroundColor: eventForm.backgroundColor,
-          textColor: eventForm.textColor,
-          accentColor: eventForm.accentColor,
-        },
-      });
+      await updateEvent(token, selectedEventId, buildEventUpdatePayload(eventForm));
 
       setStatus('Event updated successfully.');
       await fetchEvents();
@@ -292,6 +331,119 @@ export const DashboardPage = () => {
     } catch (caughtError) {
       if (!handleAuthError(caughtError)) {
         setError(`Event delete failed: ${formatError(caughtError)}`);
+      }
+    }
+  };
+
+  const handleGenerateBranding = async () => {
+    if (!selectedEventId) {
+      setBrandingError('Select an event before generating branding.');
+      return;
+    }
+    if (brandingRequest.prompt.trim().length < 8) {
+      setBrandingError('Prompt must have at least 8 characters.');
+      return;
+    }
+
+    resetFeedback();
+    setBrandingBusy(true);
+    setBrandingError('');
+
+    try {
+      const rollback = {
+        hero: selectedEvent?.hero ?? {
+          title: eventForm.heroTitle,
+          subtitle: eventForm.heroSubtitle,
+          ctaText: eventForm.heroCtaText,
+        },
+        visualStyle: selectedEvent?.visualStyle ?? {
+          backgroundColor: eventForm.backgroundColor,
+          textColor: eventForm.textColor,
+          accentColor: eventForm.accentColor,
+        },
+        logoUrl: selectedEvent?.logoUrl ?? eventForm.logoUrl ?? null,
+      };
+
+      const body = await generateEventBranding(token, selectedEventId, {
+        prompt: brandingRequest.prompt,
+        styleHint: brandingRequest.styleHint || undefined,
+        provider: brandingRequest.provider,
+        fallbackOnError: brandingRequest.fallbackOnError,
+      });
+      setBrandingPreview(body.item);
+      setBrandingRollback(rollback);
+      setStatus(
+        body.item.strategy === 'fallback'
+          ? 'Branding generated with fallback strategy. Review before applying.'
+          : 'Branding generated. Review preview and accept or reject.',
+      );
+    } catch (caughtError) {
+      if (!handleAuthError(caughtError)) {
+        setBrandingError(`Branding generation failed: ${formatError(caughtError)}`);
+      }
+    } finally {
+      setBrandingBusy(false);
+    }
+  };
+
+  const handleAcceptBrandingPreview = async ({ persist } = { persist: false }) => {
+    if (!brandingPreview?.assets) {
+      return;
+    }
+
+    const mergedForm = mapBrandingAssetsToForm(eventForm, brandingPreview.assets);
+    setEventForm(mergedForm);
+
+    if (!persist) {
+      setStatus('Branding preview accepted in form. Click "Update selected" to persist.');
+      return;
+    }
+
+    try {
+      await updateEvent(token, selectedEventId, buildEventUpdatePayload(mergedForm));
+      await fetchEvents();
+      setBrandingPreview(null);
+      setBrandingRollback(null);
+      setStatus('Branding preview accepted and saved.');
+    } catch (caughtError) {
+      if (!handleAuthError(caughtError)) {
+        setBrandingError(`Branding save failed: ${formatError(caughtError)}`);
+      }
+    }
+  };
+
+  const handleRejectBrandingPreview = async () => {
+    if (!brandingRollback || !selectedEventId) {
+      setBrandingPreview(null);
+      setStatus('Branding preview discarded.');
+      return;
+    }
+
+    try {
+      await updateEvent(token, selectedEventId, {
+        hero: brandingRollback.hero,
+        visualStyle: brandingRollback.visualStyle,
+        logoUrl: brandingRollback.logoUrl,
+      });
+      await fetchEvents();
+      if (selectedEvent) {
+        setEventForm((current) => ({
+          ...current,
+          heroTitle: brandingRollback.hero?.title ?? current.heroTitle,
+          heroSubtitle: brandingRollback.hero?.subtitle ?? current.heroSubtitle,
+          heroCtaText: brandingRollback.hero?.ctaText ?? current.heroCtaText,
+          backgroundColor: brandingRollback.visualStyle?.backgroundColor ?? current.backgroundColor,
+          textColor: brandingRollback.visualStyle?.textColor ?? current.textColor,
+          accentColor: brandingRollback.visualStyle?.accentColor ?? current.accentColor,
+          logoUrl: brandingRollback.logoUrl ?? '',
+        }));
+      }
+      setBrandingPreview(null);
+      setBrandingRollback(null);
+      setStatus('Branding preview rejected and previous branding restored.');
+    } catch (caughtError) {
+      if (!handleAuthError(caughtError)) {
+        setBrandingError(`Branding rollback failed: ${formatError(caughtError)}`);
       }
     }
   };
@@ -665,6 +817,106 @@ export const DashboardPage = () => {
                 />
               </label>
             </div>
+            <input
+              placeholder="Logo URL (optional)"
+              value={eventForm.logoUrl}
+              onChange={(event) => setEventForm({ ...eventForm, logoUrl: event.target.value })}
+            />
+
+            <h3>AI Branding Generation</h3>
+            <textarea
+              placeholder="Prompt for AI branding generation"
+              value={brandingRequest.prompt}
+              onChange={(event) =>
+                setBrandingRequest({ ...brandingRequest, prompt: event.target.value })
+              }
+            />
+            <div className="inline-fields">
+              <input
+                placeholder="Style hint (optional)"
+                value={brandingRequest.styleHint}
+                onChange={(event) =>
+                  setBrandingRequest({ ...brandingRequest, styleHint: event.target.value })
+                }
+              />
+              <select
+                value={brandingRequest.provider}
+                onChange={(event) =>
+                  setBrandingRequest({ ...brandingRequest, provider: event.target.value })
+                }
+              >
+                <option value="gemini">gemini</option>
+              </select>
+              <label className="inline-check">
+                <input
+                  type="checkbox"
+                  checked={brandingRequest.fallbackOnError}
+                  onChange={(event) =>
+                    setBrandingRequest({
+                      ...brandingRequest,
+                      fallbackOnError: event.target.checked,
+                    })
+                  }
+                />
+                Fallback on error
+              </label>
+            </div>
+            <div className="inline-actions">
+              <button type="button" onClick={handleGenerateBranding} disabled={brandingBusy}>
+                {brandingBusy ? 'Generating...' : 'Generate branding'}
+              </button>
+              {brandingError ? (
+                <button type="button" onClick={handleGenerateBranding} disabled={brandingBusy}>
+                  Retry generation
+                </button>
+              ) : null}
+            </div>
+            {brandingError ? <p className="feedback-error">{brandingError}</p> : null}
+            {brandingPreview ? (
+              <div className="branding-preview">
+                <p>
+                  Preview strategy: <strong>{brandingPreview.strategy}</strong> (
+                  {brandingPreview.provider})
+                </p>
+                <p>
+                  Hero: <strong>{brandingPreview.assets.hero.title}</strong> -{' '}
+                  {brandingPreview.assets.hero.subtitle}
+                </p>
+                <p>
+                  Colors:
+                  <span
+                    className="swatch"
+                    style={{ backgroundColor: brandingPreview.assets.visualStyle.backgroundColor }}
+                  />
+                  <span
+                    className="swatch"
+                    style={{ backgroundColor: brandingPreview.assets.visualStyle.textColor }}
+                  />
+                  <span
+                    className="swatch"
+                    style={{ backgroundColor: brandingPreview.assets.visualStyle.accentColor }}
+                  />
+                </p>
+                {brandingPreview.assets.logoUrl ? (
+                  <p>
+                    Logo: <a href={brandingPreview.assets.logoUrl}>{brandingPreview.assets.logoUrl}</a>
+                  </p>
+                ) : null}
+                <div className="inline-actions">
+                  <button type="button" onClick={() => handleAcceptBrandingPreview({ persist: false })}>
+                    Accept preview
+                  </button>
+                  <button type="button" onClick={() => handleAcceptBrandingPreview({ persist: true })}>
+                    Accept + save
+                  </button>
+                  <button type="button" className="danger" onClick={handleRejectBrandingPreview}>
+                    Reject preview
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="muted">No branding preview generated yet.</p>
+            )}
 
             <div className="inline-actions">
               <button type="submit">Create event</button>

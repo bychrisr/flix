@@ -203,6 +203,35 @@ button.danger {
   padding: 0.65rem;
 }
 
+.branding-preview {
+  border: 1px dashed #60a5fa;
+  background: #eff6ff;
+  border-radius: 10px;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.branding-preview p {
+  margin: 0;
+}
+
+.swatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  margin-left: 0.45rem;
+  vertical-align: middle;
+}
+
+.muted {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 code {
   font-family: "JetBrains Mono", monospace;
 }
