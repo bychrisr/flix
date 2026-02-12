@@ -6,4 +6,5 @@ export * from './HomeHero';
 export * from './HomePageHeader';
 export * from './LandingPageHeader';
 export * from './LessonRail';
+export * from './HeroMobile';
 export * from './PlaybackPanel';

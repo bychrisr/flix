@@ -104,6 +104,22 @@ export const componentSizes = {
     ratingDockBottom: '322px',
     ratingDockHeight: '42px',
   },
+  heroMobile: {
+    height: '481px',
+    contentLeft: '48px',
+    contentRight: '48px',
+    contentBottom: '64px',
+    titleMaxWidth: '420px',
+    titleSize: '57px',
+    titleLineHeight: '0.9',
+    previewTop: '206px',
+    previewWidth: '340px',
+    previewHeight: '136px',
+    closeTop: '17px',
+    closeRight: '16px',
+    closeSize: '36px',
+    muteSize: '40px',
+  },
 } as const;
 
 export const zIndex = {

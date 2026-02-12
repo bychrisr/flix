@@ -102,6 +102,10 @@ export const colors = {
       overlayBottom: '#141414',
       utilityBackground: 'rgba(51, 51, 51, 0.60)',
     },
+    heroMobile: {
+      overlayBottom: '#181818',
+      closeBackground: '#181818',
+    },
     status: {
       success: '#46d369',
       error: '#EB3942',
