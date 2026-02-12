@@ -3,10 +3,13 @@ import { requireAdmin } from '../middleware/require-admin.js';
 import { createLessonService } from '../services/lesson-service.js';
 
 const isoDatetimeSchema = z.iso.datetime();
+const videoProviderSchema = z.enum(['youtube', 'vimeo', 'gemini_stream']);
 
 const createLessonSchema = z.object({
   title: z.string().min(3),
   slug: z.string().min(3),
+  videoProvider: videoProviderSchema.optional(),
+  videoId: z.string().min(3).max(120).optional(),
   releaseAt: isoDatetimeSchema,
   expiresAt: isoDatetimeSchema.optional(),
 });
@@ -15,6 +18,8 @@ const updateLessonSchema = z
   .object({
     title: z.string().min(3).optional(),
     slug: z.string().min(3).optional(),
+    videoProvider: videoProviderSchema.optional(),
+    videoId: z.string().min(3).max(120).optional(),
     releaseAt: isoDatetimeSchema.optional(),
     expiresAt: isoDatetimeSchema.nullable().optional(),
   })

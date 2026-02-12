@@ -8,6 +8,7 @@ const createError = (statusCode, error, message) => {
 export const createLessonService = ({ eventService }) => {
   const lessonsById = new Map();
   const normalizeLessonSlug = (slug) => slug.trim().toLowerCase();
+  const normalizeVideoProvider = (provider) => provider.trim().toLowerCase();
 
   const assertEventExists = (eventId) => {
     const event = eventService.getEventById(eventId);
@@ -47,6 +48,8 @@ export const createLessonService = ({ eventService }) => {
       eventId,
       title: payload.title.trim(),
       slug: normalizeLessonSlug(payload.slug),
+      videoProvider: payload.videoProvider ? normalizeVideoProvider(payload.videoProvider) : 'youtube',
+      videoId: payload.videoId?.trim() ?? normalizeLessonSlug(payload.slug),
       releaseAt: payload.releaseAt,
       expiresAt: payload.expiresAt ?? null,
       createdAt: now,
@@ -68,6 +71,10 @@ export const createLessonService = ({ eventService }) => {
       ...lesson,
       title: payload.title?.trim() ?? lesson.title,
       slug: payload.slug ? normalizeLessonSlug(payload.slug) : lesson.slug,
+      videoProvider: payload.videoProvider
+        ? normalizeVideoProvider(payload.videoProvider)
+        : lesson.videoProvider,
+      videoId: payload.videoId?.trim() ?? lesson.videoId,
       releaseAt: payload.releaseAt ?? lesson.releaseAt,
       expiresAt: payload.expiresAt === undefined ? lesson.expiresAt : payload.expiresAt,
       updatedAt: new Date().toISOString(),
@@ -104,6 +111,16 @@ export const createLessonService = ({ eventService }) => {
         }
       }
       return null;
+    },
+    getAdjacentLessonsBySlug: (eventId, lessonSlug) => {
+      const lessons = listLessonsByEvent(eventId);
+      const idx = lessons.findIndex((lesson) => lesson.slug === normalizeLessonSlug(lessonSlug));
+      if (idx === -1) {
+        return { previous: null, next: null };
+      }
+      const previous = idx > 0 ? lessons[idx - 1] : null;
+      const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
+      return { previous, next };
     },
     resolveLessonStatus: (lesson, referenceDate = new Date()) => {
       const now = referenceDate.getTime();
