@@ -47,11 +47,10 @@ export const LearnerCatalogTemplate = ({
       backgroundImageUrl={defaultHeroBackground}
       backgroundImageAlt={heroTitle}
       headerItems={[
-        { label: 'Home', href: `/events/${eventSlug}`, active: true },
-        { label: 'TV Shows', href: '#' },
-        { label: 'Movies', href: '#' },
-        { label: 'New & Popular', href: '#' },
-        { label: 'My List', href: '#' },
+        { label: 'Início', href: `/events/${eventSlug}`, active: true },
+        { label: 'Comentários', href: '#comentarios' },
+        { label: 'Materiais de Apoio', href: '#materiais' },
+        { label: 'Quiz', href: '#quiz' },
       ]}
       brandLabel="Netflix"
       title={heroTitle}

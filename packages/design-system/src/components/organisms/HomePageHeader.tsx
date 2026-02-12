@@ -99,6 +99,10 @@ export const HomePageHeader = ({
             key={item.href}
             href={item.href}
             style={{
+              background: 'transparent',
+              border: 0,
+              borderRadius: 0,
+              padding: 0,
               color: item.active ? 'var(--fx-color-text-primary)' : 'var(--fx-color-text-secondary)',
               textDecoration: 'none',
               fontFamily: 'var(--fx-font-sans)',
