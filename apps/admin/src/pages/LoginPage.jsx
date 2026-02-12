@@ -52,7 +52,7 @@ export const LoginPage = () => {
             onSubmit={submitLogin}
             title="Sign In"
             submitLabel={submitting ? 'Signing in...' : 'Sign In'}
-            signUpPrefix="New to Netflix?"
+            signUpPrefix="New to Flix?"
             signUpLabel="Sign up now."
             recaptchaCopy="This page is protected by Google reCAPTCHA to ensure you're not a bot."
             controlWidth="100%"

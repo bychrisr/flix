@@ -93,7 +93,7 @@ export const SignInCompletePattern = ({
   useCodeLabel = 'Use a Sign-In Code',
   forgotPasswordLabel = 'Forgot Password?',
   rememberMeLabel = 'Remember me',
-  signUpPrefix = 'New to Netflix?',
+  signUpPrefix = 'New to Flix?',
   signUpLabel = 'Sign up now.',
   recaptchaCopy = "This page is protected by Google reCAPTCHA to ensure you're not a bot.",
   learnMoreLabel = 'Learn more.',
@@ -102,7 +102,7 @@ export const SignInCompletePattern = ({
   style,
 }: SignInCompletePatternProps): ReactNode => (
   <section style={{ ...layoutStyle, ...style }}>
-    <Text as="h2" variant="medium-title1" style={{ marginBottom: 'var(--fx-space-4)' }}>
+    <Text as="h2" variant="medium-title1" style={{ marginBottom: 'var(--fx-space-6)' }}>
       {title}
     </Text>
 
@@ -130,7 +130,7 @@ export const SignInCompletePattern = ({
       {submitLabel}
     </Button>
 
-    <Text as="span" variant="medium-headline2" style={{ ...controlWidthStyle, width: controlWidth, textAlign: 'center' }}>
+    <Text as="span" variant="regular-headline1" style={{ ...controlWidthStyle, width: controlWidth, textAlign: 'center' }}>
       OR
     </Text>
 
@@ -143,11 +143,21 @@ export const SignInCompletePattern = ({
       {useCodeLabel}
     </Button>
 
-    <button type="button" onClick={onForgotPassword} style={{ ...linkButtonStyle, ...controlWidthStyle, width: controlWidth, textAlign: 'center', color: 'var(--fx-color-text-primary)' }}>
+    <button
+      type="button"
+      onClick={onForgotPassword}
+      style={{
+        ...linkButtonStyle,
+        ...controlWidthStyle,
+        width: controlWidth,
+        textAlign: 'center',
+        color: 'var(--fx-color-text-primary)',
+      }}
+    >
       {forgotPasswordLabel}
     </button>
 
-    <div style={rowStyle}>
+    <div style={{ ...rowStyle, marginTop: 'var(--fx-space-2)' }}>
       <button
         type="button"
         role="checkbox"
@@ -162,12 +172,12 @@ export const SignInCompletePattern = ({
           </svg>
         ) : null}
       </button>
-      <Text as="span" variant="medium-headline2">
+      <Text as="span" variant="regular-headline1">
         {rememberMeLabel}
       </Text>
     </div>
 
-    <Text as="p" variant="medium-headline2" tone="secondary" style={controlWidthStyle}>
+    <Text as="p" variant="regular-headline1" tone="secondary" style={controlWidthStyle}>
       {signUpPrefix}{' '}
       <button type="button" onClick={onSignUp} style={{ ...linkButtonStyle, color: 'var(--fx-color-text-primary)', fontWeight: 'var(--fx-font-weight-bold)' }}>
         {signUpLabel}
