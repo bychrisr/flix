@@ -9,6 +9,18 @@ export const iconAssets = {
   cross: new URL('./Cross.svg', import.meta.url).href,
   facebook: new URL('./Facebook.svg', import.meta.url).href,
   flag: new URL('./Flag.svg', import.meta.url).href,
+  heroBannerPreviewMuteDefault: new URL('./hero-banner-preview/HeroBannerPreviewMuteDefault.svg', import.meta.url).href,
+  heroBannerPreviewMuteHover: new URL('./hero-banner-preview/HeroBannerPreviewMuteHover.svg', import.meta.url).href,
+  heroBannerPreviewRepeatArrowDefault: new URL(
+    './hero-banner-preview/HeroBannerPreviewRepeatArrowDefault.svg',
+    import.meta.url,
+  ).href,
+  heroBannerPreviewRepeatArrowHover: new URL(
+    './hero-banner-preview/HeroBannerPreviewRepeatArrowHover.svg',
+    import.meta.url,
+  ).href,
+  heroBannerPreviewSoundDefault: new URL('./hero-banner-preview/HeroBannerPreviewSoundDefault.svg', import.meta.url).href,
+  heroBannerPreviewSoundHover: new URL('./hero-banner-preview/HeroBannerPreviewSoundHover.svg', import.meta.url).href,
   info: new URL('./Info.svg', import.meta.url).href,
   instagram: new URL('./Instagram.svg', import.meta.url).href,
   notification: new URL('./Notification.svg', import.meta.url).href,
@@ -120,5 +132,30 @@ export const getMoviePreviewIconSetAsset = (
   state: IconSetState,
 ): string => {
   const set = moviePreviewIconSets[setName] as Partial<Record<IconSetState, string>> & { default: string };
+  return set[state] ?? set.default;
+};
+
+export const heroBannerPreviewIconSets = {
+  mute: {
+    default: iconAssets.heroBannerPreviewMuteDefault,
+    hover: iconAssets.heroBannerPreviewMuteHover,
+  },
+  repeatArrow: {
+    default: iconAssets.heroBannerPreviewRepeatArrowDefault,
+    hover: iconAssets.heroBannerPreviewRepeatArrowHover,
+  },
+  sound: {
+    default: iconAssets.heroBannerPreviewSoundDefault,
+    hover: iconAssets.heroBannerPreviewSoundHover,
+  },
+} as const;
+
+export type HeroBannerPreviewIconSetName = keyof typeof heroBannerPreviewIconSets;
+
+export const getHeroBannerPreviewIconSetAsset = (
+  setName: HeroBannerPreviewIconSetName,
+  state: IconSetState,
+): string => {
+  const set = heroBannerPreviewIconSets[setName] as Partial<Record<IconSetState, string>> & { default: string };
   return set[state] ?? set.default;
 };
