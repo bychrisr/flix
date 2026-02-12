@@ -12,7 +12,11 @@ test('admin happy path smoke: login and create event', async ({ page }) => {
   const randomSuffix = `${Date.now()}`;
   await page.getByPlaceholder('Event title').fill(`E2E Event ${randomSuffix}`);
   await page.getByRole('textbox', { name: 'Slug', exact: true }).fill(`e2e-event-${randomSuffix}`);
-  await page.getByPlaceholder('Description').fill('Smoke test event created via browser runtime');
+  await page
+    .getByPlaceholder('Description', { exact: true })
+    .fill('Smoke test event created via browser runtime');
+  await page.getByPlaceholder('Short description (Hero)').fill('Short hero copy for smoke validation');
+  await page.getByPlaceholder('Long description').fill('Long description for smoke validation');
   await page.getByPlaceholder('Hero title').fill(`Hero ${randomSuffix}`);
   await page.getByPlaceholder('Hero subtitle').fill('Subtitle for smoke validation');
   await page.getByPlaceholder('Hero CTA text').fill('Start now');
