@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import { AccessKeyForm } from '../molecules/AccessKeyForm';
 import { Card } from '../atoms/Card';
 import { Text } from '../atoms/Text';
-import { HomeHero } from '../organisms/HomeHero';
+import { HeroBanner } from '../organisms/HeroBanner';
+import { HomePageHeader } from '../organisms/HomePageHeader';
 import { LessonRail } from '../organisms/LessonRail';
 
 type LessonItem = {
@@ -19,6 +20,8 @@ type LearnerCatalogTemplateProps = {
   onLoad: () => void;
   loading?: boolean;
   eventVisibility?: 'public' | 'private';
+  eventTitle?: string;
+  eventDescription?: string;
   heroTitle: string;
   heroDescription?: string;
   heroCtaLabel?: string;
@@ -36,6 +39,8 @@ export const LearnerCatalogTemplate = ({
   onLoad,
   loading,
   eventVisibility = 'public',
+  eventTitle = '',
+  eventDescription = '',
   heroTitle,
   heroDescription,
   heroCtaLabel = 'Load catalog',
@@ -43,28 +48,21 @@ export const LearnerCatalogTemplate = ({
   gatedItems,
 }: LearnerCatalogTemplateProps) => (
   <main style={{ width: '100%', display: 'grid', gap: 'var(--fx-space-6)' }}>
-    <HomeHero
-      backgroundImageUrl={defaultHeroBackground}
-      backgroundImageAlt={heroTitle}
-      headerItems={[
+    <header style={{ width: '100%', background: 'var(--fx-color-bg-primary)' }}>
+      <HomePageHeader
+        items={[
         { label: 'Início', href: `/events/${eventSlug}`, active: true },
         { label: 'Comentários', href: '#comentarios' },
         { label: 'Materiais de Apoio', href: '#materiais' },
         { label: 'Quiz', href: '#quiz' },
       ]}
-      brandLabel="Netflix"
-      title={heroTitle}
-      eyebrow={eventVisibility === 'private' ? 'Private event' : 'Public event'}
-      description={heroDescription}
-      actions={{
-        primaryLabel: heroCtaLabel,
-        secondaryLabel: 'More Info',
-        onPrimaryClick: onLoad,
-      }}
-      searchControlLabel="Search"
-      notificationsControlLabel="Notifications"
-      profileControlLabel="Open profile menu"
-    />
+        brandLabel="Netflix"
+        searchControlLabel="Search"
+        notificationsControlLabel="Notifications"
+        profileControlLabel="Open profile menu"
+        style={{ maxWidth: 1320, margin: '0 auto', width: '100%' }}
+      />
+    </header>
 
     <section
       style={{
@@ -77,7 +75,30 @@ export const LearnerCatalogTemplate = ({
         boxSizing: 'border-box',
       }}
     >
-      <Card>
+      <HeroBanner
+        size="large"
+        backgroundImageUrl={defaultHeroBackground}
+        backgroundImageAlt={heroTitle}
+        badgeLabel={eventVisibility === 'private' ? 'Private event' : 'Public event'}
+        eyebrow={eventTitle || eventSlug}
+        title={heroTitle}
+        description={heroDescription}
+        supportingText={eventDescription}
+        actions={{
+          primaryLabel: heroCtaLabel,
+          secondaryLabel: 'More Info',
+          onPrimaryClick: onLoad,
+        }}
+        utilities={{
+          ratingLabel: 'TV-14',
+          muteControlLabel: 'Mute',
+          audioDescriptionControlLabel: 'Audio description',
+          replayControlLabel: 'Replay',
+        }}
+        style={{ width: '100%' }}
+      />
+
+      <Card id="materiais">
         <Text as="h1" variant="display-large">Flix</Text>
         <Text variant="regular-body" style={{ marginTop: 'var(--fx-space-2)' }}>
           Event: <code>{eventSlug}</code>
@@ -93,8 +114,12 @@ export const LearnerCatalogTemplate = ({
           submitLabel="Load catalog"
         />
       </Card>
-      <LessonRail title="Continue learning" items={releasedItems} />
-      <LessonRail title="Scheduled or restricted" items={gatedItems} />
+      <section id="comentarios">
+        <LessonRail title="Continue learning" items={releasedItems} />
+      </section>
+      <section id="quiz">
+        <LessonRail title="Scheduled or restricted" items={gatedItems} />
+      </section>
     </section>
   </main>
 );

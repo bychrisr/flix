@@ -80,6 +80,8 @@ export const CatalogPage = () => {
         onLoad={loadCatalog}
         loading={loading}
         eventVisibility={catalog?.event?.visibility}
+        eventTitle={catalog?.event?.title ?? ''}
+        eventDescription={catalog?.event?.description ?? ''}
         heroTitle={catalog?.event?.hero?.title ?? catalog?.event?.title ?? 'Flix'}
         heroDescription={catalog?.event?.hero?.subtitle ?? catalog?.event?.description ?? ''}
         heroCtaLabel={catalog?.event?.hero?.ctaText ?? 'Load catalog'}
