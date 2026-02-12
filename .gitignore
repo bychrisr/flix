@@ -32,3 +32,8 @@ Thumbs.db
 
 # Local database artifacts
 services/api/.data/
+.data/
+
+# E2E artifacts
+playwright-report/
+test-results/

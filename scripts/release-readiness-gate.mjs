@@ -13,6 +13,17 @@ const runCheck = (name, fn) => {
 };
 
 runCheck('Admin + learner smoke test suite', () => {
+  execSync('npm run e2e:smoke:gate', { stdio: 'inherit' });
+  return 'Browser smoke suite passed';
+});
+
+runCheck('Frontend build checks', () => {
+  execSync('npm run build --workspace @flix/web', { stdio: 'pipe' });
+  execSync('npm run build --workspace @flix/admin', { stdio: 'pipe' });
+  return 'Web and admin production builds passed';
+});
+
+runCheck('API integration regression checks', () => {
   execSync('npm run test --workspace @flix/api', { stdio: 'pipe' });
   return 'API integration suite passed';
 });

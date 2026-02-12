@@ -16,8 +16,12 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "dev:web": "npm --workspace @flix/web run dev",
     "dev:admin": "npm --workspace @flix/admin run dev",
-    "dev:api": "npm --workspace @flix/api run dev"
-    ,
-    "release:readiness": "node scripts/release-readiness-gate.mjs"
+    "dev:api": "npm --workspace @flix/api run dev",
+    "release:readiness": "node scripts/release-readiness-gate.mjs",
+    "e2e:smoke": "playwright test --config e2e/playwright.config.mjs",
+    "e2e:smoke:gate": "node scripts/e2e-smoke-gate.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1"
   }
 }

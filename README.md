@@ -31,6 +31,14 @@ npm run dev:admin
 npm run dev:api
 ```
 
+## Quality Gates
+
+```bash
+npm run e2e:smoke
+npm run e2e:smoke:gate
+npm run release:readiness
+```
+
 ## Documentation
 
 - `docs/design-system-extraction.md` (what can be migrated from legacy DS)
