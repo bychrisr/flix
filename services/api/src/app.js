@@ -25,7 +25,7 @@ export const createApp = async () => {
   await registerEventRoutes(app, { eventService });
   await registerLessonRoutes(app, { eventService, lessonService });
   await registerAdminDashboardRoutes(app, { eventService, lessonService });
-  await registerPublicAccessRoutes(app, { learnerAccessService, lessonService });
+  await registerPublicAccessRoutes(app, { learnerAccessService, eventService, lessonService });
 
   return app;
 };

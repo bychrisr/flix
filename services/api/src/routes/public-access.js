@@ -34,7 +34,62 @@ const mapNavigationLesson = (lesson, lessonService) => {
   };
 };
 
-export const registerPublicAccessRoutes = async (app, { learnerAccessService, lessonService }) => {
+export const registerPublicAccessRoutes = async (
+  app,
+  { learnerAccessService, eventService, lessonService },
+) => {
+  app.post('/api/public/events/:eventSlug/catalog', async (request, reply) => {
+    const parsed = accessPayloadSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid catalog payload',
+        details: parsed.error.flatten(),
+      });
+    }
+
+    const event = eventService.getEventBySlug(request.params.eventSlug);
+    if (!event) {
+      return reply.code(404).send({ error: 'EVENT_NOT_FOUND', message: 'Event not found' });
+    }
+
+    if (event.visibility === 'private') {
+      const isValidKey =
+        Boolean(event.accessKey) && parsed.data?.eventAccessKey === event.accessKey;
+      if (!isValidKey) {
+        return reply.code(403).send({
+          error: 'EVENT_ACCESS_DENIED',
+          status: 'blocked_private',
+          message: 'Private event access is required',
+        });
+      }
+    }
+
+    const items = lessonService.listLessonsByEvent(event.id).map((lesson) => ({
+      id: lesson.id,
+      slug: lesson.slug,
+      title: lesson.title,
+      releaseAt: lesson.releaseAt,
+      expiresAt: lesson.expiresAt,
+      status: lessonService.resolveLessonStatus(lesson),
+    }));
+
+    return reply.send({
+      event: {
+        id: event.id,
+        slug: event.slug,
+        title: event.title,
+        description: event.description,
+        visibility: event.visibility,
+        hero: event.hero,
+      },
+      catalog: {
+        items,
+        isEmpty: items.length === 0,
+      },
+      serverTime: new Date().toISOString(),
+    });
+  });
   app.post(
     '/api/public/events/:eventSlug/lessons/:lessonSlug/access-check',
     async (request, reply) => {
