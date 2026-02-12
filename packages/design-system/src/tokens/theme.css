@@ -36,11 +36,13 @@
   --fx-color-bg-elevated: #181818;
   --fx-color-bg-card: #2a2a2a;
   --fx-color-bg-hover: #333333;
+  --fx-color-bg-input: rgb(0 0 0 / 50%);
   --fx-color-brand-primary: #e50914;
   --fx-color-brand-hover: #c11119;
   --fx-color-text-primary: #ffffff;
   --fx-color-text-secondary: #b3b3b3;
   --fx-color-text-tertiary: #808080;
+  --fx-color-text-placeholder: #bcbcbc;
   --fx-color-border-default: #333333;
   --fx-color-border-strong: #808080;
   --fx-color-success: #46d369;
@@ -63,9 +65,23 @@
   --fx-space-12: 48px;
 
   --fx-radius-sm: 2px;
+  --fx-radius-input: 4px;
   --fx-radius-md: 6px;
   --fx-radius-lg: 8px;
   --fx-radius-xl: 12px;
+
+  --fx-size-input-height: 55px;
+  --fx-size-input-error-icon: 16px;
+  --fx-size-border-default: 1px;
+  --fx-size-focus-ring: 2px;
+  --fx-size-pattern-get-started-input-width: 367px;
+  --fx-size-pattern-get-started-button-width: 208px;
+  --fx-size-pattern-get-started-button-height: 56px;
+  --fx-size-pattern-get-started-arrow-width: 9px;
+  --fx-size-pattern-get-started-arrow-height: 16px;
+  --fx-size-pattern-get-started-arrow-stroke: 2px;
+  --fx-size-pattern-signin-control-width: 314px;
+  --fx-size-pattern-signin-button-height: 40px;
 
   --fx-breakpoint-sm: 640px;
   --fx-breakpoint-md: 768px;
@@ -213,4 +229,9 @@
   --fx-typo-display-xlarge-line: 1;
   --fx-typo-display-xlarge-weight: 400;
   --fx-typo-display-xlarge-spacing: 0.5px;
+}
+
+[data-fx-input='true']::placeholder {
+  color: var(--fx-color-text-placeholder);
+  opacity: 1;
 }
