@@ -1,4 +1,5 @@
 export * from './AdminHeader';
+export * from './AdminPageHeader';
 export * from './AppTopNav';
 export * from './ContinueWatchingPattern';
 export * from './FaqQuestionsPattern';
