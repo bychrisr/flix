@@ -3,6 +3,21 @@ import { z } from 'zod';
 import { createEventService } from '../services/event-service.js';
 
 const visibilitySchema = z.enum(['public', 'private']);
+const hexColorSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Expected 6-digit hex color');
+const heroSchema = z
+  .object({
+    title: z.string().min(1).max(120),
+    subtitle: z.string().min(1).max(220),
+    ctaText: z.string().min(1).max(40),
+  })
+  .strict();
+const visualStyleSchema = z
+  .object({
+    backgroundColor: hexColorSchema,
+    textColor: hexColorSchema,
+    accentColor: hexColorSchema,
+  })
+  .strict();
 
 const createEventSchema = z.object({
   title: z.string().min(3),
@@ -10,6 +25,8 @@ const createEventSchema = z.object({
   description: z.string().max(500).optional(),
   isActive: z.boolean().optional(),
   visibility: visibilitySchema.optional(),
+  hero: heroSchema.optional(),
+  visualStyle: visualStyleSchema.optional(),
 });
 
 const updateEventSchema = z
@@ -19,6 +36,8 @@ const updateEventSchema = z
     description: z.string().max(500).optional(),
     isActive: z.boolean().optional(),
     visibility: visibilitySchema.optional(),
+    hero: heroSchema.optional(),
+    visualStyle: visualStyleSchema.optional(),
   })
   .refine((payload) => Object.keys(payload).length > 0, {
     message: 'At least one field must be provided',
