@@ -34,6 +34,8 @@ type HeroBannerProps = {
   badgeLabel?: string;
   actions?: HeroBannerActionConfig;
   utilities?: HeroBannerUtilityConfig;
+  titleStyle?: CSSProperties;
+  descriptionStyle?: CSSProperties;
   style?: CSSProperties;
 };
 
@@ -149,6 +151,8 @@ export const HeroBanner = ({
   badgeLabel,
   actions,
   utilities,
+  titleStyle: customTitleStyle,
+  descriptionStyle: customDescriptionStyle,
   style,
 }: HeroBannerProps): ReactNode => {
   const showContent = !imageOnlyVariants.has(size);
@@ -211,13 +215,13 @@ export const HeroBanner = ({
           ) : null}
 
           {title ? (
-            <Text as="h2" variant="bold-title2" style={{ ...titleStyle, fontSize: typeScale.titleSize }}>
+            <Text as="h2" variant="bold-title2" style={{ ...titleStyle, fontSize: typeScale.titleSize, ...customTitleStyle }}>
               {title}
             </Text>
           ) : null}
 
           {description ? (
-            <Text as="p" variant="regular-title3" style={{ ...descriptionStyle, fontSize: typeScale.descriptionSize }}>
+            <Text as="p" variant="regular-title3" style={{ ...descriptionStyle, fontSize: typeScale.descriptionSize, ...customDescriptionStyle }}>
               {description}
             </Text>
           ) : null}

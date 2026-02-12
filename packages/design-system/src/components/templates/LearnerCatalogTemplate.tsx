@@ -41,13 +41,14 @@ const defaultHeroBackground =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23131313'/%3E%3Cstop offset='55%25' stop-color='%230f1e2f'/%3E%3Cstop offset='100%25' stop-color='%23131313'/%3E%3C/linearGradient%3E%3CradialGradient id='glow' cx='0.2' cy='0.15' r='0.6'%3E%3Cstop offset='0%25' stop-color='%23e50914' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23e50914' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23bg)'/%3E%3Crect width='1600' height='900' fill='url(%23glow)'/%3E%3C/svg%3E";
 const defaultHeroVideoUrl = 'https://www.youtube.com/watch?v=M7lc1UVf-VE';
 
-const isYouTubeUrl = (url: string) => /youtu\.be|youtube\.com/i.test(url);
+const isYouTubeUrl = (url: string) => /youtu\.be|youtube(?:-nocookie)?\.com/i.test(url);
 
 const getYouTubeVideoId = (url: string) => {
   const patterns = [
     /youtu\.be\/([^?&#/]+)/i,
     /youtube\.com\/watch\?v=([^?&#/]+)/i,
     /youtube\.com\/embed\/([^?&#/]+)/i,
+    /youtube-nocookie\.com\/embed\/([^?&#/]+)/i,
     /youtube\.com\/shorts\/([^?&#/]+)/i,
   ];
 
@@ -73,12 +74,12 @@ const normalizeVideoUrl = (input: string) => {
   if (!raw) return '';
 
   if (/^[a-zA-Z0-9_-]{11}$/.test(raw)) {
-    return `https://www.youtube.com/watch?v=${raw}`;
+    return `https://www.youtube-nocookie.com/embed/${raw}`;
   }
 
   if (isYouTubeUrl(raw)) {
     const id = getYouTubeVideoId(raw);
-    if (id) return `https://www.youtube.com/watch?v=${id}`;
+    if (id) return `https://www.youtube-nocookie.com/embed/${id}`;
   }
 
   const vimeoId = getVimeoVideoId(raw);
@@ -170,6 +171,8 @@ export const LearnerCatalogTemplate = ({
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
   const currentVideoUrl = candidateVideoUrls[currentCandidateIndex] ?? '';
   const currentYouTubeVideoId = useMemo(() => getYouTubeVideoId(currentVideoUrl) ?? '', [currentVideoUrl]);
+  const resolvedHeroTitle = heroTitle || eventTitle || 'Flix';
+  const resolvedHeroDescription = heroDescription || eventDescription || undefined;
   const heroRailItems = useMemo(
     () =>
       [...releasedItems, ...gatedItems]
@@ -180,7 +183,6 @@ export const LearnerCatalogTemplate = ({
         })),
     [releasedItems, gatedItems],
   );
-
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -229,17 +231,30 @@ export const LearnerCatalogTemplate = ({
       <LoadingScreen isReady={isHeroReady} />
 
       <section
+        className="fx-catalog-hero"
         style={{
           width: '100%',
           position: 'relative',
-          minHeight: 760,
+          minHeight: '100svh',
+          height: '100svh',
           overflow: 'hidden',
           background: 'var(--fx-color-bg-primary)',
         }}
       >
         {isMounted && !hasVideoError && currentVideoUrl ? (
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-            <div style={{ width: '100%', height: '100%', transform: 'scale(1.35)', transformOrigin: 'center' }}>
+            <div
+              className="fx-catalog-hero-video-frame"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: 'max(100vw, calc(100svh * 16 / 9))',
+                height: 'max(100svh, calc(100vw * 9 / 16))',
+                transform: 'translate(-50%, -50%)',
+                transformOrigin: 'center',
+              }}
+            >
               <ReactPlayer
                 ref={playerRef}
                 key={currentVideoUrl}
@@ -308,18 +323,16 @@ export const LearnerCatalogTemplate = ({
                 }}
                 config={{
                   youtube: {
-                    playerVars: {
-                      autoplay: 1,
-                      controls: 0,
-                      disablekb: 1,
-                      modestbranding: 1,
-                      rel: 0,
-                      playsinline: 1,
-                      iv_load_policy: 3,
-                      mute: 1,
-                      loop: 1,
-                      playlist: currentYouTubeVideoId || undefined,
-                    },
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 1,
+                    modestbranding: 1,
+                    rel: 0,
+                    playsinline: 1,
+                    iv_load_policy: 3,
+                    cc_load_policy: 0,
+                    loop: 1,
+                    playlist: currentYouTubeVideoId || undefined,
                   },
                   html: {
                     poster: defaultHeroBackground,
@@ -339,11 +352,119 @@ export const LearnerCatalogTemplate = ({
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(180deg, rgb(0 0 0 / 24%) 0%, rgb(0 0 0 / 22%) 18%, rgb(0 0 0 / 82%) 100%), linear-gradient(90deg, rgb(0 0 0 / 74%) 0%, rgb(0 0 0 / 26%) 52%, rgb(0 0 0 / 48%) 100%)',
+              'linear-gradient(180deg, rgb(0 0 0 / 68%) 0%, rgb(0 0 0 / 22%) 24%, rgb(20 20 20 / 90%) 100%), linear-gradient(90deg, rgb(0 0 0 / 76%) 0%, rgb(0 0 0 / 22%) 55%, rgb(0 0 0 / 52%) 100%)',
           }}
         />
 
         <div style={{ position: 'relative', zIndex: 1, opacity: isHeroReady ? 1 : 0, transition: 'opacity 220ms ease' }}>
+          <style>
+            {`
+              .fx-catalog-hero-video-frame {
+                overflow: hidden;
+              }
+
+              .fx-catalog-hero-video-frame > div {
+                width: 100% !important;
+                height: 100% !important;
+              }
+
+              .fx-catalog-hero-content {
+                min-height: clamp(340px, calc(100svh - 300px), 620px) !important;
+              }
+
+              .fx-catalog-hero-banner {
+                bottom: clamp(108px, 15vh, 176px) !important;
+              }
+
+              .fx-catalog-rating-dock {
+                bottom: clamp(116px, 16vh, 186px) !important;
+              }
+
+              .fx-catalog-hero-rail {
+                margin-top: 0 !important;
+              }
+
+              @media (max-width: 1200px) {
+                .fx-catalog-hero-content {
+                  min-height: clamp(330px, calc(100svh - 280px), 560px) !important;
+                }
+
+                .fx-catalog-hero-banner {
+                  width: min(560px, calc(100% - 72px)) !important;
+                }
+
+                .fx-catalog-rating-dock {
+                  right: var(--fx-space-4) !important;
+                }
+              }
+
+              @media (max-width: 900px) {
+                .fx-catalog-hero {
+                  min-height: 100svh !important;
+                }
+
+                .fx-catalog-hero-content {
+                  min-height: clamp(300px, calc(100svh - 260px), 480px) !important;
+                  padding: 0 var(--fx-space-4) !important;
+                }
+
+                .fx-catalog-hero-banner {
+                  left: var(--fx-space-4) !important;
+                  width: calc(100% - 36px) !important;
+                  bottom: clamp(92px, 13vh, 118px) !important;
+                }
+
+                .fx-catalog-hero-rail {
+                  padding: 0 var(--fx-space-4) var(--fx-space-3) !important;
+                }
+
+                .fx-catalog-rating-dock {
+                  display: none;
+                }
+              }
+
+              @media (max-width: 768px) {
+                .fx-catalog-hero-content {
+                  min-height: clamp(280px, calc(100svh - 240px), 430px) !important;
+                }
+
+                .fx-catalog-hero-banner {
+                  width: calc(100% - 30px) !important;
+                }
+
+                .fx-catalog-hero-rail {
+                  padding-bottom: var(--fx-space-3) !important;
+                }
+              }
+
+              @media (max-width: 560px) {
+                .fx-catalog-hero-video-frame {
+                  width: max(100vw, calc(100dvh * 16 / 9)) !important;
+                  height: max(100dvh, calc(100vw * 9 / 16)) !important;
+                }
+
+                .fx-catalog-hero-content {
+                  min-height: clamp(250px, calc(100svh - 220px), 380px) !important;
+                  padding: 0 var(--fx-space-3) !important;
+                }
+
+                .fx-catalog-hero-banner {
+                  left: var(--fx-space-3) !important;
+                  width: calc(100% - 24px) !important;
+                  bottom: clamp(84px, 12vh, 102px) !important;
+                }
+
+                .fx-catalog-hero-rail {
+                  padding: 0 var(--fx-space-3) var(--fx-space-2) !important;
+                }
+
+                .fx-catalog-rail-title {
+                  font-size: 22px !important;
+                  line-height: 1.2 !important;
+                }
+              }
+            `}
+          </style>
           <HomePageHeader
             items={[
               { label: 'Início', href: `/events/${eventSlug}`, active: true },
@@ -355,26 +476,28 @@ export const LearnerCatalogTemplate = ({
             searchControlLabel="Search"
             notificationsControlLabel="Notifications"
             profileControlLabel="Open profile menu"
-            style={{ maxWidth: 1360, margin: '0 auto', width: '100%', paddingTop: 'var(--fx-space-3)' }}
+            style={{ maxWidth: 1320, margin: '0 auto', width: '100%' }}
           />
 
           <div
+            className="fx-catalog-hero-content"
             style={{
-              maxWidth: 1360,
+              maxWidth: 1320,
               margin: '0 auto',
               padding: '0 var(--fx-space-6)',
-              minHeight: 600,
+              minHeight: 620,
               position: 'relative',
               boxSizing: 'border-box',
             }}
           >
             <div
+              className="fx-catalog-hero-banner"
               style={{
                 position: 'absolute',
                 left: 'var(--fx-space-6)',
-                bottom: 120,
+                bottom: 162,
                 width: 620,
-                maxWidth: 'min(620px, calc(100% - 180px))',
+                maxWidth: 'min(620px, calc(100% - 120px))',
               }}
             >
               <HeroBanner
@@ -382,8 +505,22 @@ export const LearnerCatalogTemplate = ({
                 size="large"
                 badgeLabel={undefined}
                 eyebrow={eventVisibility === 'private' ? 'Private event' : 'N SERIES'}
-                title={heroTitle}
-                description={heroDescription}
+                title={resolvedHeroTitle}
+                description={resolvedHeroDescription}
+                titleStyle={{
+                  fontSize: 'clamp(30px, 5.2vw, 68px)',
+                  lineHeight: '0.92',
+                  letterSpacing: '-0.03em',
+                  maxWidth: 540,
+                  textTransform: 'uppercase',
+                  textShadow: '0 2px 18px rgb(0 0 0 / 45%)',
+                }}
+                descriptionStyle={{
+                  fontSize: 'clamp(14px, 1.9vw, 28px)',
+                  lineHeight: '1.2',
+                  maxWidth: 650,
+                  textShadow: '0 2px 10px rgb(0 0 0 / 45%)',
+                }}
                 actions={{
                   primaryLabel: heroCtaLabel || 'Play',
                   secondaryLabel: 'More Info',
@@ -393,10 +530,13 @@ export const LearnerCatalogTemplate = ({
             </div>
 
             <div
+              className="fx-catalog-rating-dock"
               style={{
                 position: 'absolute',
-                right: 'var(--fx-space-6)',
-                bottom: 132,
+                right: 0,
+                bottom: 176,
+                background: 'var(--fx-color-home-hero-utility-background)',
+                padding: 'var(--fx-space-2) 0 var(--fx-space-2) var(--fx-space-2)',
               }}
             >
               <HeroBannerRatingPattern ratingLabel="TV-14" />
@@ -405,23 +545,33 @@ export const LearnerCatalogTemplate = ({
 
           {heroRailItems.length ? (
             <div
+              className="fx-catalog-hero-rail"
               style={{
-                maxWidth: 1360,
+                maxWidth: 1320,
                 margin: '0 auto',
-                padding: '0 var(--fx-space-6) var(--fx-space-6)',
+                padding: '0 var(--fx-space-6) var(--fx-space-4)',
                 boxSizing: 'border-box',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
-              <Text as="h3" variant="bold-title3" style={{ margin: 0, marginBottom: 'var(--fx-space-3)' }}>
+              <Text
+                as="h3"
+                variant="bold-title3"
+                className="fx-catalog-rail-title"
+                style={{ margin: 0, marginBottom: 'var(--fx-space-2)', fontSize: '32px', lineHeight: '1.15' }}
+              >
                 Matched to You
               </Text>
               <div
                 style={{
                   display: 'grid',
                   gridAutoFlow: 'column',
-                  gridAutoColumns: 'var(--fx-size-pattern-movie-card-standard-width)',
-                  gap: 'var(--fx-space-2)',
+                  gridAutoColumns: 'clamp(150px, 42vw, var(--fx-size-pattern-movie-card-standard-width))',
+                  gap: '10px',
                   overflowX: 'auto',
+                  paddingBottom: 'var(--fx-space-2)',
+                  scrollbarWidth: 'none',
                 }}
               >
                 {heroRailItems.map((item) => (
@@ -430,6 +580,14 @@ export const LearnerCatalogTemplate = ({
                     imageUrl={item.imageUrl ?? buildFallbackCardImage(item.id, item.title)}
                     imageAlt={item.imageAlt ?? item.title}
                     presetIconName={item.presetIconName}
+                    presetPosition="bottom-left"
+                    titleOverlay={item.title}
+                    titleLines={2}
+                    style={{
+                      width: 'clamp(150px, 18.5vw, 218px)',
+                      height: 'auto',
+                      aspectRatio: '16 / 9',
+                    }}
                   />
                 ))}
               </div>
