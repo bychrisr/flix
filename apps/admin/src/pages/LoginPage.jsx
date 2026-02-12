@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { SignInEmailPasswordPattern } from '../../../../packages/design-system/src/components/molecules/SignInEmailPasswordPattern.tsx';
+import { SignInCompletePattern } from '../../../../packages/design-system/src/components/molecules/SignInCompletePattern.tsx';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ export const LoginPage = () => {
   const { login, isAuthenticated } = useAuth();
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('admin123');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -40,20 +41,22 @@ export const LoginPage = () => {
   return (
     <main className="auth-layout">
       <section className="auth-card" aria-label="Admin login">
-        <h1>Flix Admin</h1>
-        <p>Sign in to manage events, lessons, and operations.</p>
-
         <form onSubmit={onSubmit} className="auth-form">
-          <SignInEmailPasswordPattern
+          <SignInCompletePattern
             emailValue={username}
             passwordValue={password}
+            rememberMe={rememberMe}
             onEmailChange={setUsername}
             onPasswordChange={setPassword}
+            onRememberMeChange={setRememberMe}
             onSubmit={submitLogin}
-            emailPlaceholder="Username"
-            buttonLabel={submitting ? 'Signing in...' : 'Sign In'}
-            disabled={submitting}
+            title="Sign In"
+            submitLabel={submitting ? 'Signing in...' : 'Sign In'}
+            signUpPrefix="New to Netflix?"
+            signUpLabel="Sign up now."
+            recaptchaCopy="This page is protected by Google reCAPTCHA to ensure you're not a bot."
             controlWidth="100%"
+            submitting={submitting}
           />
           <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1}>
             Sign in

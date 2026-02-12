@@ -10,6 +10,7 @@ export * from './MoviePreviewPattern';
 export * from './PlayAddThumbUpPattern';
 export * from './PlayMoreInfoPattern';
 export * from './SignInEmailPasswordPattern';
+export * from './SignInCompletePattern';
 export * from './StatTile';
 export * from './VideoPlayerControlsPattern';
 export * from './VideoPlayerUtilitiesPattern';

@@ -43,6 +43,7 @@
   --fx-color-text-secondary: #b3b3b3;
   --fx-color-text-tertiary: #808080;
   --fx-color-text-placeholder: #bcbcbc;
+  --fx-color-link-primary: #0071eb;
   --fx-color-bg-overlay-strong: rgb(109 109 110 / 70%);
   --fx-color-border-default: #333333;
   --fx-color-border-strong: #808080;
@@ -91,6 +92,7 @@
   --fx-size-pattern-get-started-arrow-stroke: 2px;
   --fx-size-pattern-signin-control-width: 314px;
   --fx-size-pattern-signin-button-height: 40px;
+  --fx-size-pattern-signin-checkbox-size: 18px;
   --fx-size-pattern-movie-info-left-min-width: 320px;
   --fx-size-pattern-movie-info-right-min-width: 240px;
   --fx-size-pattern-movie-info-quality-icon-width: 37px;
