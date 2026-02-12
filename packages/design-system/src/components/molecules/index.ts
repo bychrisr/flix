@@ -15,6 +15,8 @@ export * from './MoviePreviewDetailsPattern';
 export * from './MoviePreviewPattern';
 export * from './PlayAddThumbUpPattern';
 export * from './PlayMoreInfoPattern';
+export * from './ProfileAvatarTrigger';
+export * from './ProfileMenuItem';
 export * from './SignInEmailPasswordPattern';
 export * from './SignInCompletePattern';
 export * from './StatTile';

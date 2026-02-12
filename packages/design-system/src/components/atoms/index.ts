@@ -6,4 +6,5 @@ export * from './FaqToggleIcon';
 export * from './HeroBannerControlButton';
 export * from './Icon';
 export * from './Input';
+export * from './ProfileAvatar';
 export * from './Text';
