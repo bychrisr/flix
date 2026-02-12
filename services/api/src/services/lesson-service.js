@@ -95,6 +95,10 @@ export const createLessonService = ({ eventService }) => {
   };
 
   return {
+    getLessonById: (lessonId) => {
+      const lesson = lessonsById.get(lessonId);
+      return lesson ? { ...lesson } : null;
+    },
     listLessonsByEvent,
     listLessonsByEventSlug: (eventSlug) => {
       const event = eventService.getEventBySlug(eventSlug);

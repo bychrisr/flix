@@ -6,6 +6,18 @@ const accessPayloadSchema = z
   })
   .optional();
 
+const quizSubmitPayloadSchema = z.object({
+  eventAccessKey: z.string().min(6).max(64).optional(),
+  answers: z
+    .array(
+      z.object({
+        questionId: z.uuid(),
+        optionId: z.uuid(),
+      }),
+    )
+    .max(100),
+});
+
 const errorResponse = (reply, error) => {
   if (error.statusCode && error.error) {
     return reply.code(error.statusCode).send({ error: error.error, message: error.message });
@@ -36,7 +48,7 @@ const mapNavigationLesson = (lesson, lessonService) => {
 
 export const registerPublicAccessRoutes = async (
   app,
-  { learnerAccessService, eventService, lessonService },
+  { learnerAccessService, eventService, lessonService, materialService, quizService },
 ) => {
   app.post('/api/public/events/:eventSlug/catalog', async (request, reply) => {
     const parsed = accessPayloadSchema.safeParse(request.body);
@@ -182,6 +194,122 @@ export const registerPublicAccessRoutes = async (
             next: mapNavigationLesson(adjacent.next, lessonService),
           };
         })(),
+      });
+    } catch (error) {
+      return errorResponse(reply, error);
+    }
+  });
+
+  app.post('/api/public/events/:eventSlug/lessons/:lessonSlug/materials', async (request, reply) => {
+    const parsed = accessPayloadSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid materials payload',
+        details: parsed.error.flatten(),
+      });
+    }
+
+    try {
+      const access = learnerAccessService.evaluateAccess({
+        eventSlug: request.params.eventSlug,
+        lessonSlug: request.params.lessonSlug,
+        eventAccessKey: parsed.data?.eventAccessKey,
+      });
+
+      if (!access.authorized) {
+        return reply.code(403).send({
+          error: 'LESSON_ACCESS_DENIED',
+          status: access.status,
+          message: access.message,
+        });
+      }
+
+      const items = materialService.listByLesson(access.event.id, access.lesson.id);
+      return reply.send({ items });
+    } catch (error) {
+      return errorResponse(reply, error);
+    }
+  });
+
+  app.post('/api/public/events/:eventSlug/lessons/:lessonSlug/quiz', async (request, reply) => {
+    const parsed = accessPayloadSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid quiz payload',
+        details: parsed.error.flatten(),
+      });
+    }
+
+    try {
+      const access = learnerAccessService.evaluateAccess({
+        eventSlug: request.params.eventSlug,
+        lessonSlug: request.params.lessonSlug,
+        eventAccessKey: parsed.data?.eventAccessKey,
+      });
+
+      if (!access.authorized) {
+        return reply.code(403).send({
+          error: 'LESSON_ACCESS_DENIED',
+          status: access.status,
+          message: access.message,
+        });
+      }
+
+      const quiz = quizService.getQuizByLesson(access.lesson.id);
+      if (!quiz) {
+        return reply.code(404).send({ error: 'QUIZ_NOT_FOUND', message: 'Quiz not found' });
+      }
+
+      return reply.send({ item: quizService.getQuizForLearner(quiz.id) });
+    } catch (error) {
+      return errorResponse(reply, error);
+    }
+  });
+
+  app.post('/api/public/events/:eventSlug/lessons/:lessonSlug/quiz/submit', async (request, reply) => {
+    const parsed = quizSubmitPayloadSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid quiz submit payload',
+        details: parsed.error.flatten(),
+      });
+    }
+
+    try {
+      const access = learnerAccessService.evaluateAccess({
+        eventSlug: request.params.eventSlug,
+        lessonSlug: request.params.lessonSlug,
+        eventAccessKey: parsed.data.eventAccessKey,
+      });
+
+      if (!access.authorized) {
+        return reply.code(403).send({
+          error: 'LESSON_ACCESS_DENIED',
+          status: access.status,
+          message: access.message,
+        });
+      }
+
+      const quiz = quizService.getQuizByLesson(access.lesson.id);
+      if (!quiz) {
+        return reply.code(404).send({ error: 'QUIZ_NOT_FOUND', message: 'Quiz not found' });
+      }
+
+      const result = quizService.submitAttempt(quiz.id, parsed.data.answers);
+      return reply.send({
+        lesson: {
+          id: access.lesson.id,
+          slug: access.lesson.slug,
+          title: access.lesson.title,
+        },
+        quiz: {
+          id: quiz.id,
+          title: quiz.title,
+        },
+        result,
       });
     } catch (error) {
       return errorResponse(reply, error);
