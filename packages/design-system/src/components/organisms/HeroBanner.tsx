@@ -24,6 +24,7 @@ type HeroBannerUtilityConfig = {
 
 type HeroBannerProps = {
   size?: HeroBannerSize;
+  mode?: 'default' | 'overlay';
   backgroundImageUrl?: string;
   backgroundImageAlt?: string;
   eyebrow?: string;
@@ -33,6 +34,8 @@ type HeroBannerProps = {
   badgeLabel?: string;
   actions?: HeroBannerActionConfig;
   utilities?: HeroBannerUtilityConfig;
+  titleStyle?: CSSProperties;
+  descriptionStyle?: CSSProperties;
   style?: CSSProperties;
 };
 
@@ -138,6 +141,7 @@ const imageOnlyVariants = new Set<HeroBannerSize>(['small2', 'small3']);
 
 export const HeroBanner = ({
   size = 'large',
+  mode = 'default',
   backgroundImageUrl,
   backgroundImageAlt = '',
   eyebrow,
@@ -147,9 +151,12 @@ export const HeroBanner = ({
   badgeLabel,
   actions,
   utilities,
+  titleStyle: customTitleStyle,
+  descriptionStyle: customDescriptionStyle,
   style,
 }: HeroBannerProps): ReactNode => {
   const showContent = !imageOnlyVariants.has(size);
+  const isOverlayMode = mode === 'overlay';
   const typeScale = variantTypography[size];
 
   return (
@@ -157,22 +164,37 @@ export const HeroBanner = ({
       style={{
         ...rootStyle,
         ...variantDimensions[size],
-        ...(showContent ? { display: 'grid', gridTemplateRows: 'var(--fx-size-pattern-hero-media-height) auto' } : null),
+        ...(showContent && !isOverlayMode ? { display: 'grid', gridTemplateRows: 'var(--fx-size-pattern-hero-media-height) auto' } : null),
+        ...(isOverlayMode ? { background: 'transparent', minHeight: 'auto' } : null),
         ...style,
       }}
     >
-      <div
-        style={{
-          ...mediaStyle,
-          ...(size === 'small3' ? { height: 'var(--fx-size-pattern-hero-small3-height)' } : null),
-        }}
-      >
-        {backgroundImageUrl ? <img src={backgroundImageUrl} alt={backgroundImageAlt} style={imageStyle} /> : null}
-        {!imageOnlyVariants.has(size) ? <div aria-hidden="true" style={mediaOverlayStyle} /> : null}
-      </div>
+      {!isOverlayMode ? (
+        <div
+          style={{
+            ...mediaStyle,
+            ...(size === 'small3' ? { height: 'var(--fx-size-pattern-hero-small3-height)' } : null),
+          }}
+        >
+          {backgroundImageUrl ? <img src={backgroundImageUrl} alt={backgroundImageAlt} style={imageStyle} /> : null}
+          {!imageOnlyVariants.has(size) ? <div aria-hidden="true" style={mediaOverlayStyle} /> : null}
+        </div>
+      ) : null}
 
       {showContent ? (
-        <div style={{ ...contentStyle, gap: typeScale.contentGap }}>
+        <div
+          style={{
+            ...contentStyle,
+            ...(isOverlayMode
+              ? {
+                  background: 'transparent',
+                  padding: 0,
+                  gap: 'var(--fx-space-3)',
+                }
+              : null),
+            gap: isOverlayMode ? 'var(--fx-space-3)' : typeScale.contentGap,
+          }}
+        >
           {badgeLabel ? (
             <span style={badgeStyle}>
               <Text as="span" variant="medium-caption1">
@@ -193,13 +215,13 @@ export const HeroBanner = ({
           ) : null}
 
           {title ? (
-            <Text as="h2" variant="bold-title2" style={{ ...titleStyle, fontSize: typeScale.titleSize }}>
+            <Text as="h2" variant="bold-title2" style={{ ...titleStyle, fontSize: typeScale.titleSize, ...customTitleStyle }}>
               {title}
             </Text>
           ) : null}
 
           {description ? (
-            <Text as="p" variant="regular-title3" style={{ ...descriptionStyle, fontSize: typeScale.descriptionSize }}>
+            <Text as="p" variant="regular-title3" style={{ ...descriptionStyle, fontSize: typeScale.descriptionSize, ...customDescriptionStyle }}>
               {description}
             </Text>
           ) : null}

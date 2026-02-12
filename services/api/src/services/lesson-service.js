@@ -48,6 +48,7 @@ export const createLessonService = ({
       id: crypto.randomUUID(),
       eventId,
       title: payload.title.trim(),
+      description: payload.description?.trim() ?? '',
       slug: normalizeLessonSlug(payload.slug),
       videoProvider: payload.videoProvider ? normalizeVideoProvider(payload.videoProvider) : 'youtube',
       videoId: payload.videoId?.trim() ?? normalizeLessonSlug(payload.slug),
@@ -70,6 +71,7 @@ export const createLessonService = ({
     const next = {
       ...lesson,
       title: payload.title?.trim() ?? lesson.title,
+      description: payload.description?.trim() ?? lesson.description ?? '',
       slug: payload.slug ? normalizeLessonSlug(payload.slug) : lesson.slug,
       videoProvider: payload.videoProvider
         ? normalizeVideoProvider(payload.videoProvider)

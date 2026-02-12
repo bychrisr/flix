@@ -1,4 +1,5 @@
 export * from './AdminHeader';
+export * from './AdminPageHeader';
 export * from './AppTopNav';
 export * from './ContinueWatchingPattern';
 export * from './FaqQuestionsPattern';
@@ -7,6 +8,7 @@ export * from './HomeHero';
 export * from './HomePageHeader';
 export * from './LandingPageHeader';
 export * from './LessonRail';
+export * from './LoadingScreen';
 export * from './HeroMobile';
 export * from './ListOfEpisodesPattern';
 export * from './MovieBlocksPattern';

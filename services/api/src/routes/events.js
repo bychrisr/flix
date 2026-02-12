@@ -19,17 +19,21 @@ const visualStyleSchema = z
   })
   .strict();
 const logoUrlSchema = z.string().url().max(400);
+const highlightVideoUrlSchema = z.string().url().max(400);
 
 const createEventSchema = z.object({
   title: z.string().min(3),
   slug: z.string().min(3),
   description: z.string().max(500).optional(),
+  shortDescription: z.string().max(220).optional(),
+  longDescription: z.string().max(4000).optional(),
   isActive: z.boolean().optional(),
   visibility: visibilitySchema.optional(),
   accessKey: z.string().min(6).max(64).optional(),
   hero: heroSchema.optional(),
   visualStyle: visualStyleSchema.optional(),
   logoUrl: logoUrlSchema.optional(),
+  highlightVideoUrl: highlightVideoUrlSchema.optional(),
 });
 
 const updateEventSchema = z
@@ -37,12 +41,15 @@ const updateEventSchema = z
     title: z.string().min(3).optional(),
     slug: z.string().min(3).optional(),
     description: z.string().max(500).optional(),
+    shortDescription: z.string().max(220).optional(),
+    longDescription: z.string().max(4000).optional(),
     isActive: z.boolean().optional(),
     visibility: visibilitySchema.optional(),
     accessKey: z.string().min(6).max(64).nullable().optional(),
     hero: heroSchema.optional(),
     visualStyle: visualStyleSchema.optional(),
     logoUrl: logoUrlSchema.nullable().optional(),
+    highlightVideoUrl: highlightVideoUrlSchema.nullable().optional(),
   })
   .refine((payload) => Object.keys(payload).length > 0, {
     message: 'At least one field must be provided',

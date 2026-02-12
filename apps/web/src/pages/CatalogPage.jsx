@@ -1,12 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Card, LearnerCatalogPage, Text } from '@flix/design-system/components';
 import { fetchCatalog } from '../services/api.js';
 
 const eventKey = (eventSlug) => `flix.web.eventKey.${eventSlug}`;
 
+const getLessonThumbnail = (lesson) => {
+  if (lesson?.videoProvider === 'youtube' && lesson?.videoId) {
+    return `https://i.ytimg.com/vi/${lesson.videoId}/hqdefault.jpg`;
+  }
+  if (lesson?.videoProvider === 'vimeo' && lesson?.videoId) {
+    return `https://vumbnail.com/${lesson.videoId}.jpg`;
+  }
+  return '';
+};
+
 export const CatalogPage = () => {
   const { eventSlug } = useParams();
+  const navigate = useNavigate();
   const [catalog, setCatalog] = useState(null);
   const [accessKey, setAccessKey] = useState(() =>
     eventSlug ? window.localStorage.getItem(eventKey(eventSlug)) ?? '' : '',
@@ -47,17 +58,60 @@ export const CatalogPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventSlug]);
 
+  const handleWatchFirstLesson = async () => {
+    if (!eventSlug) return;
+
+    const navigateToFirstLesson = (items = []) => {
+      const firstLesson = items.find((lesson) => lesson?.slug);
+      if (!firstLesson?.slug) return false;
+      navigate(`/events/${eventSlug}/lessons/${firstLesson.slug}`);
+      return true;
+    };
+
+    if (navigateToFirstLesson(catalog?.catalog?.items ?? [])) {
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const body = await fetchCatalog(eventSlug, accessKey || undefined);
+      setCatalog(body);
+      if (accessKey) {
+        window.localStorage.setItem(eventKey(eventSlug), accessKey);
+      }
+
+      if (!navigateToFirstLesson(body?.catalog?.items ?? [])) {
+        setError('Nenhuma aula disponível para este evento.');
+      }
+    } catch (caughtError) {
+      setCatalog(null);
+      setError(caughtError?.message ?? 'Catalog request failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const releasedItems = releasedLessons.map((lesson) => ({
     id: lesson.id,
     title: lesson.title,
+    description: lesson.description ?? '',
     status: lesson.status,
+    imageUrl: getLessonThumbnail(lesson),
+    presetIconName: 'presetRecentlyAdded',
+    onClick: () => navigate(`/events/${eventSlug}/lessons/${lesson.slug}`),
     action: <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Open lesson</Link>,
   }));
 
   const gatedItems = gatedLessons.map((lesson) => ({
     id: lesson.id,
     title: lesson.title,
+    description: lesson.description ?? '',
     status: lesson.status,
+    imageUrl: getLessonThumbnail(lesson),
+    presetIconName: lesson.status === 'locked' ? 'presetTop10' : 'presetLeavingSoon',
+    onClick: () => navigate(`/events/${eventSlug}/lessons/${lesson.slug}`),
     action: <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Details</Link>,
   }));
 
@@ -77,10 +131,15 @@ export const CatalogPage = () => {
         eventSlug={eventSlug ?? ''}
         accessKey={accessKey}
         onAccessKeyChange={setAccessKey}
-        onLoad={loadCatalog}
+        onLoad={handleWatchFirstLesson}
         loading={loading}
-        heroTitle={catalog?.event?.title ?? 'Flix'}
-        heroDescription={catalog?.event?.description ?? ''}
+        eventVisibility={catalog?.event?.visibility}
+        eventTitle={catalog?.event?.title ?? ''}
+        eventDescription={catalog?.event?.longDescription ?? catalog?.event?.description ?? ''}
+        highlightVideoUrl={catalog?.event?.highlightVideoUrl ?? ''}
+        heroTitle={catalog?.event?.hero?.title ?? catalog?.event?.title ?? 'Flix'}
+        heroDescription={catalog?.event?.shortDescription ?? catalog?.event?.hero?.subtitle ?? catalog?.event?.description ?? ''}
+        heroCtaLabel={catalog?.event?.hero?.ctaText ?? 'Load catalog'}
         releasedItems={releasedItems}
         gatedItems={gatedItems}
       />

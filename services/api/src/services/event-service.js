@@ -50,13 +50,20 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       id: crypto.randomUUID(),
       title: payload.title.trim(),
       slug,
-      description: payload.description?.trim() ?? '',
+      shortDescription: payload.shortDescription?.trim() ?? payload.description?.trim() ?? '',
+      longDescription:
+        payload.longDescription?.trim() ??
+        payload.shortDescription?.trim() ??
+        payload.description?.trim() ??
+        '',
+      description: payload.shortDescription?.trim() ?? payload.description?.trim() ?? '',
       isActive: payload.isActive ?? false,
       visibility: payload.visibility ?? 'private',
       accessKey: payload.accessKey?.trim() || null,
       hero: payload.hero ?? defaultHero,
       visualStyle: payload.visualStyle ?? defaultVisualStyle,
       logoUrl: payload.logoUrl?.trim() || null,
+      highlightVideoUrl: payload.highlightVideoUrl?.trim() || null,
       brandingProvider: payload.brandingProvider?.trim() || null,
       brandingPromptVersion: payload.brandingPromptVersion?.trim() || null,
       brandingGeneratedAt: payload.brandingGeneratedAt ?? null,
@@ -92,13 +99,31 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       ...existing,
       title: payload.title?.trim() ?? existing.title,
       slug: nextSlug,
-      description: payload.description?.trim() ?? existing.description,
+      shortDescription:
+        payload.shortDescription?.trim() ??
+        payload.description?.trim() ??
+        existing.shortDescription ??
+        existing.description,
+      longDescription:
+        payload.longDescription?.trim() ??
+        existing.longDescription ??
+        existing.shortDescription ??
+        existing.description,
+      description:
+        payload.shortDescription?.trim() ??
+        payload.description?.trim() ??
+        existing.shortDescription ??
+        existing.description,
       isActive: payload.isActive ?? existing.isActive,
       visibility,
       accessKey: payload.accessKey === undefined ? existing.accessKey : payload.accessKey?.trim() || null,
       hero: payload.hero ?? existing.hero,
       visualStyle: payload.visualStyle ?? existing.visualStyle,
       logoUrl: payload.logoUrl === undefined ? existing.logoUrl : payload.logoUrl?.trim() || null,
+      highlightVideoUrl:
+        payload.highlightVideoUrl === undefined
+          ? existing.highlightVideoUrl
+          : payload.highlightVideoUrl?.trim() || null,
       brandingProvider:
         payload.brandingProvider === undefined
           ? existing.brandingProvider

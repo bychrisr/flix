@@ -7,6 +7,7 @@ const videoProviderSchema = z.enum(['youtube', 'vimeo', 'gemini_stream']);
 
 const createLessonSchema = z.object({
   title: z.string().min(3),
+  description: z.string().max(400).optional(),
   slug: z.string().min(3),
   videoProvider: videoProviderSchema.optional(),
   videoId: z.string().min(3).max(120).optional(),
@@ -17,6 +18,7 @@ const createLessonSchema = z.object({
 const updateLessonSchema = z
   .object({
     title: z.string().min(3).optional(),
+    description: z.string().max(400).optional(),
     slug: z.string().min(3).optional(),
     videoProvider: videoProviderSchema.optional(),
     videoId: z.string().min(3).max(120).optional(),

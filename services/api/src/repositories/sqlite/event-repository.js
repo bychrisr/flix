@@ -2,7 +2,9 @@ const mapRowToEvent = (row) => ({
   id: row.id,
   title: row.title,
   slug: row.slug,
-  description: row.description,
+  description: row.short_description ?? row.description,
+  shortDescription: row.short_description ?? row.description,
+  longDescription: row.long_description ?? row.description,
   isActive: Boolean(row.is_active),
   visibility: row.visibility,
   accessKey: row.access_key,
@@ -17,6 +19,7 @@ const mapRowToEvent = (row) => ({
     accentColor: row.accent_color,
   },
   logoUrl: row.logo_url,
+  highlightVideoUrl: row.highlight_video_url,
   brandingProvider: row.branding_provider,
   brandingPromptVersion: row.branding_prompt_version,
   brandingGeneratedAt: row.branding_generated_at,
@@ -30,19 +33,19 @@ export const createSqliteEventRepository = ({ db }) => {
   const findBySlugStmt = db.prepare('SELECT * FROM events WHERE slug = ? LIMIT 1');
   const insertStmt = db.prepare(`
     INSERT INTO events (
-      id, title, slug, description, is_active, visibility, access_key,
+      id, title, slug, description, short_description, long_description, is_active, visibility, access_key,
       hero_title, hero_subtitle, hero_cta_text,
       background_color, text_color, accent_color,
-      logo_url, branding_provider, branding_prompt_version, branding_generated_at,
+      logo_url, highlight_video_url, branding_provider, branding_prompt_version, branding_generated_at,
       created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const updateStmt = db.prepare(`
     UPDATE events SET
-      title = ?, slug = ?, description = ?, is_active = ?, visibility = ?, access_key = ?,
+      title = ?, slug = ?, description = ?, short_description = ?, long_description = ?, is_active = ?, visibility = ?, access_key = ?,
       hero_title = ?, hero_subtitle = ?, hero_cta_text = ?,
       background_color = ?, text_color = ?, accent_color = ?,
-      logo_url = ?, branding_provider = ?, branding_prompt_version = ?, branding_generated_at = ?,
+      logo_url = ?, highlight_video_url = ?, branding_provider = ?, branding_prompt_version = ?, branding_generated_at = ?,
       updated_at = ?
     WHERE id = ?
   `);
@@ -67,7 +70,9 @@ export const createSqliteEventRepository = ({ db }) => {
         event.id,
         event.title,
         event.slug,
-        event.description,
+        event.shortDescription ?? event.description,
+        event.shortDescription ?? event.description,
+        event.longDescription ?? event.shortDescription ?? event.description,
         event.isActive ? 1 : 0,
         event.visibility,
         event.accessKey,
@@ -78,6 +83,7 @@ export const createSqliteEventRepository = ({ db }) => {
         event.visualStyle.textColor,
         event.visualStyle.accentColor,
         event.logoUrl,
+        event.highlightVideoUrl,
         event.brandingProvider,
         event.brandingPromptVersion,
         event.brandingGeneratedAt,
@@ -91,7 +97,9 @@ export const createSqliteEventRepository = ({ db }) => {
       updateStmt.run(
         event.title,
         event.slug,
-        event.description,
+        event.shortDescription ?? event.description,
+        event.shortDescription ?? event.description,
+        event.longDescription ?? event.shortDescription ?? event.description,
         event.isActive ? 1 : 0,
         event.visibility,
         event.accessKey,
@@ -102,6 +110,7 @@ export const createSqliteEventRepository = ({ db }) => {
         event.visualStyle.textColor,
         event.visualStyle.accentColor,
         event.logoUrl,
+        event.highlightVideoUrl,
         event.brandingProvider,
         event.brandingPromptVersion,
         event.brandingGeneratedAt,

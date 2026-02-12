@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { AdminContentTemplate, AdminDashboardPage, Card, Text } from '@flix/design-system/components';
 import {
   createEvent,
   generateEventBranding,
@@ -24,6 +25,8 @@ const defaultEventForm = {
   title: '',
   slug: '',
   description: '',
+  shortDescription: '',
+  longDescription: '',
   isActive: false,
   visibility: 'private',
   accessKey: '',
@@ -34,6 +37,7 @@ const defaultEventForm = {
   textColor: '#f5f5f5',
   accentColor: '#e50914',
   logoUrl: '',
+  highlightVideoUrl: '',
 };
 
 const defaultBrandingRequest = {
@@ -45,6 +49,7 @@ const defaultBrandingRequest = {
 
 const defaultLessonForm = {
   title: '',
+  description: '',
   slug: '',
   videoProvider: 'youtube',
   videoId: '',
@@ -79,7 +84,9 @@ const formatError = (error) => {
 const buildEventUpdatePayload = (form) => ({
   title: form.title,
   slug: form.slug,
-  description: form.description,
+  description: form.shortDescription || form.description,
+  shortDescription: form.shortDescription || form.description,
+  longDescription: form.longDescription || form.description,
   isActive: form.isActive,
   visibility: form.visibility,
   accessKey: form.accessKey ? form.accessKey : null,
@@ -94,15 +101,23 @@ const buildEventUpdatePayload = (form) => ({
     accentColor: form.accentColor,
   },
   logoUrl: form.logoUrl ? form.logoUrl : null,
+  highlightVideoUrl: form.highlightVideoUrl ? form.highlightVideoUrl : null,
 });
 
-const pageTitles = {
-  dashboard: 'Dashboard',
-  eventos: 'Eventos',
-  'eventos-new': 'Eventos / Novo',
-  'eventos-edit': 'Eventos / Editar',
-  aulas: 'Aulas',
-  quizzes: 'Quizzes',
+const sectionDetails = {
+  dashboard: 'Visao geral operacional.',
+  eventos: 'Gestao de eventos e branding.',
+  'eventos-new': 'Criacao de novos eventos.',
+  'eventos-edit': 'Edicao de evento selecionado.',
+  aulas: 'Gestao de aulas e materiais.',
+  quizzes: 'Gestao de quizzes por aula.',
+};
+
+const isSectionActive = (currentSection, target) => {
+  if (target === 'eventos') {
+    return ['eventos', 'eventos-new', 'eventos-edit'].includes(currentSection);
+  }
+  return currentSection === target;
 };
 
 export const DashboardPage = ({ section = 'dashboard' }) => {
@@ -145,11 +160,13 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     [lessons, selectedLessonId],
   );
 
-  const mapEventToForm = (item) => ({
-    title: item.title ?? '',
-    slug: item.slug ?? '',
-    description: item.description ?? '',
-    isActive: Boolean(item.isActive),
+const mapEventToForm = (item) => ({
+  title: item.title ?? '',
+  slug: item.slug ?? '',
+  description: item.description ?? '',
+  shortDescription: item.shortDescription ?? item.description ?? '',
+  longDescription: item.longDescription ?? item.description ?? '',
+  isActive: Boolean(item.isActive),
     visibility: item.visibility ?? 'private',
     accessKey: item.accessKey ?? '',
     heroTitle: item.hero?.title ?? '',
@@ -159,6 +176,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     textColor: item.visualStyle?.textColor ?? '#f5f5f5',
     accentColor: item.visualStyle?.accentColor ?? '#e50914',
     logoUrl: item.logoUrl ?? '',
+    highlightVideoUrl: item.highlightVideoUrl ?? '',
   });
 
   const mapBrandingAssetsToForm = (baseForm, assets) => ({
@@ -292,7 +310,9 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
       await createEvent(token, {
         title: eventForm.title,
         slug: eventForm.slug,
-        description: eventForm.description,
+        description: eventForm.shortDescription || eventForm.description,
+        shortDescription: eventForm.shortDescription || eventForm.description,
+        longDescription: eventForm.longDescription || eventForm.description,
         isActive: eventForm.isActive,
         visibility: eventForm.visibility,
         accessKey: eventForm.accessKey || undefined,
@@ -307,6 +327,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
           accentColor: eventForm.accentColor,
         },
         logoUrl: eventForm.logoUrl || undefined,
+        highlightVideoUrl: eventForm.highlightVideoUrl || undefined,
       });
       setStatus('Event created successfully.');
       await fetchEvents();
@@ -496,6 +517,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     try {
       await createLesson(token, selectedEventId, {
         title: lessonForm.title,
+        description: lessonForm.description || undefined,
         slug: lessonForm.slug,
         videoProvider: lessonForm.videoProvider,
         videoId: lessonForm.videoId || undefined,
@@ -527,6 +549,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
 
     setLessonForm({
       title: selectedLesson.title ?? '',
+      description: selectedLesson.description ?? '',
       slug: selectedLesson.slug ?? '',
       videoProvider: selectedLesson.videoProvider ?? 'youtube',
       videoId: selectedLesson.videoId ?? '',
@@ -548,6 +571,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     try {
       await updateLesson(token, selectedEventId, selectedLessonId, {
         title: lessonForm.title,
+        description: lessonForm.description,
         slug: lessonForm.slug,
         videoProvider: lessonForm.videoProvider,
         videoId: lessonForm.videoId,
@@ -732,78 +756,74 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     }
   };
 
+  const navItems = [
+    { label: 'Dashboard', href: '/dashboard', active: isSectionActive(section, 'dashboard') },
+    { label: 'Eventos', href: '/eventos', active: isSectionActive(section, 'eventos') },
+    { label: 'Aulas', href: '/aulas', active: isSectionActive(section, 'aulas') },
+    { label: 'Quizzes', href: '/quizzes', active: isSectionActive(section, 'quizzes') },
+  ];
+
   return (
-    <main className="dashboard-layout">
-      <header className="dashboard-header">
-        <div>
-          <h1>{pageTitles[section] ?? 'Admin Content Operations'}</h1>
-          <p>Fluxo administrativo orientado por rotas do workflow oficial.</p>
-        </div>
-        <button type="button" onClick={logout}>
-          Logout
-        </button>
-      </header>
-
-      <nav className="admin-nav">
-        <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Dashboard
-        </NavLink>
-        <NavLink to="/eventos" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Eventos
-        </NavLink>
-        <NavLink to="/aulas" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Aulas
-        </NavLink>
-        <NavLink to="/quizzes" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Quizzes
-        </NavLink>
-      </nav>
-
-      <section className="dashboard-grid two-col">
-        <article>
-          <h2>Runtime</h2>
-          <p>
-            API base URL: <code>{getApiBaseUrl()}</code>
-          </p>
-          <p>
-            Signed in as <strong>{session?.user?.username ?? 'admin'}</strong>
-          </p>
-        </article>
-
-        <article>
-          <h2>Feedback</h2>
-          {status ? <p className="feedback-ok">{status}</p> : <p>No recent actions.</p>}
-          {error ? <p className="feedback-error">{error}</p> : null}
-        </article>
-      </section>
+    <AdminDashboardPage
+      title="Admin Dashboard"
+      subtitle={sectionDetails[section] ?? 'Fluxo administrativo orientado por rotas do workflow oficial.'}
+      onLogout={logout}
+      navItems={navItems}
+    >
+      <AdminContentTemplate
+        leftTitle="Runtime"
+        rightTitle="Feedback"
+        left={(
+          <>
+            <p>
+              API base URL: <code>{getApiBaseUrl()}</code>
+            </p>
+            <p>
+              Signed in as <strong>{session?.user?.username ?? 'admin'}</strong>
+            </p>
+          </>
+        )}
+        right={(
+          <>
+            {status ? <p className="feedback-ok">{status}</p> : <p>No recent actions.</p>}
+            {error ? <p className="feedback-error">{error}</p> : null}
+          </>
+        )}
+      />
 
       {section === 'dashboard' ? (
-        <section className="dashboard-grid two-col">
-          <article>
-            <h2>Command Center</h2>
+        <AdminContentTemplate
+          leftTitle="Command Center"
+          rightTitle="Selecao Atual"
+          left={(
+            <>
             <p className="muted">Use o menu para operar cada etapa com foco por contexto.</p>
             <div className="inline-actions">
               <NavLink to="/eventos">Abrir Eventos</NavLink>
               <NavLink to="/aulas">Abrir Aulas</NavLink>
               <NavLink to="/quizzes">Abrir Quizzes</NavLink>
             </div>
-          </article>
-          <article>
-            <h2>Selecao Atual</h2>
+            </>
+          )}
+          right={(
+            <>
             <p className="muted">
               Evento: <strong>{selectedEvent?.title ?? 'Nenhum'}</strong>
             </p>
             <p className="muted">
               Aula: <strong>{selectedLesson?.title ?? 'Nenhuma'}</strong>
             </p>
-          </article>
-        </section>
+            </>
+          )}
+        />
       ) : null}
 
       {isEventosSection ? (
-        <section className="dashboard-grid two-col">
-        <article>
-          <h2>Events + Branding</h2>
+        <AdminContentTemplate
+          leftTitle="Events + Branding"
+          rightTitle="Selected Event Context"
+          left={(
+            <>
           <form className="stack-form" onSubmit={handleCreateEvent}>
             <input
               placeholder="Event title"
@@ -821,6 +841,16 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               placeholder="Description"
               value={eventForm.description}
               onChange={(event) => setEventForm({ ...eventForm, description: event.target.value })}
+            />
+            <textarea
+              placeholder="Short description (Hero)"
+              value={eventForm.shortDescription}
+              onChange={(event) => setEventForm({ ...eventForm, shortDescription: event.target.value })}
+            />
+            <textarea
+              placeholder="Long description"
+              value={eventForm.longDescription}
+              onChange={(event) => setEventForm({ ...eventForm, longDescription: event.target.value })}
             />
             <div className="inline-fields">
               <select
@@ -896,6 +926,11 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               placeholder="Logo URL (optional)"
               value={eventForm.logoUrl}
               onChange={(event) => setEventForm({ ...eventForm, logoUrl: event.target.value })}
+            />
+            <input
+              placeholder="Highlight video URL (YouTube)"
+              value={eventForm.highlightVideoUrl}
+              onChange={(event) => setEventForm({ ...eventForm, highlightVideoUrl: event.target.value })}
             />
 
             <h3>AI Branding Generation</h3>
@@ -1042,17 +1077,18 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               </li>
             ))}
           </ul>
-        </article>
-        <article>
-          <h2>Selected Event Context</h2>
+            </>
+          )}
+          right={(
+            <>
           {selectedEvent ? (
-            <div className="payload-preview">
+            <Card className="payload-preview">
               <p>
                 <strong>{selectedEvent.title}</strong>
               </p>
               <p className="muted">Slug: {selectedEvent.slug}</p>
               <p className="muted">Visibility: {selectedEvent.visibility}</p>
-            </div>
+            </Card>
           ) : (
             <p className="muted">
               {isEventEditMode
@@ -1060,14 +1096,17 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
                 : 'Select an event to continue with lesson and quiz flows.'}
             </p>
           )}
-        </article>
-      </section>
+            </>
+          )}
+        />
       ) : null}
 
       {section === 'aulas' ? (
-      <section className="dashboard-grid two-col">
-        <article>
-          <h2>Lessons</h2>
+      <AdminContentTemplate
+        leftTitle="Lessons"
+        rightTitle="Materials"
+        left={(
+          <>
           <form className="stack-form" onSubmit={handleCreateLesson}>
             <input
               placeholder="Lesson title"
@@ -1080,6 +1119,11 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               value={lessonForm.slug}
               onChange={(event) => setLessonForm({ ...lessonForm, slug: event.target.value })}
               required
+            />
+            <textarea
+              placeholder="Short lesson description"
+              value={lessonForm.description}
+              onChange={(event) => setLessonForm({ ...lessonForm, description: event.target.value })}
             />
             <div className="inline-fields">
               <select
@@ -1143,10 +1187,10 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               </li>
             ))}
           </ul>
-        </article>
-
-        <article>
-          <h2>Materials</h2>
+          </>
+        )}
+        right={(
+          <>
           <form className="stack-form" onSubmit={handleCreateMaterial}>
             <input
               placeholder="File name"
@@ -1192,14 +1236,17 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               </li>
             ))}
           </ul>
-        </article>
-      </section>
+          </>
+        )}
+      />
       ) : null}
 
       {section === 'quizzes' ? (
-      <section className="dashboard-grid two-col">
-        <article>
-          <h2>Quizzes</h2>
+      <AdminContentTemplate
+        leftTitle="Quizzes"
+        rightTitle="Lesson Context"
+        left={(
+          <>
           <form className="stack-form" onSubmit={handleCreateQuiz}>
             <input
               placeholder="Quiz id (for load/update/delete)"
@@ -1262,26 +1309,28 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
           </form>
 
           {quizPayload ? (
-            <div className="payload-preview">
+            <Card className="payload-preview">
               <strong>Loaded quiz:</strong> {quizPayload.title} ({quizPayload.id})
-            </div>
+            </Card>
           ) : null}
-        </article>
-        <article>
-          <h2>Lesson Context</h2>
+          </>
+        )}
+        right={(
+          <>
           {selectedLesson ? (
-            <div className="payload-preview">
+            <Card className="payload-preview">
               <p>
                 <strong>{selectedLesson.title}</strong>
               </p>
               <p className="muted">Slug: {selectedLesson.slug}</p>
-            </div>
+            </Card>
           ) : (
             <p className="muted">Select event and lesson in /aulas before creating quizzes.</p>
           )}
-        </article>
-      </section>
+          </>
+        )}
+      />
       ) : null}
-    </main>
+    </AdminDashboardPage>
   );
 };

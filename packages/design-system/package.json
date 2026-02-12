@@ -28,5 +28,8 @@
     "test": "echo 'design-system tests not configured yet'",
     "lint": "echo 'design-system lint not configured yet'",
     "typecheck": "echo 'design-system typecheck not configured yet'"
+  },
+  "dependencies": {
+    "react-player": "^3.4.0"
   }
 }
