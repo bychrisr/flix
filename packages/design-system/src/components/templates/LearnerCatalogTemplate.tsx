@@ -11,10 +11,12 @@ import { LoadingScreen } from '../organisms/LoadingScreen';
 type LessonItem = {
   id: string;
   title: string;
+  description?: string;
   status: 'released' | 'locked' | 'expired';
   imageUrl?: string;
   imageAlt?: string;
   presetIconName?: 'presetTop10' | 'presetRecentlyAdded' | 'presetLeavingSoon' | 'presetNewSeason';
+  onClick?: () => void;
   action?: ReactNode;
 };
 
@@ -113,7 +115,7 @@ const buildCandidateVideoUrls = (highlightVideoUrl: string) => {
     .filter(Boolean)
     .filter((url, index, list) => list.indexOf(url) === index);
 
-  return candidates.filter((url) => ReactPlayer.canPlay(url));
+  return candidates.filter((url) => ReactPlayer.canPlay?.(url) ?? true);
 };
 
 const encodeSvg = (value: string) =>
@@ -156,7 +158,7 @@ export const LearnerCatalogTemplate = ({
   releasedItems,
   gatedItems,
 }: LearnerCatalogTemplateProps) => {
-  const playerRef = useRef<ReactPlayer | null>(null);
+  const playerRef = useRef<any>(null);
   const railRef = useRef<HTMLDivElement | null>(null);
   const loopSeekLockRef = useRef(false);
   const activeVideoUrlRef = useRef('');
@@ -185,6 +187,7 @@ export const LearnerCatalogTemplate = ({
         })),
     [releasedItems, gatedItems],
   );
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -318,10 +321,11 @@ export const LearnerCatalogTemplate = ({
                 height="100%"
                 playsInline
                 onReady={() => setIsPlayerReady(true)}
-                onProgress={({ playedSeconds, loadedSeconds }) => {
+                onProgress={(progress: any) => {
                   if (activeVideoUrlRef.current !== currentVideoUrl) {
                     return;
                   }
+                  const { playedSeconds, loadedSeconds } = progress ?? {};
                   const loaded = typeof loadedSeconds === 'number' ? loadedSeconds : 0;
                   const played = typeof playedSeconds === 'number' ? playedSeconds : 0;
 
@@ -381,7 +385,6 @@ export const LearnerCatalogTemplate = ({
                     rel: 0,
                     playsinline: 1,
                     iv_load_policy: 3,
-                    cc_load_policy: 0,
                     loop: 1,
                     playlist: currentYouTubeVideoId || undefined,
                   },
@@ -661,7 +664,7 @@ export const LearnerCatalogTemplate = ({
               >
                 <Text
                   as="h3"
-                  variant="bold-title3"
+                  variant="bold-title2"
                   className="fx-catalog-rail-title"
                   style={{ margin: 0, fontSize: '32px', lineHeight: '1.15' }}
                 >
@@ -735,11 +738,14 @@ export const LearnerCatalogTemplate = ({
                     presetIconName={item.presetIconName}
                     presetPosition="bottom-left"
                     titleOverlay={item.title}
-                    titleLines={2}
+                    descriptionOverlay={item.description}
+                    titleLines={1}
+                    descriptionLines={2}
+                    showCenteredPlayIcon
+                    onClick={item.onClick}
                     style={{
                       width: '100%',
                       height: 'auto',
-                      aspectRatio: '16 / 9',
                     }}
                   />
                 ))}

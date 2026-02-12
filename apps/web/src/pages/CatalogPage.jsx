@@ -96,18 +96,22 @@ export const CatalogPage = () => {
   const releasedItems = releasedLessons.map((lesson) => ({
     id: lesson.id,
     title: lesson.title,
+    description: lesson.description ?? '',
     status: lesson.status,
     imageUrl: getLessonThumbnail(lesson),
     presetIconName: 'presetRecentlyAdded',
+    onClick: () => navigate(`/events/${eventSlug}/lessons/${lesson.slug}`),
     action: <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Open lesson</Link>,
   }));
 
   const gatedItems = gatedLessons.map((lesson) => ({
     id: lesson.id,
     title: lesson.title,
+    description: lesson.description ?? '',
     status: lesson.status,
     imageUrl: getLessonThumbnail(lesson),
     presetIconName: lesson.status === 'locked' ? 'presetTop10' : 'presetLeavingSoon',
+    onClick: () => navigate(`/events/${eventSlug}/lessons/${lesson.slug}`),
     action: <Link to={`/events/${eventSlug}/lessons/${lesson.slug}`}>Details</Link>,
   }));
 
@@ -131,10 +135,10 @@ export const CatalogPage = () => {
         loading={loading}
         eventVisibility={catalog?.event?.visibility}
         eventTitle={catalog?.event?.title ?? ''}
-        eventDescription={catalog?.event?.description ?? ''}
+        eventDescription={catalog?.event?.longDescription ?? catalog?.event?.description ?? ''}
         highlightVideoUrl={catalog?.event?.highlightVideoUrl ?? ''}
         heroTitle={catalog?.event?.hero?.title ?? catalog?.event?.title ?? 'Flix'}
-        heroDescription={catalog?.event?.hero?.subtitle ?? catalog?.event?.description ?? ''}
+        heroDescription={catalog?.event?.shortDescription ?? catalog?.event?.hero?.subtitle ?? catalog?.event?.description ?? ''}
         heroCtaLabel={catalog?.event?.hero?.ctaText ?? 'Load catalog'}
         releasedItems={releasedItems}
         gatedItems={gatedItems}
