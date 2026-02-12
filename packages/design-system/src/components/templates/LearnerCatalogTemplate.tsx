@@ -378,7 +378,6 @@ export const LearnerCatalogTemplate = ({
                 }}
                 config={{
                   youtube: {
-                    autoplay: 1,
                     controls: 0,
                     disablekb: 1,
                     modestbranding: 1,
