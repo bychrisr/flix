@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Card, LearnerCatalogPage, Text } from '@flix/design-system/components';
 import { fetchCatalog } from '../services/api.js';
 
@@ -17,6 +17,7 @@ const getLessonThumbnail = (lesson) => {
 
 export const CatalogPage = () => {
   const { eventSlug } = useParams();
+  const navigate = useNavigate();
   const [catalog, setCatalog] = useState(null);
   const [accessKey, setAccessKey] = useState(() =>
     eventSlug ? window.localStorage.getItem(eventKey(eventSlug)) ?? '' : '',
@@ -57,6 +58,41 @@ export const CatalogPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventSlug]);
 
+  const handleWatchFirstLesson = async () => {
+    if (!eventSlug) return;
+
+    const navigateToFirstLesson = (items = []) => {
+      const firstLesson = items.find((lesson) => lesson?.slug);
+      if (!firstLesson?.slug) return false;
+      navigate(`/events/${eventSlug}/lessons/${firstLesson.slug}`);
+      return true;
+    };
+
+    if (navigateToFirstLesson(catalog?.catalog?.items ?? [])) {
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const body = await fetchCatalog(eventSlug, accessKey || undefined);
+      setCatalog(body);
+      if (accessKey) {
+        window.localStorage.setItem(eventKey(eventSlug), accessKey);
+      }
+
+      if (!navigateToFirstLesson(body?.catalog?.items ?? [])) {
+        setError('Nenhuma aula disponível para este evento.');
+      }
+    } catch (caughtError) {
+      setCatalog(null);
+      setError(caughtError?.message ?? 'Catalog request failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const releasedItems = releasedLessons.map((lesson) => ({
     id: lesson.id,
     title: lesson.title,
@@ -91,7 +127,7 @@ export const CatalogPage = () => {
         eventSlug={eventSlug ?? ''}
         accessKey={accessKey}
         onAccessKeyChange={setAccessKey}
-        onLoad={loadCatalog}
+        onLoad={handleWatchFirstLesson}
         loading={loading}
         eventVisibility={catalog?.event?.visibility}
         eventTitle={catalog?.event?.title ?? ''}
