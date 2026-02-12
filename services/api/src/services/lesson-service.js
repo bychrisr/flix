@@ -88,6 +88,30 @@ export const createLessonService = ({ eventService }) => {
 
   return {
     listLessonsByEvent,
+    countLessons: () => lessonsById.size,
+    getReleaseStatusDistribution: (referenceDate = new Date()) => {
+      const now = referenceDate.getTime();
+      const distribution = { upcoming: 0, available: 0, expired: 0 };
+
+      for (const lesson of lessonsById.values()) {
+        const releaseTime = new Date(lesson.releaseAt).getTime();
+        const expiresTime = lesson.expiresAt ? new Date(lesson.expiresAt).getTime() : null;
+
+        if (releaseTime > now) {
+          distribution.upcoming += 1;
+          continue;
+        }
+
+        if (expiresTime !== null && expiresTime <= now) {
+          distribution.expired += 1;
+          continue;
+        }
+
+        distribution.available += 1;
+      }
+
+      return distribution;
+    },
     createLesson,
     updateLesson,
     deleteLesson,
