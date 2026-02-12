@@ -15,10 +15,11 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = async ({ username, password }) => {
-    const { response, body } = await postJson('/api/admin/login', { username, password });
-
-    if (!response.ok) {
-      return { ok: false, error: body?.message ?? 'Invalid credentials' };
+    let body;
+    try {
+      body = await postJson('/api/admin/login', { username, password });
+    } catch (error) {
+      return { ok: false, error: error.message ?? 'Invalid credentials' };
     }
 
     const nextSession = {
