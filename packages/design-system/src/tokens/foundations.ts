@@ -120,6 +120,15 @@ export const componentSizes = {
     closeSize: '36px',
     muteSize: '40px',
   },
+  profile: {
+    menuWidth: '218px',
+    menuMinHeight: '350px',
+    avatarSmall: '32px',
+    avatarMedium: '56px',
+    avatarLarge: '144px',
+    compactTriggerWidth: '172px',
+    compactTriggerHeight: '96px',
+  },
   movieCard: {
     small: { width: '128px', height: '72px' },
     standard: { width: '218px', height: '123px' },

@@ -106,6 +106,14 @@ export const colors = {
       overlayBottom: '#181818',
       closeBackground: '#181818',
     },
+    profile: {
+      menuBackground: '#141414',
+      menuBorder: '#808080',
+      menuTextMuted: '#B3B3B3',
+      avatarSelectionBorder: '#E5E5E5',
+      avatarAddBackground: '#808080',
+      avatarAddForeground: '#141414',
+    },
     movieCard: {
       progressTrack: 'rgba(255, 255, 255, 0.35)',
       activeBackground: '#232323',
