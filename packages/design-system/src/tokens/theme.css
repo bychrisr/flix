@@ -111,6 +111,15 @@
   --fx-size-pattern-video-movie-preview-width: 291px;
   --fx-size-pattern-video-rating-icon-width: 70px;
   --fx-size-pattern-video-quality-icon-width: 30px;
+  --fx-size-pattern-header-landing-logo-size: 56px;
+  --fx-size-pattern-header-home-logo-size: 38px;
+  --fx-size-pattern-header-logo-letter-spacing: 0.06em;
+  --fx-size-pattern-header-language-width: 177px;
+  --fx-size-pattern-header-signin-width: 76px;
+  --fx-size-pattern-header-signin-height: 36px;
+  --fx-size-pattern-header-action-icon-size: 24px;
+  --fx-size-pattern-header-avatar-size: 32px;
+  --fx-size-pattern-header-caret-size: 10px;
 
   --fx-breakpoint-sm: 640px;
   --fx-breakpoint-md: 768px;
