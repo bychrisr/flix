@@ -274,7 +274,7 @@ export const LearnerCatalogTemplate = ({
         style={{
           width: '100%',
           position: 'relative',
-          minHeight: 'calc(56.25vw + 96px)',
+          minHeight: 'calc((56.25vw * 0.9) + 96px)',
           height: 'auto',
           overflow: 'visible',
           paddingBottom: 96,
@@ -284,14 +284,26 @@ export const LearnerCatalogTemplate = ({
         {isMounted && !hasVideoError && currentVideoUrl ? (
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
             <div
-              className="fx-catalog-hero-video-frame"
+              className="fx-catalog-hero-video-crop"
               style={{
                 position: 'absolute',
                 left: 0,
+                right: 0,
+                top: 0,
+                height: 'calc(56.25vw * 0.9)',
+                overflow: 'hidden',
+              }}
+            >
+            <div
+              className="fx-catalog-hero-video-frame"
+              style={{
+                position: 'absolute',
+                left: '50%',
                 top: 0,
                 width: '100%',
                 height: 'auto',
                 aspectRatio: '16 / 9',
+                transform: 'translateX(-50%)',
               }}
             >
               <ReactPlayer
@@ -383,6 +395,7 @@ export const LearnerCatalogTemplate = ({
                 }}
               />
             </div>
+            </div>
           </div>
         ) : null}
         <div
@@ -394,8 +407,22 @@ export const LearnerCatalogTemplate = ({
               'linear-gradient(180deg, rgb(0 0 0 / 68%) 0%, rgb(0 0 0 / 22%) 24%, rgb(20 20 20 / 90%) 100%), linear-gradient(90deg, rgb(0 0 0 / 76%) 0%, rgb(0 0 0 / 22%) 55%, rgb(0 0 0 / 52%) 100%)',
           }}
         />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 'clamp(140px, 16vw, 260px)',
+            background:
+              'linear-gradient(180deg, rgb(19 19 19 / 0%) 0%, rgb(19 19 19 / 82%) 62%, var(--fx-color-bg-primary) 100%)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
 
-        <div style={{ position: 'relative', zIndex: 1, opacity: isHeroReady ? 1 : 0, transition: 'opacity 220ms ease' }}>
+        <div style={{ position: 'relative', zIndex: 2, opacity: isHeroReady ? 1 : 0, transition: 'opacity 220ms ease' }}>
           <style>
             {`
               .fx-catalog-hero-video-frame {
@@ -408,7 +435,7 @@ export const LearnerCatalogTemplate = ({
               }
 
               .fx-catalog-hero-content {
-                min-height: clamp(320px, calc(56.25vw - 188px), 560px) !important;
+                min-height: clamp(300px, calc((56.25vw * 0.9) - 130px), 520px) !important;
               }
 
               .fx-catalog-hero-banner {
@@ -431,7 +458,7 @@ export const LearnerCatalogTemplate = ({
 
               @media (max-width: 1200px) {
                 .fx-catalog-hero-content {
-                  min-height: clamp(280px, calc(56.25vw - 170px), 520px) !important;
+                  min-height: clamp(280px, calc((56.25vw * 0.9) - 120px), 500px) !important;
                 }
 
                 .fx-catalog-hero-banner {
@@ -444,6 +471,10 @@ export const LearnerCatalogTemplate = ({
                 .fx-catalog-hero {
                   min-height: calc(56.25vw + 64px) !important;
                   padding-bottom: 48px !important;
+                }
+
+                .fx-catalog-hero-video-crop {
+                  height: 56.25vw !important;
                 }
 
                 .fx-catalog-hero-content {
@@ -486,6 +517,10 @@ export const LearnerCatalogTemplate = ({
               }
 
               @media (max-width: 560px) {
+                .fx-catalog-hero-video-crop {
+                  height: 56.25vw !important;
+                }
+
                 .fx-catalog-hero-video-frame {
                   width: 100% !important;
                   height: auto !important;
