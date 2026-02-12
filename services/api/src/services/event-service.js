@@ -1,3 +1,5 @@
+import { createInMemoryEventRepository } from '../repositories/in-memory/event-repository.js';
+
 const allowedVisibility = ['public', 'private'];
 const defaultHero = {
   title: '',
@@ -25,38 +27,17 @@ const createError = (statusCode, error, message) => {
   return err;
 };
 
-export const createEventService = () => {
-  const eventsById = new Map();
-
+export const createEventService = ({ eventRepository = createInMemoryEventRepository() } = {}) => {
   const hasSlugConflict = (slug, excludedId = null) => {
-    const normalizedSlug = normalizeSlug(slug);
-    for (const event of eventsById.values()) {
-      if (event.id !== excludedId && event.slug === normalizedSlug) {
-        return true;
-      }
-    }
-    return false;
+    const existing = eventRepository.findBySlug(normalizeSlug(slug));
+    return Boolean(existing && existing.id !== excludedId);
   };
 
-  const listEvents = () =>
-    Array.from(eventsById.values())
-      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-      .map((event) => ({ ...event }));
+  const listEvents = () => eventRepository.list();
 
-  const getEventById = (id) => {
-    const event = eventsById.get(id);
-    return event ? { ...event } : null;
-  };
+  const getEventById = (id) => eventRepository.findById(id);
 
-  const getEventBySlug = (slug) => {
-    const normalizedSlug = normalizeSlug(slug);
-    for (const event of eventsById.values()) {
-      if (event.slug === normalizedSlug) {
-        return { ...event };
-      }
-    }
-    return null;
-  };
+  const getEventBySlug = (slug) => eventRepository.findBySlug(normalizeSlug(slug));
 
   const createEvent = (payload) => {
     const slug = normalizeSlug(payload.slug);
@@ -83,12 +64,11 @@ export const createEventService = () => {
       throw createError(400, 'VALIDATION_ERROR', 'Invalid event visibility');
     }
 
-    eventsById.set(event.id, event);
-    return { ...event };
+    return eventRepository.insert(event);
   };
 
   const updateEvent = (id, payload) => {
-    const existing = eventsById.get(id);
+    const existing = eventRepository.findById(id);
     if (!existing) {
       throw createError(404, 'EVENT_NOT_FOUND', 'Event not found');
     }
@@ -117,12 +97,11 @@ export const createEventService = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    eventsById.set(existing.id, updated);
-    return { ...updated };
+    return eventRepository.update(existing.id, updated);
   };
 
   const deleteEvent = (id) => {
-    const deleted = eventsById.delete(id);
+    const deleted = eventRepository.deleteById(id);
     if (!deleted) {
       throw createError(404, 'EVENT_NOT_FOUND', 'Event not found');
     }
@@ -132,7 +111,7 @@ export const createEventService = () => {
     listEvents,
     getEventById,
     getEventBySlug,
-    countEvents: () => eventsById.size,
+    countEvents: () => eventRepository.count(),
     createEvent,
     updateEvent,
     deleteEvent,
