@@ -1,3 +1,35 @@
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("./fonts/NetflixSans-Rg.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("./fonts/NetflixSans-Md.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("./fonts/NetflixSans-Bd.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("./fonts/BebasNeue-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --fx-color-bg-primary: #000000;
   --fx-color-bg-secondary: #141414;
@@ -16,6 +48,9 @@
 
   --fx-font-sans: 'Netflix Sans', 'Helvetica Neue', Arial, sans-serif;
   --fx-font-display: 'Bebas Neue', 'Arial Black', sans-serif;
+  --fx-font-weight-regular: 400;
+  --fx-font-weight-medium: 500;
+  --fx-font-weight-bold: 700;
 
   --fx-space-1: 4px;
   --fx-space-2: 8px;
@@ -36,9 +71,146 @@
   --fx-breakpoint-md: 768px;
   --fx-breakpoint-lg: 1024px;
 
+  /* Backward-compatible aliases */
   --fx-text-caption: 13px;
   --fx-text-body: 16px;
   --fx-text-headline: 21px;
   --fx-text-title: 30px;
   --fx-text-display: 48px;
+
+  /* Regular scale */
+  --fx-typo-regular-caption2-size: 11px;
+  --fx-typo-regular-caption2-line: 100%;
+  --fx-typo-regular-caption2-weight: 400;
+  --fx-typo-regular-caption2-spacing: 0;
+  --fx-typo-regular-caption1-size: 13px;
+  --fx-typo-regular-caption1-line: 16px;
+  --fx-typo-regular-caption1-weight: 400;
+  --fx-typo-regular-caption1-spacing: 0.25px;
+  --fx-typo-regular-small-body-size: 14px;
+  --fx-typo-regular-small-body-line: 100%;
+  --fx-typo-regular-small-body-weight: 400;
+  --fx-typo-regular-small-body-spacing: -0.2px;
+  --fx-typo-regular-small-body-normal-size: 14px;
+  --fx-typo-regular-small-body-normal-line: 20px;
+  --fx-typo-regular-small-body-normal-weight: 400;
+  --fx-typo-regular-small-body-normal-spacing: 0;
+  --fx-typo-regular-body-size: 16px;
+  --fx-typo-regular-body-line: 100%;
+  --fx-typo-regular-body-weight: 400;
+  --fx-typo-regular-body-spacing: 0;
+  --fx-typo-regular-headline2-size: 17px;
+  --fx-typo-regular-headline2-line: 100%;
+  --fx-typo-regular-headline2-weight: 400;
+  --fx-typo-regular-headline2-spacing: 0;
+  --fx-typo-regular-headline1-size: 18px;
+  --fx-typo-regular-headline1-line: 22px;
+  --fx-typo-regular-headline1-weight: 400;
+  --fx-typo-regular-headline1-spacing: 0;
+  --fx-typo-regular-title4-size: 20px;
+  --fx-typo-regular-title4-line: 30px;
+  --fx-typo-regular-title4-weight: 400;
+  --fx-typo-regular-title4-spacing: 0;
+  --fx-typo-regular-title3-size: 21px;
+  --fx-typo-regular-title3-line: 25px;
+  --fx-typo-regular-title3-weight: 400;
+  --fx-typo-regular-title3-spacing: 0;
+  --fx-typo-regular-title2-size: 24px;
+  --fx-typo-regular-title2-line: 30px;
+  --fx-typo-regular-title2-weight: 400;
+  --fx-typo-regular-title2-spacing: 0;
+  --fx-typo-regular-title1-size: 27px;
+  --fx-typo-regular-title1-line: 36px;
+  --fx-typo-regular-title1-weight: 400;
+  --fx-typo-regular-title1-spacing: 0;
+  --fx-typo-regular-large-title-size: 50px;
+  --fx-typo-regular-large-title-line: 100%;
+  --fx-typo-regular-large-title-weight: 400;
+  --fx-typo-regular-large-title-spacing: 0;
+
+  /* Medium scale */
+  --fx-typo-medium-caption2-size: 12px;
+  --fx-typo-medium-caption2-line: 100%;
+  --fx-typo-medium-caption2-weight: 500;
+  --fx-typo-medium-caption2-spacing: -0.25px;
+  --fx-typo-medium-caption1-size: 13px;
+  --fx-typo-medium-caption1-line: 100%;
+  --fx-typo-medium-caption1-weight: 500;
+  --fx-typo-medium-caption1-spacing: 0;
+  --fx-typo-medium-small-body-size: 14px;
+  --fx-typo-medium-small-body-line: 100%;
+  --fx-typo-medium-small-body-weight: 500;
+  --fx-typo-medium-small-body-spacing: 0;
+  --fx-typo-medium-body-size: 16px;
+  --fx-typo-medium-body-line: 24px;
+  --fx-typo-medium-body-weight: 500;
+  --fx-typo-medium-body-spacing: 0;
+  --fx-typo-medium-body-condensed-size: 16px;
+  --fx-typo-medium-body-condensed-line: 24px;
+  --fx-typo-medium-body-condensed-weight: 500;
+  --fx-typo-medium-body-condensed-spacing: 0.5px;
+  --fx-typo-medium-headline2-size: 20px;
+  --fx-typo-medium-headline2-line: 30px;
+  --fx-typo-medium-headline2-weight: 500;
+  --fx-typo-medium-headline2-spacing: 0;
+  --fx-typo-medium-headline1-size: 21px;
+  --fx-typo-medium-headline1-line: 25px;
+  --fx-typo-medium-headline1-weight: 500;
+  --fx-typo-medium-headline1-spacing: 0;
+  --fx-typo-medium-title4-size: 22px;
+  --fx-typo-medium-title4-line: 22px;
+  --fx-typo-medium-title4-weight: 500;
+  --fx-typo-medium-title4-spacing: 0;
+  --fx-typo-medium-title3-size: 24px;
+  --fx-typo-medium-title3-line: 100%;
+  --fx-typo-medium-title3-weight: 500;
+  --fx-typo-medium-title3-spacing: 0;
+  --fx-typo-medium-title3-condensed-size: 24px;
+  --fx-typo-medium-title3-condensed-line: 100%;
+  --fx-typo-medium-title3-condensed-weight: 500;
+  --fx-typo-medium-title3-condensed-spacing: -0.5px;
+  --fx-typo-medium-title2-size: 28px;
+  --fx-typo-medium-title2-line: 45px;
+  --fx-typo-medium-title2-weight: 500;
+  --fx-typo-medium-title2-spacing: 0;
+  --fx-typo-medium-title1-size: 30px;
+  --fx-typo-medium-title1-line: 45px;
+  --fx-typo-medium-title1-weight: 500;
+  --fx-typo-medium-title1-spacing: 0;
+  --fx-typo-medium-large-title-size: 33px;
+  --fx-typo-medium-large-title-line: 100%;
+  --fx-typo-medium-large-title-weight: 500;
+  --fx-typo-medium-large-title-spacing: 0;
+
+  /* Bold scale */
+  --fx-typo-bold-title2-size: 20px;
+  --fx-typo-bold-title2-line: 30px;
+  --fx-typo-bold-title2-weight: 700;
+  --fx-typo-bold-title2-spacing: 0;
+  --fx-typo-bold-title1-size: 48px;
+  --fx-typo-bold-title1-line: 62px;
+  --fx-typo-bold-title1-weight: 700;
+  --fx-typo-bold-title1-spacing: 0;
+  --fx-typo-bold-large-title-size: 55px;
+  --fx-typo-bold-large-title-line: 100%;
+  --fx-typo-bold-large-title-weight: 700;
+  --fx-typo-bold-large-title-spacing: -1px;
+
+  /* Display scale */
+  --fx-typo-display-small-size: 24px;
+  --fx-typo-display-small-line: 1;
+  --fx-typo-display-small-weight: 400;
+  --fx-typo-display-small-spacing: 0.5px;
+  --fx-typo-display-medium-size: 36px;
+  --fx-typo-display-medium-line: 1;
+  --fx-typo-display-medium-weight: 400;
+  --fx-typo-display-medium-spacing: 0.5px;
+  --fx-typo-display-large-size: 48px;
+  --fx-typo-display-large-line: 1;
+  --fx-typo-display-large-weight: 400;
+  --fx-typo-display-large-spacing: 0.5px;
+  --fx-typo-display-xlarge-size: 64px;
+  --fx-typo-display-xlarge-line: 1;
+  --fx-typo-display-xlarge-weight: 400;
+  --fx-typo-display-xlarge-spacing: 0.5px;
 }
