@@ -31,9 +31,7 @@ const errorResponse = (reply, error) => {
   throw error;
 };
 
-export const registerEventRoutes = async (app) => {
-  const eventService = createEventService();
-
+export const registerEventRoutes = async (app, { eventService = createEventService() } = {}) => {
   app.get('/api/events', { preHandler: [requireAdmin] }, async () => ({
     items: eventService.listEvents(),
   }));
