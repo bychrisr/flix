@@ -29,3 +29,6 @@ Thumbs.db
 .aios/install-log.txt
 .aios/project-status.yaml
 .aios/environment-report.yaml
+
+# Local database artifacts
+services/api/.data/
