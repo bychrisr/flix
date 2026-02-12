@@ -99,6 +99,16 @@
   --fx-size-pattern-movie-info-rating-icon-height: 24px;
   --fx-size-pattern-movie-info-preset-icon-width: 24px;
   --fx-size-pattern-movie-info-preset-icon-height: 36px;
+  --fx-size-pattern-video-icon-play: 36px;
+  --fx-size-pattern-video-icon-control: 40px;
+  --fx-size-pattern-video-button-icon: 21px;
+  --fx-size-pattern-video-play-button-width: 119px;
+  --fx-size-pattern-video-more-info-button-width: 161px;
+  --fx-size-pattern-video-rating-width: 111px;
+  --fx-size-pattern-video-rating-height: 36px;
+  --fx-size-pattern-video-movie-preview-width: 291px;
+  --fx-size-pattern-video-rating-icon-width: 70px;
+  --fx-size-pattern-video-quality-icon-width: 30px;
 
   --fx-breakpoint-sm: 640px;
   --fx-breakpoint-md: 768px;
