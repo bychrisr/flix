@@ -611,8 +611,8 @@ export const LearnerCatalogTemplate = ({
                   textShadow: '0 2px 10px rgb(0 0 0 / 45%)',
                 }}
                 actions={{
-                  primaryLabel: heroCtaLabel || 'Play',
-                  secondaryLabel: 'More Info',
+                  primaryLabel: 'Assistir Aula',
+                  secondaryLabel: 'Mais detalhes',
                   onPrimaryClick: onLoad,
                 }}
               />
