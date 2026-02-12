@@ -35,6 +35,7 @@ const defaultEventForm = {
   textColor: '#f5f5f5',
   accentColor: '#e50914',
   logoUrl: '',
+  highlightVideoUrl: '',
 };
 
 const defaultBrandingRequest = {
@@ -95,15 +96,16 @@ const buildEventUpdatePayload = (form) => ({
     accentColor: form.accentColor,
   },
   logoUrl: form.logoUrl ? form.logoUrl : null,
+  highlightVideoUrl: form.highlightVideoUrl ? form.highlightVideoUrl : null,
 });
 
-const pageTitles = {
-  dashboard: 'Dashboard',
-  eventos: 'Eventos',
-  'eventos-new': 'Eventos / Novo',
-  'eventos-edit': 'Eventos / Editar',
-  aulas: 'Aulas',
-  quizzes: 'Quizzes',
+const sectionDetails = {
+  dashboard: 'Visao geral operacional.',
+  eventos: 'Gestao de eventos e branding.',
+  'eventos-new': 'Criacao de novos eventos.',
+  'eventos-edit': 'Edicao de evento selecionado.',
+  aulas: 'Gestao de aulas e materiais.',
+  quizzes: 'Gestao de quizzes por aula.',
 };
 
 const isSectionActive = (currentSection, target) => {
@@ -167,6 +169,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
     textColor: item.visualStyle?.textColor ?? '#f5f5f5',
     accentColor: item.visualStyle?.accentColor ?? '#e50914',
     logoUrl: item.logoUrl ?? '',
+    highlightVideoUrl: item.highlightVideoUrl ?? '',
   });
 
   const mapBrandingAssetsToForm = (baseForm, assets) => ({
@@ -315,6 +318,7 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
           accentColor: eventForm.accentColor,
         },
         logoUrl: eventForm.logoUrl || undefined,
+        highlightVideoUrl: eventForm.highlightVideoUrl || undefined,
       });
       setStatus('Event created successfully.');
       await fetchEvents();
@@ -749,8 +753,8 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
 
   return (
     <AdminDashboardPage
-      title={pageTitles[section] ?? 'Admin Content Operations'}
-      subtitle="Fluxo administrativo orientado por rotas do workflow oficial."
+      title="Admin Dashboard"
+      subtitle={sectionDetails[section] ?? 'Fluxo administrativo orientado por rotas do workflow oficial.'}
       onLogout={logout}
       navItems={navItems}
     >
@@ -900,6 +904,11 @@ export const DashboardPage = ({ section = 'dashboard' }) => {
               placeholder="Logo URL (optional)"
               value={eventForm.logoUrl}
               onChange={(event) => setEventForm({ ...eventForm, logoUrl: event.target.value })}
+            />
+            <input
+              placeholder="Highlight video URL (YouTube)"
+              value={eventForm.highlightVideoUrl}
+              onChange={(event) => setEventForm({ ...eventForm, highlightVideoUrl: event.target.value })}
             />
 
             <h3>AI Branding Generation</h3>
