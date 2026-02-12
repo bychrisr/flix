@@ -4,10 +4,24 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo 'open apps/admin/src/core-screens.html in browser for responsive baseline preview'",
-    "build": "echo 'admin build not configured yet'",
-    "test": "node ../../scripts/verify-token-usage.mjs apps/admin/src",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
     "lint": "echo 'admin lint not configured yet'",
     "typecheck": "echo 'admin typecheck not configured yet'"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^5.1.4",
+    "jsdom": "^27.4.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   }
 }
