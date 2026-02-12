@@ -56,6 +56,10 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       accessKey: payload.accessKey?.trim() || null,
       hero: payload.hero ?? defaultHero,
       visualStyle: payload.visualStyle ?? defaultVisualStyle,
+      logoUrl: payload.logoUrl?.trim() || null,
+      brandingProvider: payload.brandingProvider?.trim() || null,
+      brandingPromptVersion: payload.brandingPromptVersion?.trim() || null,
+      brandingGeneratedAt: payload.brandingGeneratedAt ?? null,
       createdAt: now,
       updatedAt: now,
     };
@@ -94,6 +98,19 @@ export const createEventService = ({ eventRepository = createInMemoryEventReposi
       accessKey: payload.accessKey === undefined ? existing.accessKey : payload.accessKey?.trim() || null,
       hero: payload.hero ?? existing.hero,
       visualStyle: payload.visualStyle ?? existing.visualStyle,
+      logoUrl: payload.logoUrl === undefined ? existing.logoUrl : payload.logoUrl?.trim() || null,
+      brandingProvider:
+        payload.brandingProvider === undefined
+          ? existing.brandingProvider
+          : payload.brandingProvider?.trim() || null,
+      brandingPromptVersion:
+        payload.brandingPromptVersion === undefined
+          ? existing.brandingPromptVersion
+          : payload.brandingPromptVersion?.trim() || null,
+      brandingGeneratedAt:
+        payload.brandingGeneratedAt === undefined
+          ? existing.brandingGeneratedAt
+          : payload.brandingGeneratedAt ?? null,
       updatedAt: new Date().toISOString(),
     };
 

@@ -101,6 +101,7 @@ export const registerPublicAccessRoutes = async (
         title: event.title,
         description: event.description,
         visibility: event.visibility,
+        logoUrl: event.logoUrl,
         hero: event.hero,
       },
       catalog: {

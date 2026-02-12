@@ -17,6 +17,9 @@ import { registerQuizRoutes } from './routes/quizzes.js';
 import { createObservabilityService } from './services/observability-service.js';
 import { createRepositories } from './repositories/index.js';
 import { env } from './config/env.js';
+import { createBrandingService } from './services/branding-service.js';
+import { createGeminiBrandingAdapter } from './services/branding-adapters/gemini-branding-adapter.js';
+import { registerBrandingRoutes } from './routes/branding.js';
 
 export const createApp = async ({
   logger = true,
@@ -24,6 +27,8 @@ export const createApp = async ({
   persistenceAdapter = env.persistenceAdapter,
   databaseUrl = env.databaseUrl,
   databaseProfile = env.databaseProfile,
+  brandingService: brandingServiceOverride,
+  brandingProviderAdapters,
 } = {}) => {
   const app = Fastify({ logger });
 
@@ -58,6 +63,22 @@ export const createApp = async ({
   });
   const learnerAccessService = createLearnerAccessService({ eventService, lessonService });
   const observabilityService = createObservabilityService(observabilityOverrides);
+  const brandingService =
+    brandingServiceOverride ??
+    createBrandingService({
+      eventService,
+      providers: {
+        gemini: createGeminiBrandingAdapter({
+          apiKey: env.geminiApiKey,
+          model: env.geminiModel,
+        }),
+        ...(brandingProviderAdapters ?? {}),
+      },
+      defaultProvider: env.brandingProvider,
+      promptVersion: env.brandingPromptVersion,
+      timeoutMs: env.brandingTimeoutMs,
+      maxRetries: env.brandingMaxRetries,
+    });
 
   await registerHealthRoutes(app);
   await registerAdminAuthRoutes(app, { observabilityService });
@@ -65,6 +86,7 @@ export const createApp = async ({
   await registerLessonRoutes(app, { eventService, lessonService });
   await registerMaterialRoutes(app, { eventService, lessonService, materialService });
   await registerQuizRoutes(app, { eventService, lessonService, quizService });
+  await registerBrandingRoutes(app, { brandingService });
   await registerAdminDashboardRoutes(app, { eventService, lessonService });
   await registerPublicAccessRoutes(app, {
     learnerAccessService,
